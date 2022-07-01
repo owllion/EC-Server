@@ -1,4 +1,5 @@
-// require("./db/mongoose");
+import dbConnect from "./db/mongoose";
+
 require("dotenv").config();
 import config from "config";
 const express = require("express");
@@ -22,4 +23,7 @@ app.use(cors());
 // app.use("/api", orderRouter);
 // app.use("/api", gameRouter);
 
-app.listen(port, () => console.log(`Server is up on the ${port}`));
+app.listen(port, () => {
+  console.log(`Server is up on the ${port} `);
+  dbConnect();
+});
