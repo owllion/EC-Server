@@ -5,6 +5,7 @@ import {
   Severity,
   pre,
   DocumentType,
+  ReturnModelType,
 } from "@typegoose/typegoose";
 
 import validator from "validator";
@@ -26,6 +27,17 @@ import { nanoid } from "nanoid";
 @modelOptions({
   schemaOptions: {
     timestamps: true,
+    toObject: {
+      transform: function (_, ret) {
+        delete ret.password;
+        delete ret.tokens;
+      },
+    },
+    // toJSON: {
+    //   transform: function (doc, ret) {
+    //     delete ret._id;
+    //   },
+    // },
   },
   options: {
     allowMixed: Severity.ALLOW, //allow the use and execution of mongoose.Schema.Types.Mixed, if the inferred type cannot be set otherwise)
@@ -90,43 +102,30 @@ export class User {
   @prop()
   favList: object[];
 
-  //DocumentType-> methods
-  async findByCredentials(
-    this: DocumentType<User>,
+  public static async findByCredentials(
+    this: ReturnModelType<typeof User>,
     email: string,
     password: string
-  ) {
+  ): Promise<User | null> {
     try {
-      //   const user = await User.findOne({ email });
+      const user = await this.findOne({ email });
 
-      //   if (!user) {
-      //     throw new Error("No user with that email!");
-      //   }
+      if (!user) {
+        throw new Error("No user with that email!");
+      }
 
-      const isMatch: boolean = await argon2.verify(password, this.password!);
+      const isMatch: boolean = await argon2.verify(password, user.password!);
       if (!isMatch) {
         throw new Error("Incorrect Password ");
       }
-      //   return user;
+      return user;
     } catch (e) {
       console.log(e);
       return null;
     }
   }
-
-  // JSON.stringify() === toJSON()
-  toJSON(this: DocumentType<User>) {
-    const user = this;
-
-    const userObject: DocumentType<User> = user.toObject();
-
-    delete userObject.password;
-    delete userObject.tokens;
-
-    return userObject;
-  }
 }
 
-const UserModel = getModelForClass<typeof User>(User);
-// getModelForClass -> gets a model for a given class
+const UserModel = getModelForClass(User);
+
 export default UserModel;
