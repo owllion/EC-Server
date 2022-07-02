@@ -4,14 +4,14 @@ import {
   prop,
   Severity,
   pre,
-  DocumentType,
   ReturnModelType,
+  DocumentType,
 } from "@typegoose/typegoose";
 
 import validator from "validator";
 import jwt from "jsonwebtoken";
 import argon2 from "argon2";
-
+import config from "config";
 import { nanoid } from "nanoid";
 
 @pre<User>("save", async function (next) {
@@ -81,11 +81,7 @@ export class User {
   password?: string;
 
   @prop()
-  tokens?: [
-    {
-      token: string;
-    }
-  ];
+  tokens?: { token: string }[];
 
   @prop({ required: true, default: () => nanoid() })
   verificationCode: string;
@@ -123,6 +119,35 @@ export class User {
       console.log(e);
       return null;
     }
+  }
+
+  public async generateAuthToken(this: DocumentType<User>) {
+    const token = jwt.sign(
+      { _id: this._id.toString() },
+      config.get<string>("privateSecret"),
+      {
+        expiresIn: "7d",
+      }
+    );
+    this.tokens = this.tokens?.concat({ token });
+
+    await this.save();
+
+    return token;
+  }
+  public async generateRefreshToken(this: DocumentType<User>) {
+    const refreshToken = jwt.sign(
+      { _id: this._id.toString() },
+      config.get<string>("refreshSecret"),
+      {
+        expiresIn: "15m",
+      }
+    );
+    // this.tokens = this.tokens?.concat({ token:refreshToken });
+
+    // await this.save();
+
+    return refreshToken;
   }
 }
 

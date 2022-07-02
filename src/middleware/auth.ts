@@ -1,13 +1,22 @@
+import config from "config";
 import jwt from "jsonwebtoken";
 import User from "../model/user.model";
 import { NextFunction, Request, Response } from "express";
+import { verifyJwt } from "../utils/jwt";
+
+interface JwtPayload {
+  _id: string;
+}
 
 const auth = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const token =
-      req.body.token || req.header("Authorization").replace("Bearer ", "");
+      req.body.token || req.header("Authorization")?.replace("Bearer ", "");
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const decoded = verifyJwt(
+      token,
+      config.get<string>("publicSecret")
+    ) as JwtPayload;
 
     const user = await User.findOne({
       _id: decoded._id,
