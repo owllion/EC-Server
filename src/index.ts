@@ -1,10 +1,10 @@
-require("dotenv").config();
 import dbConnect from "./db/mongoose";
 import config from "config";
 import morgan from "morgan";
 import express from "express";
 import cors from "cors";
 import router from "./routes";
+// import "dotenv/config";
 import helmet from "helmet";
 
 const app = express();
