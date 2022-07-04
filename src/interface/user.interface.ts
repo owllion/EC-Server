@@ -4,7 +4,7 @@ export interface StudentInterface {
   address?: string;
 }
 
-export interface TeacherInterface {
+export interface Teacher2Interface {
   name: string;
   subject: string;
   gender?: "male" | "female";

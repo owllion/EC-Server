@@ -24,6 +24,7 @@
     "@types/morgan": "^1.9.3",
     "@types/node": "^18.0.0",
     "@types/nodemailer": "^6.4.4",
+    "@types/ramda": "^0.28.14",
     "@types/validator": "^13.7.3",
     "jest": "^28.1.2",
     "nodemon": "^2.0.18",
