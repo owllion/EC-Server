@@ -27,17 +27,20 @@ import { nanoid } from "nanoid";
 @modelOptions({
   schemaOptions: {
     timestamps: true,
-    toObject: {
+    // toObject: {
+    //   transform: function (_, ret) {
+
+    //     delete ret.password;
+    //     delete ret.tokens;
+    //   },
+    // },
+    toJSON: {
       transform: function (_, ret) {
+        ret.toObject();
         delete ret.password;
         delete ret.tokens;
       },
     },
-    // toJSON: {
-    //   transform: function (doc, ret) {
-    //     delete ret._id;
-    //   },
-    // },
   },
   options: {
     allowMixed: Severity.ALLOW, //allow the use and execution of mongoose.Schema.Types.Mixed, if the inferred type cannot be set otherwise)
