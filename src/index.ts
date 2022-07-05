@@ -4,7 +4,7 @@ import morgan from "morgan";
 import express from "express";
 import cors from "cors";
 import router from "./routes";
-// import "dotenv/config";
+import "dotenv/config";
 import helmet from "helmet";
 
 const app = express();

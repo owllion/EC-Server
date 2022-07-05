@@ -17,7 +17,6 @@ export interface GetRefreshTokenInterface {
   refresh: string;
 }
 export interface RegisterInterface {
-  refresh: string;
   /**
    * @TJS-format email
    */
@@ -28,7 +27,6 @@ export interface RegisterInterface {
 }
 
 export interface UploadAvatarInterface {
-  //do not know what type it's gonna be.
   file: Buffer;
 }
 
@@ -47,10 +45,36 @@ export interface ResetPasswordInterface {
   password: string;
 }
 
-export interface UserInfoModify {
+export interface UserInfoModifyInterface {
   name: string;
   /**
    * @TJS-pattern ^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$
    */
   phone: string;
+}
+export interface UserPasswordModifyInterface {
+  password: string;
+}
+
+export interface AddToFavInterface {
+  productId: string;
+}
+export interface RemoveFromFavInterface {
+  productId: string;
+  favList: object[];
+}
+
+export interface RemoveItemFromCartInterface {
+  productId: string;
+  cartList: object[];
+}
+
+export interface UpdateQtyInterface {
+  productId: string;
+  cartList: object[];
+  qty: number;
+}
+export interface AddToCartInterface {
+  productId: string;
+  qty: number;
 }
