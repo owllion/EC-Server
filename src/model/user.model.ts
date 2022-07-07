@@ -101,6 +101,9 @@ export class User {
   @prop()
   favList: object[];
 
+  @prop()
+  couponList: object[];
+
   public static async findByCredentials(
     this: ReturnModelType<typeof User>,
     email: string,
