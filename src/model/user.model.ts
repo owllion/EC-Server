@@ -4,6 +4,7 @@ import {
   prop,
   Severity,
   pre,
+  post,
   ReturnModelType,
   DocumentType,
 } from "@typegoose/typegoose";
@@ -14,6 +15,8 @@ import argon2 from "argon2";
 import config from "config";
 import { nanoid } from "nanoid";
 
+import Order from "../model/order.model";
+
 @pre<User>("save", async function (next) {
   //Arrow Functions cannot be used here, because the binding of this is required to get & modify the document.
   const user = this;
@@ -23,6 +26,14 @@ import { nanoid } from "nanoid";
   }
 
   next();
+})
+@pre<User>("remove", async function (next) {
+  const user = this;
+  await Order.deleteMany({ owner: user._id });
+  next();
+})
+@post<User>("save", function () {
+  console.log("this is @post");
 })
 @modelOptions({
   schemaOptions: {
