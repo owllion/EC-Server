@@ -1,31 +1,33 @@
 import sgMail from "@sendgrid/mail";
 import config from "config";
+import { getMailText } from "./getMailText";
+import { setTemplate } from "../data/emailTemplate.js";
 
 sgMail.setApiKey(config.get<string>("sendgridApiKey"));
 
 export const sendResetPasswordLink = (
   type: string,
   email?: string,
-  link?: string,
-  code?: string,
-  id?: string
+  link?: string
 ) => {
-  let subject: string, content: string;
-
-  if (type === "reset") {
-    subject = "Reset Password";
-    content = `<h2>Please click on the given link to reset your password!</h2>
-       <a href="${link}">Click to reset your password!</a>`;
-  } else {
-    subject = "Verify your email";
-    content = `<h2>verification code: ${code}. Id: ${id}</h2>
-       `;
-  }
+  const {
+    btnText,
+    title,
+    content,
+    type: actionType,
+    action,
+  } = getMailText(type, link);
 
   sgMail.send({
     to: email,
-    from: config.get<string>("email"),
-    subject,
-    html: content,
+    from: "no-reply@mail.com",
+    subject: title,
+    html: setTemplate({
+      btnText,
+      title,
+      content,
+      type: actionType,
+      action,
+    }),
   });
 };
