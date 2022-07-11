@@ -97,8 +97,8 @@ export class User {
   @prop()
   tokens?: { token: string }[];
 
-  @prop({ required: true, default: () => nanoid() })
-  verificationCode: string;
+  // @prop({ required: true, default: () => nanoid() })
+  // verificationCode: string;
 
   @prop()
   passwordResetCode: string | null; //Type mixed

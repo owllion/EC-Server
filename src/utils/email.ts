@@ -37,6 +37,7 @@ export const sendLink = async ({
       subject: title,
       html: setTemplate({
         btnText,
+        btnLink: link,
         title,
         content,
         type: actionType,

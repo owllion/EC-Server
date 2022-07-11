@@ -1,5 +1,6 @@
 export interface params {
   btnText: string;
+  btnLink: string;
   title: string;
   content: string;
   type: string;
@@ -7,6 +8,7 @@ export interface params {
 }
 export const setTemplate = ({
   btnText,
+  btnLink,
   title,
   content,
   type,
@@ -471,7 +473,7 @@ export const setTemplate = ({
                                                                     style="padding:0;Margin:0;padding-top:5px"><span
                                                                         class="es-button-border"
                                                                         style="border-style:solid;border-color:#333333;background:#333333;border-width:0px;display:inline-block;border-radius:5px;width:auto"><a
-                                                                            href="https://viewstripo.email/"
+                                                                            href="${btnLink}"
                                                                             class="es-button" target="_blank"
                                                                             style="mso-style-priority:100 !important;text-decoration:none;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;color:#FFFFFF;font-size:16px;border-style:solid;border-color:#333333;border-width:8px 30px 8px 30px;display:inline-block;background:#333333;border-radius:5px;font-family:'lucida sans unicode', 'lucida grande', sans-serif;font-weight:normal;font-style:normal;line-height:19px;width:auto;text-align:center">${btnText}</a></span></td>
                                                             </tr>
@@ -620,14 +622,14 @@ export const setTemplate = ({
                                                             style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px">
                                                             <tr style="border-collapse:collapse">
                                                                 <td align="center"
-                                                                    style="padding:0;Margin:0;font-size:0"><a
-                                                                        target="_blank" href="https://viewstripo.email/"
+                                                                    style="padding:0;Margin:0;font-size:0"><div
+                                                                        
                                                                         style="-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;text-decoration:underline;color:#999999;font-size:16px"><img
                                                                             class="adapt-img"
                                                                             src="https://wlases.stripocdn.email/content/guids/CABINET_6ebdc9f620b6c98ec92e579217982603/images/81101525781549293.png"
                                                                             alt
                                                                             style="display:block;border:0;outline:none;text-decoration:none;-ms-interpolation-mode:bicubic"
-                                                                            width="130"></a></td>
+                                                                            width="130"></div></td>
                                                             </tr>
                                                         </table>
                                                     </td>
@@ -645,14 +647,14 @@ export const setTemplate = ({
                                                             style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px">
                                                             <tr style="border-collapse:collapse">
                                                                 <td align="center"
-                                                                    style="padding:0;Margin:0;font-size:0"><a
-                                                                        target="_blank" href="https://viewstripo.email/"
+                                                                    style="padding:0;Margin:0;font-size:0"><div
+                                                                        
                                                                         style="-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;text-decoration:underline;color:#999999;font-size:16px"><img
                                                                             class="adapt-img"
                                                                             src="https://wlases.stripocdn.email/content/guids/CABINET_6ebdc9f620b6c98ec92e579217982603/images/74371525781549159.png"
                                                                             alt
                                                                             style="display:block;border:0;outline:none;text-decoration:none;-ms-interpolation-mode:bicubic"
-                                                                            width="130"></a></td>
+                                                                            width="130"></div></td>
                                                             </tr>
                                                         </table>
                                                     </td>
