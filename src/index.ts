@@ -20,3 +20,11 @@ app.listen(port, () => {
   console.log(`Server is up on the ${port} `);
   dbConnect();
 });
+
+// import { sendLink } from "./utils/email";
+
+// sendLink({
+//   type: "verify",
+//   link: "https://stackoverflow.com/questions/12736269/how-to-declare-return-types-for-functions-in-typescript",
+//   email: "defrag55345@gmail.com",
+// });

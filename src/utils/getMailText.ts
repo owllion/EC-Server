@@ -1,21 +1,17 @@
 import { params } from "../data/emailTemplate";
-export const getMailText = (type: string, link?: string): params => {
-  if (type === "reset") {
-    return {
-      btnText: "Reset Password",
-      title: "Reset Your Password",
-      content: `<h2>Please click on the given link to reset your password!</h2>
-           <a href="${link}">Click to reset your password!</a>`,
-      type,
-      action: "resetting password",
-    };
-  } else {
-    return {
-      btnText: "Verify Email",
-      title: "Verify Your Email",
-      content: `<h2>Please click on the given link to verify your email</h2>`,
-      type,
-      action: "email verification",
-    };
-  }
+
+export const getMailText = (type: string, link: string): params => {
+  const isReset = type === "reset";
+
+  return {
+    btnText: isReset
+      ? `<a href="${link}">Reset Password</a>`
+      : `<a href="${link}">Verify Email</a>`,
+    title: isReset ? "Reset Your Password" : "Verify Your Email",
+    content: `<h2>Please click on the given link to ${
+      isReset ? "reset your password" : "verify your email"
+    }!</h2>`,
+    type,
+    action: "resetting password",
+  };
 };

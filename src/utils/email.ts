@@ -1,15 +1,18 @@
-import sgMail from "@sendgrid/mail";
 import config from "config";
+import nodemailer from "nodemailer";
+
 import { getMailText } from "./getMailText";
-import { setTemplate } from "../data/emailTemplate.js";
+import { setTemplate } from "../data/emailTemplate";
 
-sgMail.setApiKey(config.get<string>("sendgridApiKey"));
-
-export const sendResetPasswordLink = (
-  type: string,
-  email?: string,
-  link?: string
-) => {
+export const sendLink = async ({
+  type,
+  link,
+  email,
+}: {
+  type: string;
+  link: string;
+  email: string;
+}): Promise<void> => {
   const {
     btnText,
     title,
@@ -17,17 +20,32 @@ export const sendResetPasswordLink = (
     type: actionType,
     action,
   } = getMailText(type, link);
+  try {
+    let transporter = nodemailer.createTransport({
+      host: config.get<string>("host"),
+      port: config.get<number>("mailPort"),
+      secure: true,
+      auth: {
+        user: config.get<string>("mailFrom"),
+        pass: config.get<string>("mailPwd"),
+      },
+    });
 
-  sgMail.send({
-    to: email,
-    from: "no-reply@mail.com",
-    subject: title,
-    html: setTemplate({
-      btnText,
-      title,
-      content,
-      type: actionType,
-      action,
-    }),
-  });
+    const info = await transporter.sendMail({
+      to: email,
+      from: config.get<string>("mailFrom"),
+      subject: title,
+      html: setTemplate({
+        btnText,
+        title,
+        content,
+        type: actionType,
+        action,
+      }),
+    });
+
+    console.log("Email send", info);
+  } catch (error) {
+    console.log("Something went wrong!", error);
+  }
 };
