@@ -1,13 +1,16 @@
 export default{
   "type": "object",
   "properties": {
-    "email": {
-      "format": "email",
+    "totalPrice": {
+      "type": "number"
+    },
+    "code": {
       "type": "string"
     }
   },
   "required": [
-    "email"
+    "code",
+    "totalPrice"
   ],
   "$schema": "http://json-schema.org/draft-07/schema#"
 }
