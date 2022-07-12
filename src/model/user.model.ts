@@ -161,7 +161,7 @@ export class User {
 
     await this.save();
 
-    // return token;
+    return token;
   }
   public async generateRefreshToken(this: DocumentType<User>) {
     const refreshToken = jwt.sign(
