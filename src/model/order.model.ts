@@ -1,15 +1,19 @@
 import {
   getModelForClass,
   modelOptions,
+  Severity,
   prop,
   Ref,
 } from "@typegoose/typegoose";
 import { CreateProductInterface } from "../interface/product.interface";
-import User from "./user.model";
+import { User } from "./user.model";
 
 @modelOptions({
   schemaOptions: {
     timestamps: true,
+  },
+  options: {
+    allowMixed: Severity.ALLOW, //allow the use and execution of mongoose.Schema.Types.Mixed, if the inferred type cannot be set otherwise)
   },
 })
 export class Order {
@@ -19,8 +23,11 @@ export class Order {
   @prop({ default: null })
   order_status: string;
 
-  @prop({ ref: () => User })
-  owner: Ref<typeof User>;
+  @prop({ ref: "User" })
+  //circular dependencies
+  //Must import {User},not UserModel(means whole user collection)
+  //Only when you need to use the method like deleteMany、find,you import the whole model.
+  owner: Ref<User>;
   //equal to  { type: Schema.Types.ObjectId, ref: 'User' },
 
   @prop({ required: true })

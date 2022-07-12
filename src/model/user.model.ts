@@ -8,14 +8,15 @@ import {
   ReturnModelType,
   DocumentType,
 } from "@typegoose/typegoose";
-
+// isDocument,
+import mongoose from "mongoose";
 import validator from "validator";
 import jwt from "jsonwebtoken";
 import argon2 from "argon2";
 import config from "config";
-import { nanoid } from "nanoid";
+// import { nanoid } from "nanoid";
 
-import Order from "../model/order.model";
+import OrderModel from "../model/order.model";
 
 @pre<User>("save", async function (next) {
   //Arrow Functions cannot be used here, because the binding of this is required to get & modify the document.
@@ -29,7 +30,7 @@ import Order from "../model/order.model";
 })
 @pre<User>("remove", async function (next) {
   const user = this;
-  await Order.deleteMany({ owner: user._id });
+  await OrderModel.deleteMany({ owner: user._id });
   next();
 })
 @post<User>("save", function () {
@@ -84,6 +85,7 @@ export class User {
   avatarDefault: string;
 
   @prop({
+    required: true,
     trim: true,
     minlength: 7,
     validate(value: string) {
@@ -116,41 +118,50 @@ export class User {
   couponList: object[];
 
   public static async findByCredentials(
+    //static -> model method
     this: ReturnModelType<typeof User>,
+    //this -> refer to whole model
     email: string,
     password: string
-  ): Promise<User | null> {
+  ) {
     try {
       const user = await this.findOne({ email });
-
+      console.log(
+        "這是findByCredentials的user，是否為document",
+        user instanceof mongoose.Document
+      );
+      // console.log(isDocument(user), "這個findOne是不是UserMode的document呢?");
+      // console.log(user, "這個是findByCredentials的節果，是否為instance呢???");
       if (!user) {
         throw new Error("No user with that email!");
       }
 
-      const isMatch: boolean = await argon2.verify(password, user.password!);
+      const isMatch: boolean = await argon2.verify(user.password!, password);
+      // argon2.verify("<big long hash>", "password");
       if (!isMatch) {
         throw new Error("Incorrect Password ");
       }
-      return user;
+      return user; //this is instanceof UserModel
     } catch (e) {
       console.log(e);
-      return null;
+      return null!;
     }
   }
 
   public async generateAuthToken(this: DocumentType<User>) {
+    // this -> refer to one document
     const token = jwt.sign(
       { _id: this._id.toString() },
       config.get<string>("privateSecret"),
       {
-        expiresIn: "7d",
+        expiresIn: "1d",
       }
     );
     this.tokens = this.tokens?.concat({ token });
 
     await this.save();
 
-    return token;
+    // return token;
   }
   public async generateRefreshToken(this: DocumentType<User>) {
     const refreshToken = jwt.sign(

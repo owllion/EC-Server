@@ -32,3 +32,28 @@ export const register: RequestHandler = async (req, res) => {
     });
   }
 };
+
+export const login: RequestHandler = async (req, res) => {
+  let token, refreshToken;
+  const { email, password } = req.body;
+  try {
+    const user = await UserModel.findByCredentials(email, password);
+    console.log({ user });
+    console.log(user instanceof UserModel);
+    if (user) {
+      token = await user.generateAuthToken();
+      refreshToken = await user.generateRefreshToken();
+    }
+
+    res.status(200).send({
+      msg: "success",
+      result: {
+        user,
+        token,
+        refreshToken,
+      },
+    });
+  } catch (e) {
+    res.status(400).send({ msg: e.message });
+  }
+};
