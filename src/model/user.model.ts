@@ -126,12 +126,7 @@ export class User {
   ) {
     try {
       const user = await this.findOne({ email });
-      console.log(
-        "這是findByCredentials的user，是否為document",
-        user instanceof mongoose.Document
-      );
-      // console.log(isDocument(user), "這個findOne是不是UserMode的document呢?");
-      // console.log(user, "這個是findByCredentials的節果，是否為instance呢???");
+
       if (!user) {
         throw new Error("No user with that email!");
       }
@@ -141,7 +136,7 @@ export class User {
       if (!isMatch) {
         throw new Error("Incorrect Password ");
       }
-      return user; //this is instanceof UserModel
+      return user; //this is instance of UserModel and mongoose.Document
     } catch (e) {
       console.log(e);
       return null!;

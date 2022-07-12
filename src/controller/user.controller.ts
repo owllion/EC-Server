@@ -34,16 +34,12 @@ export const register: RequestHandler = async (req, res) => {
 };
 
 export const login: RequestHandler = async (req, res) => {
-  let token, refreshToken;
   const { email, password } = req.body;
   try {
     const user = await UserModel.findByCredentials(email, password);
-    console.log({ user });
-    console.log(user instanceof UserModel);
-    if (user) {
-      token = await user.generateAuthToken();
-      refreshToken = await user.generateRefreshToken();
-    }
+
+    const token = await user.generateAuthToken();
+    const refreshToken = await user.generateRefreshToken();
 
     res.status(200).send({
       msg: "success",
@@ -55,5 +51,19 @@ export const login: RequestHandler = async (req, res) => {
     });
   } catch (e) {
     res.status(400).send({ msg: e.message });
+  }
+};
+
+export const logout: RequestHandler = async (req, res) => {
+  try {
+    req.user.tokens = req.user.tokens.filter(
+      (token: { token: string }) => token.token !== req.token
+    );
+
+    await req.user.save();
+
+    res.status(200).send();
+  } catch (e) {
+    res.status(500).send();
   }
 };

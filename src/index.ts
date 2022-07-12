@@ -1,11 +1,14 @@
-import dbConnect from "./db/mongoose";
-import config from "config";
 import morgan from "morgan";
-import express from "express";
 import cors from "cors";
-import router from "./routes";
 import "dotenv/config";
 import helmet from "helmet";
+import express from "express";
+
+import dbConnect from "./db/mongoose";
+import config from "config";
+import router from "./routes";
+import { errorHandler } from "./middleware/error.middleware";
+import { notFoundHandler } from "./middleware/not-found.middleware";
 
 const app = express();
 app.use(express.json());
@@ -13,6 +16,9 @@ app.use(cors());
 app.use(helmet());
 app.use(morgan("combined"));
 app.use("/api", router);
+
+app.use(errorHandler);
+app.use(notFoundHandler);
 
 const port = config.get("port");
 
