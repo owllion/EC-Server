@@ -1,9 +1,5 @@
-import {
-  getModelForClass,
-  modelOptions,
-  prop,
-  Ref,
-} from "@typegoose/typegoose";
+import { getModelForClass, modelOptions, prop } from "@typegoose/typegoose";
+import { nanoid } from "nanoid";
 
 @modelOptions({
   schemaOptions: {
@@ -11,7 +7,7 @@ import {
   },
 })
 export class Product {
-  @prop({ required: true })
+  @prop({ required: true, default: () => nanoid() })
   productId: string;
 
   @prop({ required: true })

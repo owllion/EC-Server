@@ -7,17 +7,14 @@ import UserModel from "../model/user.model";
 //service 可以被各种环境调用，虽然更多时候它只有一种能力，仅仅去处理 controller 发过来的 http 请求
 
 export const findUser = async ({
-  attr,
-  val,
+  field,
+  value,
 }: {
-  attr: string;
-  val: string;
+  field: string;
+  value: string;
 }) => {
-  const user = await UserModel.findOne({ [attr]: val });
+  const user = await UserModel.findOne({ [field]: value });
 
   //If user does not exist, you will get null.
-  if (!user) {
-    throw new Error("No user with that email!");
-  }
   return user;
 };

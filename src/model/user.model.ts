@@ -12,7 +12,6 @@ import validator from "validator";
 import jwt from "jsonwebtoken";
 import argon2 from "argon2";
 import config from "config";
-// import { nanoid } from "nanoid";
 
 import OrderModel from "../model/order.model";
 import { Product } from "../model/product.model";

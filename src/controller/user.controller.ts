@@ -6,7 +6,7 @@ import config from "config";
 import UserModel from "../model/user.model";
 import { sendLink } from "../utils/email";
 import { signJwt, verifyJwt } from "../utils/jwt";
-import { Product } from "../model/product.model";
+import ProductModel, { Product } from "../model/product.model";
 
 //  controller，可以说他是对 http 中 request 的解析，以及对 response 的封装，它对应的是每一个路由，是 http 请求到代码的一个承接，它必须是可单例的，是无状态的。
 
@@ -97,7 +97,9 @@ export const forgotPassword: RequestHandler = async (req, res) => {
     if (!validator.isEmail(email)) {
       throw new Error("Email is invalid!");
     }
-    const user = await findUser({ attr: "email", val: email });
+    const user = await findUser({ field: "email", value: email });
+
+    if (!user) throw new Error("No user with that email!");
 
     const token: string = signJwt(
       { _id: user._id },
@@ -159,13 +161,13 @@ export const resetPassword: RequestHandler<{ token: string }> = async (
   }
 };
 
-export const removeOneItem: RequestHandler = async (req, res) => {
+export const removeCartItem: RequestHandler = async (req, res) => {
   const { productId, cartList } = req.body as {
     productId: string;
     cartList: Product[];
   };
   try {
-    const filteredProduct = cartList.filter(
+    const filteredProduct: Product[] = cartList.filter(
       (item: { productId: string }) => item.productId !== productId
     );
 
@@ -176,6 +178,159 @@ export const removeOneItem: RequestHandler = async (req, res) => {
     res.status(200).send({
       msg: "success",
       cartList: req.user.cartList,
+    });
+  } catch (e) {
+    res.status(400).send({ msg: e.message });
+  }
+};
+
+export const clearCart: RequestHandler = async (req, res) => {
+  try {
+    req.user.cartList = [];
+    req.user.save();
+    res.status(200).send({ msg: "success" });
+  } catch (e) {
+    res.status(400).send({ msg: e.message });
+  }
+};
+
+export const updateItemQty: RequestHandler = async (req, res) => {
+  const { productId, qty, cartList } = req.body as {
+    productId: string;
+    qty: number;
+    cartList: Product[];
+  };
+  try {
+    const itemIndex: number = cartList.findIndex(
+      (item: { productId: string }) => item.productId === productId
+    );
+
+    if (itemIndex > -1) {
+      const productItem = cartList[itemIndex];
+      productItem.qty = qty;
+      //cartList.set(itemIndex, productItem)
+    }
+    req.user.cartList = cartList;
+
+    await req.user.save();
+
+    res.status(200).send({
+      msg: "success",
+      cartList: req.user.cartList,
+    });
+  } catch (e) {
+    res.status(400).send({ msg: e.message });
+  }
+};
+
+export const addToCart: RequestHandler = async (req, res) => {
+  const { productId, qty } = req.body as {
+    productId: string;
+    qty: number;
+    cartList: Product[];
+  };
+  // console.log(req);
+  try {
+    const product = await ProductModel.findOne({ productId });
+
+    //const productProperty = Object.keys(product)
+    const index: number = req.user.cartList.findIndex(
+      (item: { productId: string }) => item.productId === productId
+    );
+
+    //If cart is empty or can not find the product
+    if (!req.user.cartList.length || index === -1) {
+      const item = new ProductModel(product);
+      item.qty = qty;
+      req.user.cartList.push(item);
+    } else if (req.user.cartList.length > 0) {
+      //If cart already have products
+      if (index !== -1) {
+        //if find the product
+        throw new Error("Item already exists in cart!");
+      }
+    }
+    await req.user.save();
+    res.status(200).send({
+      msg: "success",
+      cartList: req.user.cartList,
+    });
+  } catch (e) {
+    res.status(400).send({ msg: e.message });
+  }
+};
+
+export const removeFromFav: RequestHandler = async (req, res) => {
+  const { productId, favList } = req.body as {
+    productId: string;
+    favList: Product[];
+  };
+  try {
+    req.user.favList = favList.filter(
+      (product: { productId: string }) => product.productId !== productId
+    );
+
+    await req.user.save();
+
+    res.status(200).send({
+      msg: "success",
+      favList: req.user.favList,
+    });
+  } catch (e) {
+    res.status(400).send({ msg: e.message });
+  }
+};
+
+export const addToFav: RequestHandler = async (req, res) => {
+  const { productId } = req.body as { productId: string };
+  try {
+    const item = await ProductModel.find({ productId });
+    console.log(item[0]); // item = array of object
+
+    req.user.favList.push(item[0]);
+
+    await req.user.save();
+
+    res.status(200).send({
+      msg: "success",
+      favList: req.user.favList,
+    });
+  } catch (e) {
+    res.status(400).send({ msg: e.message });
+  }
+};
+
+export const passwordModify: RequestHandler = async (req, res) => {
+  const { password } = req.body as { password: string };
+  try {
+    req.user.password = password;
+
+    await req.user.save();
+
+    res.status(200).send({ msg: "success" });
+  } catch (e) {
+    res.status(400).send({ msg: e.message });
+  }
+};
+
+export const userInfoModify: RequestHandler = async (req, res) => {
+  try {
+    const { name, email } = req.body as { name: string; email: string };
+
+    if (email) {
+      const user = await findUser({ field: "email", value: email });
+
+      if (user) throw new Error("duplicate email");
+
+      req.user.email = email;
+    }
+    req.user.name = name;
+
+    await req.user.save();
+
+    res.status(200).send({
+      msg: "success",
+      user: req.user,
     });
   } catch (e) {
     res.status(400).send({ msg: e.message });
