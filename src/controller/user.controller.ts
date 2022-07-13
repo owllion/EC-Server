@@ -53,11 +53,10 @@ export const login: RequestHandler = async (req, res) => {
     res.status(400).send({ msg: e.message });
   }
 };
-
 export const logout: RequestHandler = async (req, res) => {
   try {
     req.user.tokens = req.user.tokens.filter(
-      (token: { token: string }) => token.token !== req.token
+      (item: { token: string }) => item.token !== req.token
     );
 
     await req.user.save();

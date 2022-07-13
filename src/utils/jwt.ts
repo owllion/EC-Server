@@ -13,7 +13,7 @@ export const signJwt = (
   });
 };
 
-export const verifyJwt = <T>(token: string, key: String): T | null => {
+export const verifyJwt = <T>(token: string, key: string): T | null => {
   const publicKey = Buffer.from(key, "base64").toString("ascii");
 
   try {
