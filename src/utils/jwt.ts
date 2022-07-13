@@ -9,11 +9,10 @@ export const signJwt = (
 
   return jwt.sign(object, signKey, {
     ...(options && options),
-    algorithm: "RS256",
   });
 };
 
-export const verifyJwt = <T>(token: string, key: string): T | null => {
+export const verifyJwt = <T>(token: string, key: String): T | null => {
   const publicKey = Buffer.from(key, "base64").toString("ascii");
 
   try {

@@ -1,4 +1,4 @@
-import UserModel, { User } from "../model/user.model";
+import UserModel from "../model/user.model";
 
 // service 顾名思义是为了服务而生，为了业务而生，是为了一个抽象而生，可以写一个 EmailService 去处理邮件的相关逻辑，写一个 AuthorizationService 去处理登录注册，总之是为了处理一系列的业务，在这个层次你不应该去访问 http 中的参数，而是在 controller 中传递一个参数，或者构造一个对象传递到 service。
 
@@ -6,6 +6,18 @@ import UserModel, { User } from "../model/user.model";
 
 //service 可以被各种环境调用，虽然更多时候它只有一种能力，仅仅去处理 controller 发过来的 http 请求
 
-export const findUser = ({ attr, val }: { attr: string; val: string }) => {
-  return UserModel.findOne({ [attr]: val });
+export const findUser = async ({
+  attr,
+  val,
+}: {
+  attr: string;
+  val: string;
+}) => {
+  const user = await UserModel.findOne({ [attr]: val });
+
+  //If user does not exist, you will get null.
+  if (!user) {
+    throw new Error("No user with that email!");
+  }
+  return user;
 };

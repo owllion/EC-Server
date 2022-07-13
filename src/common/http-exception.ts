@@ -1,4 +1,5 @@
 export default class HttpException extends Error {
+  //field
   statusCode?: number;
   status?: number;
   message: string;

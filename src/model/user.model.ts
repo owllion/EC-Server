@@ -8,8 +8,6 @@ import {
   ReturnModelType,
   DocumentType,
 } from "@typegoose/typegoose";
-// isDocument,
-import mongoose from "mongoose";
 import validator from "validator";
 import jwt from "jsonwebtoken";
 import argon2 from "argon2";
@@ -17,6 +15,8 @@ import config from "config";
 // import { nanoid } from "nanoid";
 
 import OrderModel from "../model/order.model";
+import { Product } from "../model/product.model";
+import { Coupon } from "../model/coupon.model";
 
 @pre<User>("save", async function (next) {
   //Arrow Functions cannot be used here, because the binding of this is required to get & modify the document.
@@ -109,13 +109,13 @@ export class User {
   verified: boolean;
 
   @prop()
-  cartList: object[];
+  cartList: Product[];
 
   @prop()
-  favList: object[];
+  favList: Product[];
 
   @prop()
-  couponList: object[];
+  couponList: Coupon[];
 
   public static async findByCredentials(
     //static -> model method

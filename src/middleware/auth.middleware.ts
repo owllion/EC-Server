@@ -1,6 +1,6 @@
 import config from "config";
 import jwt from "jsonwebtoken";
-import User from "../model/user.model";
+import UserModel, { User } from "../model/user.model";
 import { NextFunction, Request, Response } from "express";
 import { verifyJwt } from "../utils/jwt";
 
@@ -8,7 +8,11 @@ interface JwtPayload {
   _id: string;
 }
 
-const auth = async (req: Request, res: Response, next: NextFunction) => {
+interface MyRequest extends Request {
+  token: string;
+}
+
+const auth = async (req: MyRequest, res: Response, next: NextFunction) => {
   try {
     const token =
       (req.body as { token: string }).token ||
@@ -19,7 +23,7 @@ const auth = async (req: Request, res: Response, next: NextFunction) => {
       config.get<string>("publicSecret")
     ) as JwtPayload;
 
-    const user = await User.findOne({
+    const user = await UserModel.findOne({
       _id: decoded._id,
       "tokens.token": token,
     });
