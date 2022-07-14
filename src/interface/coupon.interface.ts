@@ -1,3 +1,5 @@
+import { Coupon } from "./../model/coupon.model";
+
 export interface createCouponInterface {
   code: string;
   discountType: string;
@@ -9,13 +11,12 @@ export interface DeleteCouponInterface {
   code: string;
 }
 
-export interface DeleteMultipleCouponsInterface {
-  codesList: string[];
-}
-
-export interface ModifyCouponInterface {
+export interface DeleteMultipleCouponsInterface
+  extends Partial<Omit<Coupon, "code">> {
   code: string;
 }
+
+export interface ModifyCouponInterface {}
 
 export interface ApplyCouponInterface {
   totalPrice: number;

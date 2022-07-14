@@ -54,7 +54,8 @@ export const modifyCoupon: RequestHandler = async (req, res) => {
 
     const coupon = await CouponModel.findOneAndUpdate(
       { code: couponItem.code },
-      { $set: { ...fieldList } }
+      { ...fieldList },
+      { new: true }
     );
 
     console.log({ coupon });

@@ -7,6 +7,7 @@ import UserModel from "../model/user.model";
 import { sendLink } from "../utils/email";
 import { signJwt, verifyJwt } from "../utils/jwt";
 import ProductModel, { Product } from "../model/product.model";
+import { request } from "http";
 
 //  controller，可以说他是对 http 中 request 的解析，以及对 response 的封装，它对应的是每一个路由，是 http 请求到代码的一个承接，它必须是可单例的，是无状态的。
 
@@ -314,21 +315,21 @@ export const passwordModify: RequestHandler = async (req, res) => {
 };
 
 interface Body extends Request {
-  name: string;
-  email: string;
+  body: {
+    name: string;
+    email: string;
+  };
 }
 export const userInfoModify = async (req: Body, res: Response) => {
   try {
     if (req.body.email) {
       const user = await findUser({ field: "email", value: req.body.email });
 
-      if (user) throw new Error("duplicate email");
+      if (user) throw new Error("Duplicate email");
 
       ["name", "email"].forEach(
         (field: string) =>
-          (req.user[field] = (req.body as { name: string; email: string })[
-            field
-          ])
+          (req.user[field] = req.body[field as keyof typeof req.body])
       );
     }
 
