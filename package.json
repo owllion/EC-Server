@@ -55,6 +55,8 @@
     "nodemailer-smtp-transport": "^2.7.4",
     "pino": "^8.1.0",
     "ramda": "^0.28.0",
+    "swagger-jsdoc": "^6.2.1",
+    "swagger-ui-express": "^4.4.0",
     "typescript-json-schema": "^0.53.1",
     "validator": "^13.7.0"
   }

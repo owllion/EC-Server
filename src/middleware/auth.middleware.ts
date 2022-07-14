@@ -1,6 +1,6 @@
 import config from "config";
 import jwt from "jsonwebtoken";
-import UserModel, { User } from "../model/user.model";
+import UserModel from "../model/user.model";
 import { NextFunction, Request, Response } from "express";
 import { verifyJwt } from "../utils/jwt";
 

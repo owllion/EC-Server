@@ -313,18 +313,24 @@ export const passwordModify: RequestHandler = async (req, res) => {
   }
 };
 
-export const userInfoModify: RequestHandler = async (req, res) => {
+interface Body extends Request {
+  name: string;
+  email: string;
+}
+export const userInfoModify = async (req: Body, res: Response) => {
   try {
-    const { name, email } = req.body as { name: string; email: string };
-
-    if (email) {
-      const user = await findUser({ field: "email", value: email });
+    if (req.body.email) {
+      const user = await findUser({ field: "email", value: req.body.email });
 
       if (user) throw new Error("duplicate email");
 
-      req.user.email = email;
+      ["name", "email"].forEach(
+        (field: string) =>
+          (req.user[field] = (req.body as { name: string; email: string })[
+            field
+          ])
+      );
     }
-    req.user.name = name;
 
     await req.user.save();
 
