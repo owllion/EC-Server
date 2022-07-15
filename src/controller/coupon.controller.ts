@@ -42,7 +42,14 @@ export const deleteMultipleCoupon: RequestHandler = async (req, res) => {
     res.status(400).send({ msg: e.message });
   }
 };
-interface MyCoupon {
+
+// type couponInterface<Type> = {
+//   [Property in keyof Type]: Type[Property];
+// };
+interface ObjKeys {
+  [key: string]: string | undefined | Date | number;
+}
+interface ICoupon extends ObjKeys {
   _id: string;
   code?: string;
   description?: string;
@@ -50,22 +57,13 @@ interface MyCoupon {
   amount?: number;
   expiry_date?: Date;
 }
-interface test {
-  code?: string;
-  description?: string;
-  discount?: string;
-  amount?: number;
-  expiry_date?: Date;
-}
-type couponInterface<Type> = {
-  [Property in keyof Type]: Type[Property];
-};
+interface IList extends Omit<ICoupon, "_id"> {}
 
 export const modifyCoupon: RequestHandler = async (req, res) => {
-  const { couponItem } = req.body as { couponItem: couponInterface<MyCoupon> };
+  const { couponItem } = req.body as { couponItem: ICoupon };
 
   try {
-    const fieldList: test = {};
+    const fieldList: IList = {};
 
     const updateFields = Object.keys(couponItem);
 
