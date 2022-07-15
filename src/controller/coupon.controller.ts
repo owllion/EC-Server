@@ -55,7 +55,8 @@ interface ICoupon extends ObjKeys {
   description?: string;
   discount?: string;
   amount?: number;
-  expiry_date?: Date;
+  expiryDate?: Date;
+  minimumAmount?: number;
 }
 interface IList extends Omit<ICoupon, "_id"> {}
 
@@ -81,6 +82,79 @@ export const modifyCoupon: RequestHandler = async (req, res) => {
     console.log({ coupon });
 
     await coupon!.save();
+
+    res.status(200).send({ msg: "success" });
+  } catch (e) {
+    res.status(400).send({ msg: e.message });
+  }
+};
+
+export const applyCoupon: RequestHandler = async (req, res) => {
+  const { totalPrice, code } = req.body as { totalPrice: number; code: string };
+  try {
+    const coupon = await CouponModel.findOne({ code });
+
+    if (!coupon) {
+      throw new Error("Code does not exist");
+    }
+
+    const { expiryDate, minimumAmount } = coupon as {
+      expiryDate: Date;
+      minimumAmount: number;
+    };
+    const now = Date.now() / 1000;
+    const expire = Math.floor(new Date(expiryDate).valueOf() / 1000);
+    const compare = expire - now;
+    if (compare < 0) {
+      throw new Error("This code is already expired!");
+    }
+
+    //if code has the consumption threshold
+    if (minimumAmount) {
+      //if user does not achieve the threshold
+      if (totalPrice < minimumAmount) {
+        throw new Error(`You are ${minimumAmount - totalPrice} dollars short!`);
+      }
+    }
+
+    const finalPrice =
+      coupon.discount_type === "rebate"
+        ? totalPrice - coupon.amount
+        : Math.round(totalPrice * (coupon.amount * 0.01));
+
+    const discount = totalPrice - finalPrice;
+    res.send({
+      msg: "success",
+      result: {
+        finalPrice: finalPrice,
+        discount,
+        code,
+      },
+    });
+  } catch (e) {
+    res.status(400).send({ msg: e.message });
+  }
+};
+
+export const getUserCoupon: RequestHandler = async (req, res) => {
+  try {
+    res.status(200).send({
+      msg: "success",
+      couponList: req.user.couponList,
+    });
+  } catch (e) {
+    res.status(400).send({ msg: e.message });
+  }
+};
+
+export const redeemCoupon: RequestHandler = async (req, res) => {
+  const { code } = req.body as { code: string };
+  try {
+    const coupon = await CouponModel.findOne({ code });
+
+    req.user.couponList.push(coupon);
+
+    await req.user.save();
 
     res.status(200).send({ msg: "success" });
   } catch (e) {

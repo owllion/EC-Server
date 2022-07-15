@@ -19,7 +19,10 @@ export class Coupon {
   amount: number;
 
   @prop({ required: true })
-  expiry_date: Date;
+  expiryDate: Date;
+
+  @prop({ required: true })
+  minimumAmount: number;
 }
 
 const CouponModel = getModelForClass(Coupon);
