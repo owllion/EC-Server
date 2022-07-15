@@ -6,7 +6,7 @@ import { getModelForClass, modelOptions, prop } from "@typegoose/typegoose";
   },
 })
 export class Coupon {
-  @prop({ required: true })
+  @prop({ required: true, unique: true })
   code: string;
 
   @prop()

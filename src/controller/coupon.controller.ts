@@ -1,5 +1,6 @@
 import CouponModel, { Coupon } from "./../model/coupon.model";
 import { RequestHandler, Request, Response } from "express";
+import { Prop } from "@typegoose/typegoose";
 
 export const createCoupon: RequestHandler = async (req, res) => {
   const coupon = new CouponModel(req.body as Coupon);
@@ -41,31 +42,45 @@ export const deleteMultipleCoupon: RequestHandler = async (req, res) => {
     res.status(400).send({ msg: e.message });
   }
 };
+interface MyCoupon {
+  _id: string;
+  code?: string;
+  description?: string;
+  discount?: string;
+  amount?: number;
+  expiry_date?: Date;
+}
+interface test {
+  code?: string;
+  description?: string;
+  discount?: string;
+  amount?: number;
+  expiry_date?: Date;
+}
+type couponInterface<Type> = {
+  [Property in keyof Type]: Type[Property];
+};
 
 export const modifyCoupon: RequestHandler = async (req, res) => {
-  const { couponItem } = req.body as { couponItem: Partial<Coupon> };
+  const { couponItem } = req.body as { couponItem: couponInterface<MyCoupon> };
 
   try {
-    const fieldList: Partial<Coupon>[] = [];
+    const fieldList: test = {};
 
     const updateFields = Object.keys(couponItem);
 
-    updateFields.forEach((item) => fieldList.push({ [item]: req.body[item] }));
+    updateFields.forEach((item) => {
+      fieldList[item] = couponItem[item];
+    });
 
+    console.log({ code: couponItem.code }, fieldList, { new: true });
     const coupon = await CouponModel.findOneAndUpdate(
-      { code: couponItem.code },
-      { ...fieldList },
+      { id: couponItem._id },
+      fieldList,
       { new: true }
     );
 
     console.log({ coupon });
-
-    // const coupon = await CouponModel.findOne({ code: couponItem.code });
-    // if (coupon) {
-    //   // updateFields.forEach(
-    //   //   (update:any ) => (coupon[update] = couponItem[update])
-
-    //   );
 
     await coupon!.save();
 
