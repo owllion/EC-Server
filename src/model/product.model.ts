@@ -22,9 +22,6 @@ export class Product {
   productName: string;
 
   @prop({ required: true })
-  delivery_address: string;
-
-  @prop({ required: true })
   imageList: string[];
 
   @prop({ required: true })

@@ -1,6 +1,5 @@
 import CouponModel, { Coupon } from "./../model/coupon.model";
-import { RequestHandler, Request, Response } from "express";
-import { Prop } from "@typegoose/typegoose";
+import { RequestHandler } from "express";
 
 export const createCoupon: RequestHandler = async (req, res) => {
   const coupon = new CouponModel(req.body as Coupon);
@@ -8,9 +7,10 @@ export const createCoupon: RequestHandler = async (req, res) => {
     await coupon.save();
     res.status(201).send({
       msg: "Coupon has been created",
+      coupon,
     });
   } catch (e) {
-    res.status(400).send({ msg: e.message });
+    res.status(500).send({ msg: e.message });
   }
 };
 
@@ -23,11 +23,11 @@ export const deleteCoupon: RequestHandler = async (req, res) => {
 
     res.status(200).send({ msg: "success" });
   } catch (e) {
-    res.status(400).send({ msg: e.message });
+    res.status(500).send({ msg: e.message });
   }
 };
 
-export const deleteMultipleCoupon: RequestHandler = async (req, res) => {
+export const deleteMultipleCoupons: RequestHandler = async (req, res) => {
   const { codeList: batch } = req.body as { codeList: string[] };
   console.log({ batch });
   try {
@@ -39,18 +39,12 @@ export const deleteMultipleCoupon: RequestHandler = async (req, res) => {
 
     res.status(200).send({ msg: "success" });
   } catch (e) {
-    res.status(400).send({ msg: e.message });
+    res.status(500).send({ msg: e.message });
   }
 };
 
-// type couponInterface<Type> = {
-//   [Property in keyof Type]: Type[Property];
-// };
-interface ObjKeys {
-  [key: string]: string | undefined | Date | number;
-}
-interface ICoupon extends ObjKeys {
-  _id: string;
+interface ICoupon extends Record<string, string | undefined | Date | number> {
+  id: string;
   code?: string;
   description?: string;
   discount?: string;
@@ -58,7 +52,7 @@ interface ICoupon extends ObjKeys {
   expiryDate?: Date;
   minimumAmount?: number;
 }
-interface IList extends Omit<ICoupon, "_id"> {}
+interface IList extends Omit<ICoupon, "id"> {}
 
 export const modifyCoupon: RequestHandler = async (req, res) => {
   const { couponItem } = req.body as { couponItem: ICoupon };
@@ -72,9 +66,8 @@ export const modifyCoupon: RequestHandler = async (req, res) => {
       fieldList[item] = couponItem[item];
     });
 
-    console.log({ code: couponItem.code }, fieldList, { new: true });
-    const coupon = await CouponModel.findOneAndUpdate(
-      { id: couponItem._id },
+    const coupon = await CouponModel.findByIdAndUpdate(
+      { _id: couponItem._id },
       fieldList,
       { new: true }
     );
@@ -85,7 +78,7 @@ export const modifyCoupon: RequestHandler = async (req, res) => {
 
     res.status(200).send({ msg: "success" });
   } catch (e) {
-    res.status(400).send({ msg: e.message });
+    res.status(500).send({ msg: e.message });
   }
 };
 
@@ -132,7 +125,7 @@ export const applyCoupon: RequestHandler = async (req, res) => {
       },
     });
   } catch (e) {
-    res.status(400).send({ msg: e.message });
+    res.status(500).send({ msg: e.message });
   }
 };
 
@@ -143,7 +136,7 @@ export const getUserCoupon: RequestHandler = async (req, res) => {
       couponList: req.user.couponList,
     });
   } catch (e) {
-    res.status(400).send({ msg: e.message });
+    res.status(500).send({ msg: e.message });
   }
 };
 
@@ -158,6 +151,6 @@ export const redeemCoupon: RequestHandler = async (req, res) => {
 
     res.status(200).send({ msg: "success" });
   } catch (e) {
-    res.status(400).send({ msg: e.message });
+    res.status(500).send({ msg: e.message });
   }
 };

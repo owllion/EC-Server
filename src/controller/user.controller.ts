@@ -7,8 +7,6 @@ import UserModel from "../model/user.model";
 import { sendLink } from "../utils/email";
 import { signJwt, verifyJwt } from "../utils/jwt";
 import ProductModel, { Product } from "../model/product.model";
-import { request } from "http";
-import { FunctionCalledMoreThanSupportedError } from "@typegoose/typegoose/lib/internal/errors";
 
 //  controller，可以说他是对 http 中 request 的解析，以及对 response 的封装，它对应的是每一个路由，是 http 请求到代码的一个承接，它必须是可单例的，是无状态的。
 
