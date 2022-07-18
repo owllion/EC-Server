@@ -33,7 +33,7 @@ export const register: RequestHandler = async (req, res) => {
       },
     });
   } catch (e) {
-    res.status(400).send({
+    res.status(500).send({
       msg: e.message,
     });
   }
@@ -56,7 +56,7 @@ export const login: RequestHandler = async (req, res) => {
       },
     });
   } catch (e) {
-    res.status(400).send({ msg: e.message });
+    res.status(500).send({ msg: e.message });
   }
 };
 export const logout: RequestHandler = async (req, res) => {
@@ -86,7 +86,7 @@ export const uploadImg = async (req: MyRequest, res: Response) => {
       user: req.user,
     });
   } catch (e) {
-    res.status(400).send({ msg: e.message });
+    res.status(500).send({ msg: e.message });
   }
 };
 
@@ -118,7 +118,7 @@ export const forgotPassword: RequestHandler = async (req, res) => {
       message: "Successfully sent email",
     });
   } catch (e) {
-    res.status(400).send({ msg: e.message });
+    res.status(500).send({ msg: e.message });
   }
 };
 
@@ -130,7 +130,7 @@ export const resetPassword: RequestHandler<{ token: string }> = async (
     const { token } = req.params;
 
     if (!token) {
-      throw new Error("Token has expired!");
+      throw new Error("Token is invalid or has expired");
     }
 
     const { password } = req.body as { password: string };
@@ -155,7 +155,7 @@ export const resetPassword: RequestHandler<{ token: string }> = async (
       msg: "Reset password successfully",
     });
   } catch (e) {
-    res.status(400).send({
+    res.status(500).send({
       msg: e.message,
     });
   }
@@ -180,7 +180,7 @@ export const removeCartItem: RequestHandler = async (req, res) => {
       cartList: req.user.cartList,
     });
   } catch (e) {
-    res.status(400).send({ msg: e.message });
+    res.status(500).send({ msg: e.message });
   }
 };
 
@@ -190,7 +190,7 @@ export const clearCart: RequestHandler = async (req, res) => {
     req.user.save();
     res.status(200).send({ msg: "success" });
   } catch (e) {
-    res.status(400).send({ msg: e.message });
+    res.status(500).send({ msg: e.message });
   }
 };
 
@@ -219,7 +219,7 @@ export const updateItemQty: RequestHandler = async (req, res) => {
       cartList: req.user.cartList,
     });
   } catch (e) {
-    res.status(400).send({ msg: e.message });
+    res.status(500).send({ msg: e.message });
   }
 };
 
@@ -229,7 +229,6 @@ export const addToCart: RequestHandler = async (req, res) => {
     qty: number;
     cartList: Product[];
   };
-  // console.log(req);
   try {
     const product = await ProductModel.findOne({ productId });
 
@@ -256,7 +255,7 @@ export const addToCart: RequestHandler = async (req, res) => {
       cartList: req.user.cartList,
     });
   } catch (e) {
-    res.status(400).send({ msg: e.message });
+    res.status(500).send({ msg: e.message });
   }
 };
 
@@ -277,7 +276,7 @@ export const removeFromFav: RequestHandler = async (req, res) => {
       favList: req.user.favList,
     });
   } catch (e) {
-    res.status(400).send({ msg: e.message });
+    res.status(500).send({ msg: e.message });
   }
 };
 
@@ -296,7 +295,7 @@ export const addToFav: RequestHandler = async (req, res) => {
       favList: req.user.favList,
     });
   } catch (e) {
-    res.status(400).send({ msg: e.message });
+    res.status(500).send({ msg: e.message });
   }
 };
 
@@ -309,7 +308,7 @@ export const passwordModify: RequestHandler = async (req, res) => {
 
     res.status(200).send({ msg: "success" });
   } catch (e) {
-    res.status(400).send({ msg: e.message });
+    res.status(500).send({ msg: e.message });
   }
 };
 
@@ -341,6 +340,6 @@ export const userInfoModify = async (req: Body, res: Response) => {
       user: req.user,
     });
   } catch (e) {
-    res.status(400).send({ msg: e.message });
+    res.status(500).send({ msg: e.message });
   }
 };

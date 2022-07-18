@@ -118,11 +118,9 @@ export const applyCoupon: RequestHandler = async (req, res) => {
     const discount = totalPrice - finalPrice;
     res.send({
       msg: "success",
-      result: {
-        finalPrice: finalPrice,
-        discount,
-        code,
-      },
+      finalPrice,
+      discount,
+      code,
     });
   } catch (e) {
     res.status(500).send({ msg: e.message });

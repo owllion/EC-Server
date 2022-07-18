@@ -70,8 +70,13 @@ interface IProduct extends ObjKeys {
 }
 interface IList extends Omit<IProduct, "_id"> {}
 
-export const modifyProduct: RequestHandler = async (req, res) => {
-  const { productItem } = req.body as { productItem: IProduct };
+export const modifyProduct: RequestHandler<
+  unknown,
+  unknown,
+  { productItem: IProduct },
+  unknown
+> = async (req, res) => {
+  const { productItem } = req.body;
   try {
     const fieldList: IList = {};
 
@@ -101,31 +106,121 @@ export const modifyProduct: RequestHandler = async (req, res) => {
 
 interface IQuery {
   keyword: string;
-  order: {
-    price: string;
-    brand: string[];
-    category: string[];
-  };
-  sort: Record<string, number>;
+  price: string;
+  brandList: string[];
+  categoryList: string[];
+  sortBy: string;
+  orderBy: string;
   page: number;
 }
+interface IMatch {
+  $match: {
+    productName: {
+      $regex: string;
+      $options: string;
+    };
+    brand?: {
+      $in: string[];
+    };
+    category?: {
+      $in: string[];
+    };
+    price?: {
+      $gte: number;
+      $lte: number;
+    };
+  };
+}
+interface ISort {
+  $sort: {
+    [x: string]: 1 | -1;
+    _id: 1 | -1;
+  };
+}
+
 export const getProductList: RequestHandler<
   unknown,
   unknown,
   unknown,
   IQuery
 > = async (req, res) => {
-  //keyword/filter {price:[],brand:[],category:[]}/sort:sales、createdAt、price、字母(product:1or-1)/limit固定10/page
-  const { keyword, order, sort, page } = req.query;
-  // 總頁數totalPage 要跳過的skip 總共的資料筆數 totalDoc
+  const { keyword, brandList, price, categoryList, sortBy, orderBy, page } =
+    req.query;
+
+  let pipeline = [];
+
   try {
-    // const productList = await ProductModel.find({ category });
-    // console.log(productList);
-    // res.status(200).send({
-    //   msg: "success",
-    //   productList,
-    // });
+    const getPriceRange = () => {
+      return {
+        max_: Number(price.substring(0, price.indexOf("-"))) || 0,
+        min_: Number(price.substring(price.indexOf("-"))) || 0,
+      };
+    };
+
+    const AMatch: IMatch = {
+      $match: {
+        productName: {
+          $regex: keyword,
+          $options: "i",
+        },
+      },
+    };
+    if (price) {
+      AMatch.$match["price"] = {
+        $gte: getPriceRange().max_,
+        $lte: getPriceRange().min_,
+      };
+    }
+    if (brandList.length > 0) {
+      AMatch.$match["brand"] = {
+        $in: brandList,
+      };
+    }
+    if (categoryList.length > 0) {
+      AMatch.$match["category"] = {
+        $in: categoryList,
+      };
+    }
+    pipeline.push(AMatch);
+
+    if (sortBy) {
+      const ASort: ISort = {
+        $sort: {
+          [sortBy]: orderBy === "asc" ? 1 : -1,
+          _id: orderBy === "asc" ? 1 : -1,
+        },
+      };
+      pipeline.push(ASort);
+    }
+
+    const ASkip = {
+      $skip: (page - 1) * 20,
+    } as { $skip: number };
+
+    pipeline.push(ASkip, { $limit: 10 });
+
+    const paginatedProducts = await ProductModel.aggregate(pipeline);
+
+    res.status(200).send({
+      productList: paginatedProducts,
+    });
   } catch (e) {
     res.status(500).send({ msg: e.message });
+  }
+};
+
+export const productDetail: RequestHandler = async (req, res) => {
+  const { productId } = req.body as { productId: string };
+  try {
+    const product = await ProductModel.findOne({ productId });
+    if (!product) {
+      throw new Error("Product does not exist");
+    }
+    res.status(200).send({
+      msg: "success",
+      productDetail: product,
+    });
+  } catch (e) {
+    res.status(400).send({ msg: e.message });
   }
 };
