@@ -12,6 +12,8 @@ import { Product } from "./product.model";
 @modelOptions({
   schemaOptions: {
     timestamps: true,
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true },
   },
   options: {
     allowMixed: Severity.ALLOW,
@@ -24,11 +26,11 @@ export class Review {
   @prop({ ref: () => Product, required: true })
   product: Ref<Product>;
 
-  @prop({ required: true })
+  @prop({ required: true, min: 1, max: 5 })
   rating: number;
 
   @prop({ required: true })
-  content: string;
+  comment: string;
 }
 
 const ReviewModel = getModelForClass(Review);

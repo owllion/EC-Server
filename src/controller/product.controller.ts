@@ -209,7 +209,7 @@ export const getProductList: RequestHandler<
   }
 };
 
-export const productDetail: RequestHandler = async (req, res) => {
+export const getProductDetail: RequestHandler = async (req, res) => {
   const { productId } = req.body as { productId: string };
   try {
     const product = await ProductModel.findOne({ productId });

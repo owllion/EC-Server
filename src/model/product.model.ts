@@ -1,14 +1,18 @@
 import {
   getModelForClass,
   modelOptions,
+  Ref,
   prop,
   Severity,
 } from "@typegoose/typegoose";
 import { nanoid } from "nanoid";
+import { Review } from "./review.model";
 
 @modelOptions({
   schemaOptions: {
     timestamps: true,
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true },
   },
   options: {
     allowMixed: Severity.ALLOW,
@@ -47,6 +51,14 @@ export class Product {
 
   @prop({ required: true })
   sales: number;
+
+  @prop({
+    ref: Review,
+    foreignField: "product",
+    localField: "_id",
+    count: true, // And only get the number of docs
+  })
+  reviews: Ref<Review>[];
 
   @prop()
   qty?: number;
