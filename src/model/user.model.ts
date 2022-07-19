@@ -4,6 +4,7 @@ import {
   prop,
   Severity,
   pre,
+  Ref,
   post,
   ReturnModelType,
   DocumentType,
@@ -13,7 +14,7 @@ import jwt from "jsonwebtoken";
 import argon2 from "argon2";
 import config from "config";
 
-import OrderModel from "../model/order.model";
+import OrderModel, { Order } from "../model/order.model";
 import { Product } from "../model/product.model";
 import { Coupon } from "../model/coupon.model";
 
@@ -38,6 +39,8 @@ import { Coupon } from "../model/coupon.model";
 @modelOptions({
   schemaOptions: {
     timestamps: true,
+
+    toObject: { virtuals: true },
     // toObject: {
     //   transform: function (_, ret) {
 
@@ -46,8 +49,9 @@ import { Coupon } from "../model/coupon.model";
     //   },
     // },
     toJSON: {
+      virtuals: true,
       transform: function (_, ret) {
-        ret.toObject();
+        // ret.toObject();
         delete ret.password;
         delete ret.tokens;
       },
@@ -115,6 +119,13 @@ export class User {
 
   @prop()
   couponList: Coupon[];
+
+  @prop({
+    ref: "Order",
+    foreignField: "owner",
+    localField: "_id",
+  })
+  orderList: Ref<Order>[];
 
   public static async findByCredentials(
     //static -> model method

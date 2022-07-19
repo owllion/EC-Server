@@ -2,6 +2,7 @@ import express from "express";
 import * as UserController from "../controller/user.controller";
 const router = express.Router();
 
-router.get("/test", (_, res) => res.sendStatus(200));
-router.post("/fp", UserController.forgotPassword);
+router.post("/forgot-password", UserController.forgotPassword);
+router.post("/login", UserController.login);
+router.post("/register", UserController.register);
 export default router;

@@ -13,7 +13,7 @@ export class Coupon {
   description: string;
 
   @prop({ required: true })
-  discount_type: string;
+  discountType: string;
 
   @prop({ required: true })
   amount: number;

@@ -23,7 +23,7 @@ export class Review {
   @prop({ ref: () => User, required: true })
   user: Ref<User>;
 
-  @prop({ ref: () => Product, required: true })
+  @prop({ ref: "Product", required: true })
   product: Ref<Product>;
 
   @prop({ required: true, min: 1, max: 5 })

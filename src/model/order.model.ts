@@ -5,6 +5,8 @@ import {
   prop,
   Ref,
 } from "@typegoose/typegoose";
+import { nanoid } from "nanoid";
+
 import { CreateProductInterface } from "../interface/product.interface";
 import { User } from "./user.model";
 
@@ -17,11 +19,11 @@ import { User } from "./user.model";
   },
 })
 export class Order {
-  @prop({ required: true })
-  orderId: string;
+  @prop({ default: 0 }) // 0-> completed, 1-> canceled
+  orderStatus: number;
 
-  @prop({ default: null })
-  order_status: string;
+  @prop({ required: true, default: () => nanoid() })
+  orderId: string;
 
   @prop({ ref: "User" })
   //circular dependencies
@@ -31,31 +33,28 @@ export class Order {
   //equal to  { type: Schema.Types.ObjectId, ref: 'User' },
 
   @prop({ required: true })
-  delivery_address: string;
+  deliveryAddress: string;
 
   @prop({ required: true })
-  order_item: CreateProductInterface[];
+  orderItem: CreateProductInterface[];
 
-  @prop()
+  @prop({ default: 0 })
   discount?: number;
 
-  @prop()
-  discount_code: string;
+  @prop({ default: "" })
+  discountCode?: string;
 
   @prop({ required: true })
-  total_price: number;
+  totalPrice: number;
 
-  @prop({ default: "credit-card" })
-  payment_method: string;
+  @prop({ required: true, default: "creditCard" })
+  paymentMethod: string;
 
-  @prop({ default: 0 }) //0 -> paid
-  payment_status: number;
+  @prop({ required: true, default: 0 }) //0 -> paid
+  paymentStatus: number;
 
   @prop({ required: true, default: Date.now() })
-  payment_date: Date;
-
-  @prop({ default: "cancel" })
-  cancel: string;
+  paymentDate: Date;
 }
 
 const OrderModel = getModelForClass(Order);

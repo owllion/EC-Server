@@ -4,9 +4,10 @@ import validator from "validator";
 import config from "config";
 
 import UserModel from "../model/user.model";
+import ProductModel, { Product } from "../model/product.model";
 import { sendLink } from "../utils/email";
 import { signJwt, verifyJwt } from "../utils/jwt";
-import ProductModel, { Product } from "../model/product.model";
+import e from "cors";
 
 //  controller，可以说他是对 http 中 request 的解析，以及对 response 的封装，它对应的是每一个路由，是 http 请求到代码的一个承接，它必须是可单例的，是无状态的。
 
@@ -21,8 +22,8 @@ export const register: RequestHandler = async (req, res) => {
 
     const refreshToken = await user.generateRefreshToken();
 
-    const link = `http://localhost:5001/verify-email/${token}`;
-    sendLink({ type: "verify", link, email: "defrag55345@gmail.com" });
+    // const link = `http://localhost:5001/verify-email/${token}`;
+    // sendLink({ type: "verify", link, email: req.body.email });
 
     res.status(201).json({
       msg: "Registration success",
@@ -339,6 +340,17 @@ export const userInfoModify = async (req: Body, res: Response) => {
       msg: "success",
       user: req.user,
     });
+  } catch (e) {
+    res.status(500).send({ msg: e.message });
+  }
+};
+
+export const getUserOrderList: RequestHandler = (req, res) => {
+  try {
+    const list = UserModel.findById(req.user.id).populate("orderList");
+    //If user has not placed any order, orderList will be an empty array added in req.user's document.
+
+    res.status(200).send({ message: "success", list });
   } catch (e) {
     res.status(500).send({ msg: e.message });
   }
