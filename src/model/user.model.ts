@@ -157,7 +157,7 @@ export class User {
     // this -> refer to one document
     const token = jwt.sign(
       { _id: this._id.toString() },
-      config.get<string>("privateSecret"),
+      config.get<string>("jwtSecret"),
       {
         expiresIn: "1d",
       }

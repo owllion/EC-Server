@@ -7,7 +7,6 @@ import UserModel from "../model/user.model";
 import ProductModel, { Product } from "../model/product.model";
 import { sendLink } from "../utils/email";
 import { signJwt, verifyJwt } from "../utils/jwt";
-import e from "cors";
 
 //  controller，可以说他是对 http 中 request 的解析，以及对 response 的封装，它对应的是每一个路由，是 http 请求到代码的一个承接，它必须是可单例的，是无状态的。
 
@@ -77,7 +76,7 @@ interface MyRequest extends Request {
   file: string;
 }
 //use Cloudinary
-export const uploadImg = async (req: MyRequest, res: Response) => {
+export const uploadImg: RequestHandler = async (req, res) => {
   console.log(req.file);
   try {
     await req.user.save();
@@ -104,7 +103,7 @@ export const forgotPassword: RequestHandler = async (req, res) => {
 
     const token: string = signJwt(
       { _id: user._id },
-      config.get<string>("privateSecret"),
+      config.get<string>("jwtSecret"),
       {
         expiresIn: "1d",
       }
@@ -123,22 +122,15 @@ export const forgotPassword: RequestHandler = async (req, res) => {
   }
 };
 
-export const resetPassword: RequestHandler<{ token: string }> = async (
-  req,
-  res
-) => {
+export const resetPassword: RequestHandler = async (req, res) => {
   try {
-    const { token } = req.params;
+    // const { token } = req.params;
 
-    if (!token) {
-      throw new Error("Token is invalid or has expired");
-    }
-
-    const { password } = req.body as { password: string };
+    const { password, token } = req.body as { password: string; token: string };
 
     const decoded = verifyJwt<{ _id: string }>(
       token,
-      config.get<string>("publicSecret")
+      config.get<string>("jwtSecret")
     );
 
     const user = await UserModel.findOne({ _id: decoded!._id });

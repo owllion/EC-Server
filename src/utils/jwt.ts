@@ -12,13 +12,13 @@ export const signJwt = (
   });
 };
 
-export const verifyJwt = <T>(token: string, key: String): T | null => {
+export const verifyJwt = <T>(token: string, key: String): T => {
   const publicKey = Buffer.from(key, "base64").toString("ascii");
 
   try {
     const decoded = jwt.verify(token, publicKey) as T;
     return decoded;
-  } catch (e) {
-    return null;
+  } catch (err) {
+    throw new Error(err);
   }
 };

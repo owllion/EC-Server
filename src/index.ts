@@ -34,3 +34,32 @@ app.listen(port, () => {
 //   link: "https://stackoverflow.com/questions/12736269/how-to-declare-return-types-for-functions-in-typescript",
 //   email: "defrag55345@gmail.com",
 // });
+
+import { signJwt, verifyJwt } from "./utils/jwt";
+const g = () => {
+  const token: string = signJwt(
+    { email: "test@gmail.com" },
+    config.get<string>("jwtSecret"),
+    {
+      expiresIn: "30s",
+    }
+  );
+  console.log(token);
+  return token;
+};
+const main = (token: string) => {
+  try {
+    const decoded = verifyJwt<{ _id: string }>(
+      token,
+      config.get<string>("jwtSecret")
+    );
+
+    // console.log(decoded);
+  } catch (e) {
+    console.log(e.message);
+  }
+};
+// g();
+main(
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRlc3RAZ21haWwuY29tIiwiaWF0IjoxNjU4MjE4NTYyLCJleHAiOjE2NTgyMTg1OTJ9.6hBN8BzuY2M8FDZFydNp3K7yJgqd0MlILCsCsj2ORLY"
+);

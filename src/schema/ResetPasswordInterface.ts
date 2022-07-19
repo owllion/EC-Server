@@ -1,21 +1,13 @@
-export default{
-  "type": "object",
-  "properties": {
-    "email": {
-      "format": "email",
-      "type": "string"
+export default {
+  type: "object",
+  properties: {
+    token: {
+      type: "string",
     },
-    "token": {
-      "type": "string"
+    password: {
+      type: "string",
     },
-    "password": {
-      "type": "string"
-    }
   },
-  "required": [
-    "email",
-    "password",
-    "token"
-  ],
-  "$schema": "http://json-schema.org/draft-07/schema#"
-}
+  required: ["password", "token"],
+  $schema: "http://json-schema.org/draft-07/schema#",
+};
