@@ -212,7 +212,9 @@ export const getProductList: RequestHandler<
 export const getProductDetail: RequestHandler = async (req, res) => {
   const { productId } = req.body as { productId: string };
   try {
-    const product = await ProductModel.findOne({ productId });
+    const product = await ProductModel.findOne({ productId }).populate(
+      "reviews"
+    );
     if (!product) {
       throw new Error("Product does not exist");
     }

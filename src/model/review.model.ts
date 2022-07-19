@@ -8,6 +8,7 @@ import {
 
 import { User } from "./user.model";
 import { Product } from "./product.model";
+import { nanoid } from "nanoid";
 
 @modelOptions({
   schemaOptions: {
@@ -25,6 +26,9 @@ export class Review {
 
   @prop({ ref: "Product", required: true })
   product: Ref<Product>;
+
+  @prop({ required: true, default: () => nanoid() })
+  reviewId: string;
 
   @prop({ required: true, min: 1, max: 5 })
   rating: number;

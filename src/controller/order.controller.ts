@@ -4,7 +4,7 @@ import OrderModel, { Order } from "../model/order.model";
 export const createOrder: RequestHandler = async (req, res) => {
   try {
     const order = new OrderModel({
-      ...req.body,
+      ...(req.body as Order),
       owner: req.user.id,
       name: req.user.name,
       email: req.user.email,
@@ -77,11 +77,18 @@ export const cancelOrder: RequestHandler = async (req, res) => {
   }
 };
 
-export const getUserOrders: RequestHandler = async (req, res) => {
-  const orderList = await Order.find({ userId: req.user.userId });
-  res.status(200).send({
-    msg: "success",
-    length: orderList.length,
-    orderList,
-  });
+export const getOrderDetail: RequestHandler = async (req, res) => {
+  const { orderId } = req.body as { orderId: string };
+  try {
+    const order = await OrderModel.findOne({ orderId });
+
+    if (!order) res.status(400).send({ message: "order does not exist" });
+
+    res.status(200).send({
+      msg: "success",
+      order,
+    });
+  } catch (e) {
+    res.status(400).send({ msg: e.message });
+  }
 };

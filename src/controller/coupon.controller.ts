@@ -111,7 +111,7 @@ export const applyCoupon: RequestHandler = async (req, res) => {
     }
 
     const finalPrice =
-      coupon.discount_type === "rebate"
+      coupon.discountType === "rebate"
         ? totalPrice - coupon.amount
         : Math.round(totalPrice * (coupon.amount * 0.01));
 
@@ -127,21 +127,22 @@ export const applyCoupon: RequestHandler = async (req, res) => {
   }
 };
 
-export const getUserCoupon: RequestHandler = async (req, res) => {
-  try {
-    res.status(200).send({
-      msg: "success",
-      couponList: req.user.couponList,
-    });
-  } catch (e) {
-    res.status(500).send({ msg: e.message });
-  }
-};
+// export const getUserCoupon: RequestHandler = async (req, res) => {
+//   try {
+//     res.status(200).send({
+//       msg: "success",
+//       couponList: req.user.couponList,
+//     });
+//   } catch (e) {
+//     res.status(500).send({ msg: e.message });
+//   }
+// };
 
 export const redeemCoupon: RequestHandler = async (req, res) => {
   const { code } = req.body as { code: string };
   try {
     const coupon = await CouponModel.findOne({ code });
+    if (!coupon) res.status(400).send({ msg: "coupon does not exist" });
 
     req.user.couponList.push(coupon);
 
