@@ -11,17 +11,17 @@ const auth = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const token =
       (req.body as { token: string }).token ||
-      req.header("Authorization") ||
-      "".replace("Bearer ", "");
-    if (!token) {
-      res.status(403).send({ message: "No token provided!" });
-    }
+      req.header("Authorization")!.replace("Bearer ", "");
+    if (!token) throw new Error("No token provided!");
+
+    // console.log({ token });
+
     const decoded = verifyJwt(
       token,
       config.get<string>("jwtSecret")
     ) as JwtPayload;
 
-    // if (!decoded) res.status(400).send({ msg: "jwt must be provided." });
+    // console.log(decoded);
 
     const user = await UserModel.findOne({
       _id: decoded._id,
@@ -32,6 +32,7 @@ const auth = async (req: Request, res: Response, next: NextFunction) => {
       throw new Error("User does not exist");
     }
     req.user = user;
+    req.token = token;
     next();
   } catch (e) {
     res.status(401).send({ msg: e.message });

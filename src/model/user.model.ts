@@ -135,23 +135,19 @@ export class User {
     email: string,
     password: string
   ) {
-    try {
-      const user = await this.findOne({ email });
-
-      if (!user) {
-        throw new Error("No user with that email!");
-      }
-
-      const isMatch: boolean = await argon2.verify(user.password!, password);
-      // argon2.verify("<big long hash>", "password");
-      if (!isMatch) {
-        throw new Error("Incorrect Password ");
-      }
-      return user; //this is instance of UserModel and mongoose.Document
-    } catch (e) {
-      console.log(e);
-      return null!;
+    const user = await this.findOne({ email });
+    console.log(user);
+    console.log(email, password);
+    if (!user) {
+      throw new Error("No user with that email!");
     }
+
+    const isMatch: boolean = await argon2.verify(user.password!, password);
+    // argon2.verify("<big long hash>", "password");
+    if (!isMatch) {
+      throw new Error("Incorrect Password ");
+    }
+    return user; //this is instance of UserModel and mongoose.Document
   }
 
   public async generateAuthToken(this: DocumentType<User>) {
@@ -177,8 +173,8 @@ export class User {
         expiresIn: "15m",
       }
     );
-    this.tokens = this.tokens?.concat({ token: refreshToken });
-    await this.save();
+    // this.tokens = this.tokens?.concat({ token: refreshToken });
+    // await this.save();
 
     return refreshToken;
   }

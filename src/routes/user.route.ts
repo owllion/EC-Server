@@ -12,20 +12,21 @@ router.post("/reset_password", UserController.resetPassword);
 router.post("/refresh_token", UserController.getRefreshToken);
 
 //Protected API endpoint
-router.get("/logout", auth, UserController.forgotPassword);
+router.use(auth);
+router.get("/logout", auth, UserController.logout);
 
-router.post("/user/upload", auth, UserController.uploadImg);
+router.post("/user/upload", UserController.uploadImg);
 
-router.post("/user/cart/remove", auth, UserController.removeCartItem);
-router.get("/user/cart/clear", auth, UserController.clearCart);
-router.post("/user/cart/update_qty", auth, UserController.updateItemQty);
-router.post("/user/cart/add", auth, UserController.addToCart);
+router.post("/user/cart/remove", UserController.removeCartItem);
+router.get("/user/cart/clear", UserController.clearCart);
+router.post("/user/cart/update_qty", UserController.updateItemQty);
+router.post("/user/cart/add", UserController.addToCart);
 
-router.post("/user/fav/remove", auth, UserController.removeFromFav);
-router.post("/user/fav/add", auth, UserController.addToFav);
+router.post("/user/fav/remove", UserController.removeFromFav);
+router.post("/user/fav/add", UserController.addToFav);
 
-router.post("/user/update/info", auth, UserController.userInfoModify);
-router.post("/user/update/password", auth, UserController.addToFav);
-router.get("/user/order_list", auth, UserController.getUserOrderList);
+router.post("/user/update/info", UserController.userInfoModify);
+router.post("/user/update/password", UserController.addToFav);
+router.get("/user/order_list", UserController.getUserOrderList);
 
 export default router;

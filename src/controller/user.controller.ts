@@ -60,23 +60,25 @@ export const login: RequestHandler = async (req, res) => {
   }
 };
 export const logout: RequestHandler = async (req, res) => {
+  console.log("tetset");
   try {
+    console.log(req.user.tokens, "this is tokens");
     req.user.tokens = req.user.tokens.filter(
       (item: { token: string }) => item.token !== req.token
     );
 
     await req.user.save();
 
-    res.status(200).send();
+    res.status(200).send({ msg: "logout!" });
   } catch (e) {
-    res.status(500).send();
+    res.status(500).send({ msg: e });
   }
 };
 
 export const getRefreshToken: RequestHandler = async (req, res) => {
   try {
     const { refresh } = req.body as { refresh: string };
-    if (!refresh) res.status(400).send({ msg: "Refresh token is required" });
+    // if (!refresh) res.status(400).send({ msg: "Refresh token is required" });
 
     const decoded = verifyJwt<{ _id: string }>(
       refresh,
@@ -84,7 +86,7 @@ export const getRefreshToken: RequestHandler = async (req, res) => {
     );
 
     const user = await UserModel.findOne({ _id: decoded._id });
-    if (!user) res.status(400).send({ msg: "User not found" });
+    if (!user) throw new Error("User not found");
 
     const token = await user!.generateAuthToken();
 
@@ -100,6 +102,7 @@ export const getRefreshToken: RequestHandler = async (req, res) => {
       if (e.message.includes("expired")) {
         //accessToken & refreshToken both are expired.
         res.status(401).send({ msg: "token has expired" });
+        return;
       }
       //something happened when verify the refresh token (malformed .etc)
       res.status(400).send({ msg: e.message });
@@ -139,6 +142,7 @@ export const forgotPassword: RequestHandler = async (req, res) => {
         expiresIn: "1d",
       }
     );
+
     sendLink({
       type: "reset",
       email,
@@ -147,6 +151,7 @@ export const forgotPassword: RequestHandler = async (req, res) => {
 
     res.status(200).json({
       message: "Successfully sent email",
+      token,
     });
   } catch (e) {
     res.status(500).send({ msg: e.message });
@@ -159,24 +164,22 @@ export const resetPassword: RequestHandler = async (req, res) => {
 
     const { password, token } = req.body as { password: string; token: string };
 
+    //If you don't  include the generic type, <T> would be bound to unknown
     const decoded = verifyJwt<{ _id: string }>(
       token,
       config.get<string>("jwtSecret")
     );
 
     const user = await UserModel.findOne({ _id: decoded!._id });
-    //If you don't  include the generic type, <T> would be bound to unknown
 
-    if (!user) {
-      throw new Error("User does not exist");
-    }
+    if (!user) throw new Error("User does not exist");
 
     user.password = password;
 
     await user.save();
 
     res.status(200).send({
-      msg: "Reset password successfully",
+      msg: "success",
     });
   } catch (e) {
     res.status(500).send({
