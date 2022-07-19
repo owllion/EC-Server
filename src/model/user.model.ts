@@ -17,6 +17,7 @@ import config from "config";
 import OrderModel, { Order } from "../model/order.model";
 import { Product } from "../model/product.model";
 import { Coupon } from "../model/coupon.model";
+import { signJwt } from "./../utils/jwt";
 
 @pre<User>("save", async function (next) {
   //Arrow Functions cannot be used here, because the binding of this is required to get & modify the document.
@@ -155,7 +156,7 @@ export class User {
 
   public async generateAuthToken(this: DocumentType<User>) {
     // this -> refer to one document
-    const token = jwt.sign(
+    const token = signJwt(
       { _id: this._id.toString() },
       config.get<string>("jwtSecret"),
       {
@@ -169,16 +170,15 @@ export class User {
     return token;
   }
   public async generateRefreshToken(this: DocumentType<User>) {
-    const refreshToken = jwt.sign(
+    const refreshToken = signJwt(
       { _id: this._id.toString() },
       config.get<string>("refreshSecret"),
       {
         expiresIn: "15m",
       }
     );
-    // this.tokens = this.tokens?.concat({ token:refreshToken });
-
-    // await this.save();
+    this.tokens = this.tokens?.concat({ token: refreshToken });
+    await this.save();
 
     return refreshToken;
   }

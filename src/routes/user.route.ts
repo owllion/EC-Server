@@ -7,11 +7,13 @@ const router = express.Router();
 //public API endpoint
 router.post("/login", UserController.login);
 router.post("/register", UserController.register);
-router.post("/forgot-password", UserController.forgotPassword);
-router.post("/reset-password", UserController.resetPassword);
+router.post("/forgot_password", UserController.forgotPassword);
+router.post("/reset_password", UserController.resetPassword);
+router.post("/refresh_token", UserController.getRefreshToken);
 
 //Protected API endpoint
 router.get("/logout", auth, UserController.forgotPassword);
+
 router.post("/user/upload", auth, UserController.uploadImg);
 
 router.post("/user/cart/remove", auth, UserController.removeCartItem);

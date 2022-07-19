@@ -7,22 +7,22 @@ interface JwtPayload {
   _id: string;
 }
 
-interface MyRequest extends Request {
-  token: string;
-}
-
-const auth = async (req: MyRequest, res: Response, next: NextFunction) => {
+const auth = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const token =
       (req.body as { token: string }).token ||
       req.header("Authorization") ||
       "".replace("Bearer ", "");
-
+    if (!token) {
+      res.status(403).send({ message: "No token provided!" });
+    }
     const decoded = verifyJwt(
       token,
       config.get<string>("jwtSecret")
     ) as JwtPayload;
-    if (!decoded) res.status(400).send({ msg: "jwt must be provided." });
+
+    // if (!decoded) res.status(400).send({ msg: "jwt must be provided." });
+
     const user = await UserModel.findOne({
       _id: decoded._id,
       "tokens.token": token,
@@ -34,7 +34,7 @@ const auth = async (req: MyRequest, res: Response, next: NextFunction) => {
     req.user = user;
     next();
   } catch (e) {
-    res.status(400).send({ msg: e.message });
+    res.status(401).send({ msg: e.message });
   }
 };
 

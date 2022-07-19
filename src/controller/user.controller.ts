@@ -72,10 +72,41 @@ export const logout: RequestHandler = async (req, res) => {
     res.status(500).send();
   }
 };
-interface MyRequest extends Request {
-  file: string;
-}
-//use Cloudinary
+
+export const getRefreshToken: RequestHandler = async (req, res) => {
+  try {
+    const { refresh } = req.body as { refresh: string };
+    if (!refresh) res.status(400).send({ msg: "Refresh token is required" });
+
+    const decoded = verifyJwt<{ _id: string }>(
+      refresh,
+      config.get<string>("refreshSecret")
+    );
+
+    const user = await UserModel.findOne({ _id: decoded._id });
+    if (!user) res.status(400).send({ msg: "User not found" });
+
+    const token = await user!.generateAuthToken();
+
+    const refreshToken = await user!.generateRefreshToken();
+
+    res.status(200).send({
+      msg: "success",
+      token,
+      refreshToken,
+    });
+  } catch (e) {
+    if (e.message) {
+      if (e.message.includes("expired")) {
+        //accessToken & refreshToken both are expired.
+        res.status(401).send({ msg: "token has expired" });
+      }
+      //something happened when verify the refresh token (malformed .etc)
+      res.status(400).send({ msg: e.message });
+    }
+  }
+};
+
 export const uploadImg: RequestHandler = async (req, res) => {
   console.log(req.file);
   try {

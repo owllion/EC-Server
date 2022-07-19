@@ -36,6 +36,8 @@ app.listen(port, () => {
 // });
 
 import { signJwt, verifyJwt } from "./utils/jwt";
+import jwt from "jsonwebtoken";
+
 const g = () => {
   const token: string = signJwt(
     { email: "test@gmail.com" },
@@ -47,6 +49,7 @@ const g = () => {
   console.log(token);
   return token;
 };
+
 const main = (token: string) => {
   try {
     const decoded = verifyJwt<{ _id: string }>(
@@ -54,9 +57,12 @@ const main = (token: string) => {
       config.get<string>("jwtSecret")
     );
 
-    // console.log(decoded);
+    console.log(decoded);
   } catch (e) {
-    console.log(e.message);
+    console.log(e.message); //TokenExpiredError: jwt expired
+    if (e.message.includes("expired")) {
+      console.log("hello");
+    }
   }
 };
 // g();
