@@ -50,22 +50,34 @@ const g = () => {
   return token;
 };
 
-const main = (token: string) => {
-  try {
-    const decoded = verifyJwt<{ _id: string }>(
-      token,
-      config.get<string>("jwtSecret")
-    );
+// const main = (token: string) => {
+//   try {
+//     const decoded = verifyJwt<{ _id: string }>(
+//       token,
+//       config.get<string>("jwtSecret")
+//     );
 
-    console.log(decoded);
-  } catch (e) {
-    console.log(e.message); //TokenExpiredError: jwt expired
-    if (e.message.includes("expired")) {
-      console.log("hello");
-    }
-  }
-};
-// g();
-main(
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRlc3RAZ21haWwuY29tIiwiaWF0IjoxNjU4MjE4NTYyLCJleHAiOjE2NTgyMTg1OTJ9.6hBN8BzuY2M8FDZFydNp3K7yJgqd0MlILCsCsj2ORLY"
-);
+//     console.log(decoded);
+//   } catch (e) {
+//     console.log(e.message); //TokenExpiredError: jwt expired
+//     if (e.message.includes("expired")) {
+//       console.log("hello");
+//     }
+//   }
+// };
+// // g();
+// main(
+//   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRlc3RAZ21haWwuY29tIiwiaWF0IjoxNjU4MjE4NTYyLCJleHAiOjE2NTgyMTg1OTJ9.6hBN8BzuY2M8FDZFydNp3K7yJgqd0MlILCsCsj2ORLY"
+// );
+// import path from "path";
+// import fs from "fs";
+// const basePath: string = path.resolve(__dirname, "");
+// console.log(basePath);
+// console.log(__dirname);
+// const resolve = (...route: string[]) => {
+//   return path.join(basePath, ...route);
+// };
+// resolve("interface");
+// console.log(resolve("interface", "Register"));
+// const dtest = fs.readFileSync(`${resolve("schema", "Register")}Interface.ts`);
+// console.log(dtest);

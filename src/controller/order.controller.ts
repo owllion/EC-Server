@@ -1,5 +1,6 @@
 import { RequestHandler, Request, Response } from "express";
 import OrderModel, { Order } from "../model/order.model";
+import { omit } from "ramda";
 
 export const createOrder: RequestHandler = async (req, res) => {
   try {
@@ -39,50 +40,43 @@ export const createOrder: RequestHandler = async (req, res) => {
     res.status(400).send({ msg: e.message });
   }
 };
+interface IOrderItem extends Record<string, string | number | undefined> {
+  orderId: string;
+  deliveryAddress?: string;
+  orderStatus?: number;
+}
+interface IField extends Omit<IOrderItem, "orderId"> {}
 
 export const modifyOrder: RequestHandler = async (req, res) => {
-  const { deliveryAddress, orderId } = req.body as {
-    deliveryAddress: string;
-    orderId: string;
-  };
+  const { orderItem } = req.body as { orderItem: IOrderItem };
+  const updateFields: IField = {};
 
+  Object.keys(omit(["orderId"], orderItem)).forEach((item) => {
+    updateFields[item] = orderItem[item];
+  });
+
+  console.log(omit(["orderId"], orderItem));
   try {
     const order = await OrderModel.findOneAndUpdate(
-      { orderId },
-      { deliveryAddress },
+      { orderId: orderItem.orderId },
+      updateFields,
       { new: true }
     );
-    if (!order) res.status(400).send({ message: "order does not exist" });
+    if (!order) throw new Error("order does not exist");
 
     await order!.save();
     res.status(200).send({ msg: "success", order });
   } catch (e) {
-    res.status(400).send({ msg: e.message });
-  }
-};
-
-export const cancelOrder: RequestHandler = async (req, res) => {
-  const { orderId } = req.body as { orderId: string };
-  try {
-    const order = await OrderModel.findOneAndUpdate(
-      { orderId },
-      { orderStatus: 1 },
-      { new: true }
-    );
-    if (!order) res.status(400).send({ message: "order does not exist" });
-    await order!.save();
-    res.status(200).send({ msg: "success", order });
-  } catch (e) {
-    res.status(400).send({ msg: e.message });
+    res.status(500).send({ msg: e.message });
   }
 };
 
 export const getOrderDetail: RequestHandler = async (req, res) => {
   const { orderId } = req.body as { orderId: string };
   try {
-    const order = await OrderModel.findOne({ orderId });
-
-    if (!order) res.status(400).send({ message: "order does not exist" });
+    const order = await OrderModel.findOne({ orderId }).populate("owner");
+    console.log(order, "order");
+    if (!order) throw new Error("order not found");
 
     res.status(200).send({
       msg: "success",

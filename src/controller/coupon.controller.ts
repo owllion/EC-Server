@@ -1,5 +1,6 @@
 import CouponModel, { Coupon } from "./../model/coupon.model";
 import { RequestHandler } from "express";
+import R from "ramda";
 
 export const createCoupon: RequestHandler = async (req, res) => {
   const coupon = new CouponModel(req.body as Coupon);
@@ -59,8 +60,8 @@ export const modifyCoupon: RequestHandler = async (req, res) => {
 
   try {
     const fieldList: IList = {};
-
-    const updateFields = Object.keys(couponItem);
+    console.log(R.omit(["_id"], couponItem), "omit Test");
+    const updateFields = Object.keys(R.omit(["_id"], couponItem));
 
     updateFields.forEach((item) => {
       fieldList[item] = couponItem[item];

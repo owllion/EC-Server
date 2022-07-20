@@ -1,6 +1,6 @@
-import { pipe } from "ramda";
 import ProductModel, { Product } from "./../model/product.model";
 import { RequestHandler, Request, Response } from "express";
+import R from "ramda";
 
 export const createProduct: RequestHandler = async (req, res) => {
   const product = new ProductModel(req.body as Product);
