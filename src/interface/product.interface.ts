@@ -3,7 +3,7 @@ export interface CreateProductInterface {
   productName: string;
   image: Array<string>;
   price: number;
-  sale_price: number;
+  salePrice: number;
   brand: string;
   category: string;
   description: string;

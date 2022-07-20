@@ -97,6 +97,8 @@ export const applyCoupon: RequestHandler = async (req, res) => {
     };
     const now = Date.now() / 1000;
     const expire = Math.floor(new Date(expiryDate).valueOf() / 1000);
+    //valueOf -> because ts does not allow us to put the value that type is not equal to number in Math.floor,so we need to add valueOf to turn Date -> number.
+
     const compare = expire - now;
     if (compare < 0) {
       throw new Error("This code is already expired!");
@@ -142,7 +144,7 @@ export const redeemCoupon: RequestHandler = async (req, res) => {
   const { code } = req.body as { code: string };
   try {
     const coupon = await CouponModel.findOne({ code });
-    if (!coupon) res.status(400).send({ msg: "coupon does not exist" });
+    if (!coupon) throw new Error("coupon does not exist");
 
     req.user.couponList.push(coupon);
 

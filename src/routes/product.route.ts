@@ -5,18 +5,18 @@ import auth from "../middleware/auth.middleware";
 const router = express.Router();
 
 //Public endpoint
-router.get("/product_list", ProductController.getProductList);
+router.get("/product_list", ProductController.getProductList); //$facet type
 
 //Protected endpoint
-router.use(auth);
-router.post("/product/create", ProductController.createProduct);
-router.patch("/product/update", ProductController.modifyProduct);
-router.delete("/product/delete", ProductController.deleteProduct);
+router.use(auth); //ok
+router.post("/product/create", ProductController.createProduct); //ok
+router.patch("/product/update", ProductController.modifyProduct); //ok
+router.delete("/product/delete", ProductController.deleteProduct); //ok
 router.delete(
   "/product/multi_delete",
   ProductController.deleteMultipleProducts
 );
 
-router.post("/product/detail", ProductController.getProductDetail);
+router.post("/product/detail", ProductController.getProductDetail); // review's user data populate
 
 export default router;

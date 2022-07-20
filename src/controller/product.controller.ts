@@ -1,16 +1,10 @@
+import { pipe } from "ramda";
 import ProductModel, { Product } from "./../model/product.model";
 import { RequestHandler, Request, Response } from "express";
 
 export const createProduct: RequestHandler = async (req, res) => {
   const product = new ProductModel(req.body as Product);
-
   try {
-    const random1 = Math.floor(Math.random() * 10);
-    const random2 = Math.floor(Math.random() * 10);
-    const productId = `${random1}${Date.now()}${random2}`;
-
-    product.productId = productId;
-
     await product.save();
 
     res.status(201).send({
@@ -18,7 +12,7 @@ export const createProduct: RequestHandler = async (req, res) => {
       product,
     });
   } catch (e) {
-    res.send(500).send({ msg: e.message });
+    res.status(500).send({ msg: e.message });
   }
 };
 
@@ -59,7 +53,7 @@ interface IProduct extends ObjKeys {
   productName?: string;
   imageList?: string[];
   price?: number;
-  sale_price?: number;
+  salePrice?: number;
   brand?: string;
   category?: string;
   description?: string;
@@ -78,20 +72,18 @@ export const modifyProduct: RequestHandler<
 > = async (req, res) => {
   const { productItem } = req.body;
   try {
-    const fieldList: IList = {};
+    const updateFields: IList = {};
 
-    const updateFields = Object.keys(productItem);
-
-    updateFields.forEach((item) => {
-      fieldList[item] = productItem[item];
+    Object.keys(productItem).forEach((item) => {
+      updateFields[item] = productItem[item];
     });
 
     const product = await ProductModel.findOneAndUpdate(
       { _id: productItem._id },
-      fieldList,
+      updateFields,
       { new: true }
     );
-
+    if (!product) throw new Error("Product not found");
     console.log({ product });
 
     await product!.save();
@@ -100,15 +92,15 @@ export const modifyProduct: RequestHandler<
       msg: "success",
     });
   } catch (e) {
-    res.status(50).send({ msg: e.message });
+    res.status(500).send({ msg: e.message });
   }
 };
 
 interface IQuery {
   keyword: string;
   price: string;
-  brandList: string[];
-  categoryList: string[];
+  brands: string[];
+  categories: string[];
   sortBy: string;
   orderBy: string;
   page: number;
@@ -138,15 +130,30 @@ interface ISort {
   };
 }
 
+interface IFacet {
+  $facet: {
+    count: { $count: string }[];
+    list: [{ $skip: number }, ISort?, { $limit: number }?];
+  };
+}
+
 export const getProductList: RequestHandler<
   unknown,
   unknown,
   unknown,
   IQuery
 > = async (req, res) => {
-  const { keyword, brandList, price, categoryList, sortBy, orderBy, page } =
-    req.query;
+  const {
+    keyword = "",
+    brands,
+    price,
+    categories,
+    sortBy,
+    orderBy,
+    page,
+  } = req.query;
 
+  interface test extends IMatch, IFacet {}
   let pipeline = [];
 
   try {
@@ -171,17 +178,41 @@ export const getProductList: RequestHandler<
         $lte: getPriceRange().min_,
       };
     }
-    if (brandList.length > 0) {
-      AMatch.$match["brand"] = {
-        $in: brandList,
-      };
+
+    if (brands) {
+      AMatch.$match["brand"] = Array.isArray(brands)
+        ? {
+            $in: brands,
+          }
+        : brands;
     }
-    if (categoryList.length > 0) {
-      AMatch.$match["category"] = {
-        $in: categoryList,
-      };
+    console.log(brands);
+    console.log(categories);
+
+    if (categories) {
+      AMatch.$match["category"] = Array.isArray(categories)
+        ? {
+            $in: categories,
+          }
+        : categories;
     }
     pipeline.push(AMatch);
+
+    //$facet
+    const AFacet: IFacet = {
+      $facet: {
+        list: [
+          {
+            $skip: (page - 1) * 10,
+          },
+        ],
+        count: [
+          {
+            $count: "totalDoc",
+          },
+        ],
+      },
+    };
 
     if (sortBy) {
       const ASort: ISort = {
@@ -190,14 +221,10 @@ export const getProductList: RequestHandler<
           _id: orderBy === "asc" ? 1 : -1,
         },
       };
-      pipeline.push(ASort);
+      AFacet.$facet.list.push(ASort, { $limit: 1 });
     }
-
-    const ASkip = {
-      $skip: (page - 1) * 20,
-    } as { $skip: number };
-
-    pipeline.push(ASkip, { $limit: 10 });
+    pipeline.push(AFacet);
+    console.log(pipeline, "參數長");
 
     const paginatedProducts = await ProductModel.aggregate(pipeline);
 

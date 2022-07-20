@@ -21,33 +21,46 @@ export const deleteReview: RequestHandler = async (req, res) => {
   const { reviewId } = req.body as { reviewId: string };
   try {
     const review = await ReviewModel.findOneAndDelete({ reviewId });
-    if (!review) res.status(400).send({ msg: "review not found" });
+    if (!review) throw new Error("Review not found");
 
     res.status(200).send({ msg: "success" });
   } catch (e) {
     res.status(500).send({ msg: e.message });
   }
 };
+interface IReview extends Record<string, string | number | undefined> {
+  comment?: string;
+  rating?: number;
+  reviewId: string;
+}
+interface IList extends Omit<IReview, "reviewId"> {}
 
-export const modifyReview: RequestHandler = async (req, res) => {
-  const { comment, rating, reviewId } = req.body as {
-    comment: string;
-    rating: number;
-    reviewId: string;
-  };
+export const modifyReview: RequestHandler<
+  unknown,
+  unknown,
+  { reviewItem: IReview },
+  unknown
+> = async (req, res) => {
+  const { reviewItem } = req.body;
+
+  let updateFields: IList = {};
+
+  Object.keys(reviewItem).forEach(
+    (item) => (updateFields[item] = reviewItem[item])
+  );
 
   try {
     const review = await ReviewModel.findOneAndUpdate(
-      { reviewId },
-      { comment, rating },
+      { reviewId: reviewItem.reviewId },
+      updateFields,
       { new: true }
     );
-    if (!review) res.status(400).send({ message: "order does not exist" });
+    if (!review) throw new Error("review does not exist");
 
     await review!.save();
 
     res.status(200).send({ msg: "success", review });
   } catch (e) {
-    res.status(400).send({ msg: e.message });
+    res.status(500).send({ msg: e.message });
   }
 };

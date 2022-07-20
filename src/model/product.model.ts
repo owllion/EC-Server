@@ -22,7 +22,7 @@ export class Product {
   @prop({ required: true, default: () => nanoid() })
   productId: string;
 
-  @prop({ required: true })
+  @prop({ required: true, unique: true, trim: true })
   productName: string;
 
   @prop({ required: true })
@@ -40,7 +40,7 @@ export class Product {
   @prop({ required: true })
   category: string;
 
-  @prop({ default: "" })
+  @prop({ default: "", trim: true })
   description?: string;
 
   @prop({ required: true })
@@ -56,7 +56,6 @@ export class Product {
     ref: Review,
     foreignField: "product",
     localField: "_id",
-    count: true, // And only get the number of docs
   })
   reviews: Ref<Review>[];
 
