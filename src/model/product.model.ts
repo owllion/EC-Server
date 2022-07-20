@@ -32,7 +32,7 @@ export class Product {
   price: number;
 
   @prop({ default: 0 })
-  sale_price?: number;
+  salePrice?: number;
 
   @prop({ required: true })
   brand: string;

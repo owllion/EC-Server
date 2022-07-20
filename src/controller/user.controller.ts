@@ -60,7 +60,6 @@ export const login: RequestHandler = async (req, res) => {
   }
 };
 export const logout: RequestHandler = async (req, res) => {
-  console.log("tetset");
   try {
     console.log(req.user.tokens, "this is tokens");
     req.user.tokens = req.user.tokens.filter(
@@ -333,7 +332,7 @@ export const passwordModify: RequestHandler = async (req, res) => {
 
     await req.user.save();
 
-    res.status(200).send({ msg: "success" });
+    res.status(200).send({ msg: "update successfully" });
   } catch (e) {
     res.status(500).send({ msg: e.message });
   }
@@ -341,7 +340,8 @@ export const passwordModify: RequestHandler = async (req, res) => {
 
 interface Body extends Request {
   body: {
-    name: string;
+    firstName: string;
+    lastName: string;
     email: string;
   };
 }
@@ -355,7 +355,7 @@ export const userInfoModify = async (req: Body, res: Response) => {
       // const fields: (keyof typeof req.body)[] = ["name", "email"];
 
       // fields.forEach((field) => (req.user[field] = req.body[field]));
-      (["name", "email"] as const).forEach(
+      (["firstName", "lastName", "email"] as const).forEach(
         (field) => (req.user[field] = req.body[field])
       );
     }
@@ -371,10 +371,20 @@ export const userInfoModify = async (req: Body, res: Response) => {
   }
 };
 
-export const getUserOrderList: RequestHandler = (req, res) => {
+export const getUserOrderList: RequestHandler = async (req, res) => {
   try {
-    const list = UserModel.findById(req.user.id).populate("orderList");
+    const list = await UserModel.findById(req.user.id).populate("orderList");
     //If user has not placed any order, orderList will be an empty array added in req.user's document.
+
+    res.status(200).send({ message: "success", list });
+  } catch (e) {
+    res.status(500).send({ msg: e.message });
+  }
+};
+
+export const getUserReviewList: RequestHandler = async (req, res) => {
+  try {
+    const list = await UserModel.findById(req.user.id).populate("reviewList");
 
     res.status(200).send({ message: "success", list });
   } catch (e) {

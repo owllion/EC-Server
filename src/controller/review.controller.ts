@@ -21,7 +21,7 @@ export const deleteReview: RequestHandler = async (req, res) => {
   const { reviewId } = req.body as { reviewId: string };
   try {
     const review = await ReviewModel.findOneAndDelete({ reviewId });
-    if (!review) res.status(400).send({ msg: "review is not found" });
+    if (!review) res.status(400).send({ msg: "review not found" });
 
     res.status(200).send({ msg: "success" });
   } catch (e) {

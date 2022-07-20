@@ -20,6 +20,7 @@ export const sendLink = async ({
     type: actionType,
     action,
   } = getMailText(type, link);
+
   try {
     let transporter = nodemailer.createTransport({
       host: config.get<string>("host"),

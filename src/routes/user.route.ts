@@ -5,15 +5,15 @@ import auth from "../middleware/auth.middleware";
 const router = express.Router();
 
 //public API endpoint
-router.post("/login", UserController.login);
-router.post("/register", UserController.register);
-router.post("/forgot_password", UserController.forgotPassword);
-router.post("/reset_password", UserController.resetPassword);
-router.post("/refresh_token", UserController.getRefreshToken);
+router.post("/login", UserController.login); //ok
+router.post("/register", UserController.register); //ok
+router.post("/forgot_password", UserController.forgotPassword); //ok
+router.post("/reset_password", UserController.resetPassword); //ok
+router.post("/refresh_token", UserController.getRefreshToken); //ok
 
 //Protected API endpoint
-router.use(auth);
-router.get("/logout", auth, UserController.logout);
+router.use(auth); //ok
+router.get("/logout", UserController.logout); //ok
 
 router.post("/user/upload", UserController.uploadImg);
 
@@ -25,8 +25,9 @@ router.post("/user/cart/add", UserController.addToCart);
 router.post("/user/fav/remove", UserController.removeFromFav);
 router.post("/user/fav/add", UserController.addToFav);
 
-router.post("/user/update/info", UserController.userInfoModify);
-router.post("/user/update/password", UserController.addToFav);
-router.get("/user/order_list", UserController.getUserOrderList);
+router.patch("/user/update/info", UserController.userInfoModify); //ok
+router.post("/user/update/password", UserController.passwordModify); //ok
+router.get("/user/order_list", UserController.getUserOrderList); //ok
+router.get("/user/review_list", UserController.getUserReviewList);
 
 export default router;

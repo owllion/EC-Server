@@ -86,15 +86,15 @@ export const modifyProduct: RequestHandler<
       fieldList[item] = productItem[item];
     });
 
-    const coupon = await ProductModel.findOneAndUpdate(
+    const product = await ProductModel.findOneAndUpdate(
       { _id: productItem._id },
       fieldList,
       { new: true }
     );
 
-    console.log({ coupon });
+    console.log({ product });
 
-    await coupon!.save();
+    await product!.save();
 
     res.status(200).send({
       msg: "success",

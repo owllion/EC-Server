@@ -10,11 +10,11 @@ import {
   DocumentType,
 } from "@typegoose/typegoose";
 import validator from "validator";
-import jwt from "jsonwebtoken";
 import argon2 from "argon2";
 import config from "config";
 
 import OrderModel, { Order } from "../model/order.model";
+import ReviewModel, { Review } from "../model/review.model";
 import { Product } from "../model/product.model";
 import { Coupon } from "../model/coupon.model";
 import { signJwt } from "./../utils/jwt";
@@ -32,6 +32,7 @@ import { signJwt } from "./../utils/jwt";
 @pre<User>("remove", async function (next) {
   const user = this;
   await OrderModel.deleteMany({ owner: user._id });
+  await ReviewModel.deleteMany({ owner: user._id });
   next();
 })
 @post<User>("save", function () {
@@ -128,6 +129,13 @@ export class User {
   })
   orderList: Ref<Order>[];
 
+  @prop({
+    ref: "Review",
+    foreignField: "owner",
+    localField: "_id",
+  })
+  reviewList: Ref<Review>[];
+
   public static async findByCredentials(
     //static -> model method
     this: ReturnModelType<typeof User>,
@@ -136,14 +144,14 @@ export class User {
     password: string
   ) {
     const user = await this.findOne({ email });
-    console.log(user);
-    console.log(email, password);
+
     if (!user) {
       throw new Error("No user with that email!");
     }
 
     const isMatch: boolean = await argon2.verify(user.password!, password);
     // argon2.verify("<big long hash>", "password");
+
     if (!isMatch) {
       throw new Error("Incorrect Password ");
     }
@@ -173,8 +181,6 @@ export class User {
         expiresIn: "15m",
       }
     );
-    // this.tokens = this.tokens?.concat({ token: refreshToken });
-    // await this.save();
 
     return refreshToken;
   }

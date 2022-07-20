@@ -21,7 +21,7 @@ import { nanoid } from "nanoid";
   },
 })
 export class Review {
-  @prop({ ref: () => User, required: true })
+  @prop({ ref: "User", required: true })
   user: Ref<User>;
 
   @prop({ ref: "Product", required: true })
