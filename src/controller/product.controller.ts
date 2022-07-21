@@ -1,6 +1,6 @@
 import ProductModel, { Product } from "./../model/product.model";
 import { RequestHandler, Request, Response } from "express";
-import R from "ramda";
+import { omit } from "ramda";
 
 export const createProduct: RequestHandler = async (req, res) => {
   const product = new ProductModel(req.body as Product);
@@ -133,7 +133,7 @@ interface ISort {
 interface IFacet {
   $facet: {
     count: { $count: string }[];
-    list: [{ $skip: number }, ISort?, { $limit: number }?];
+    list: [{ [key: string]: number }?, ISort?, { [key: string]: number }?];
   };
 }
 
@@ -153,8 +153,7 @@ export const getProductList: RequestHandler<
     page,
   } = req.query;
 
-  interface test extends IMatch, IFacet {}
-  let pipeline = [];
+  let pipeline: (IMatch | IFacet)[] = [];
 
   try {
     const getPriceRange = () => {
@@ -198,14 +197,9 @@ export const getProductList: RequestHandler<
     }
     pipeline.push(AMatch);
 
-    //$facet
     const AFacet: IFacet = {
       $facet: {
-        list: [
-          {
-            $skip: (page - 1) * 10,
-          },
-        ],
+        list: [],
         count: [
           {
             $count: "totalDoc",
@@ -221,11 +215,12 @@ export const getProductList: RequestHandler<
           _id: orderBy === "asc" ? 1 : -1,
         },
       };
-      AFacet.$facet.list.push(ASort, { $limit: 1 });
+      AFacet.$facet.list.push(ASort);
     }
+    AFacet.$facet.list.push({ $skip: (page - 1) * 10 }, { $limit: 1 });
     pipeline.push(AFacet);
-    console.log(pipeline, "參數長");
 
+    //@ts-ignore
     const paginatedProducts = await ProductModel.aggregate(pipeline);
 
     res.status(200).send({
