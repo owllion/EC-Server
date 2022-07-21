@@ -1,5 +1,6 @@
 import ReviewModel, { Review } from "./../model/review.model";
 import { RequestHandler } from "express";
+import { omit } from "ramda";
 
 export const createReview: RequestHandler = async (req, res) => {
   const review = new ReviewModel({
@@ -45,7 +46,7 @@ export const modifyReview: RequestHandler<
 
   let updateFields: IList = {};
 
-  Object.keys(reviewItem).forEach(
+  Object.keys(omit(["reviewId"], reviewItem)).forEach(
     (item) => (updateFields[item] = reviewItem[item])
   );
 

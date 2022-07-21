@@ -1,3 +1,4 @@
+import { Product } from "./../model/product.model";
 export interface LoginInterface {
   /**
    * @TJS-format email
@@ -27,7 +28,7 @@ export interface RegisterInterface {
 }
 
 export interface UploadAvatarInterface {
-  file: Buffer;
+  file: string | Blob | Buffer;
 }
 
 export interface ForgotPasswordInterface {
@@ -37,16 +38,13 @@ export interface ForgotPasswordInterface {
   email: string;
 }
 export interface ResetPasswordInterface {
-  /**
-   * @TJS-format email
-   */
-  email: string;
   token: string;
   password: string;
 }
 
 export interface UserInfoModifyInterface {
-  name: string;
+  firstName: string;
+  lastName: string;
   /**
    * @TJS-pattern ^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$
    */
@@ -61,17 +59,16 @@ export interface AddToFavInterface {
 }
 export interface RemoveFromFavInterface {
   productId: string;
-  favList: object[];
+  favList: Product[];
 }
 
 export interface RemoveItemFromCartInterface {
   productId: string;
-  cartList: object[];
+  cartList: Product[];
 }
-
 export interface UpdateQtyInterface {
   productId: string;
-  cartList: object[];
+  cartList: Product[];
   qty: number;
 }
 export interface AddToCartInterface {

@@ -19,7 +19,7 @@ export const deleteCoupon: RequestHandler = async (req, res) => {
   const { code } = req.body as { code: string };
   try {
     const coupon = await CouponModel.findOne({ code });
-
+    if (!coupon) throw new Error("Coupon not found");
     await coupon!.remove();
 
     res.status(200).send({ msg: "success" });

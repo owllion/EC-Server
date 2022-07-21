@@ -36,7 +36,7 @@ app.listen(port, () => {
 // });
 
 import { signJwt, verifyJwt } from "./utils/jwt";
-import jwt from "jsonwebtoken";
+// import jwt from "jsonwebtoken";
 
 const g = () => {
   const token: string = signJwt(

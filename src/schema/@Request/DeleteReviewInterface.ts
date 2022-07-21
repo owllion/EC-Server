@@ -1,15 +1,12 @@
 export default{
   "type": "object",
   "properties": {
-    "codesList": {
-      "type": "array",
-      "items": {
-        "type": "string"
-      }
+    "reviewId": {
+      "type": "string"
     }
   },
   "required": [
-    "codesList"
+    "reviewId"
   ],
   "$schema": "http://json-schema.org/draft-07/schema#"
 }

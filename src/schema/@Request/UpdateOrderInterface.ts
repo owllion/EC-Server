@@ -1,20 +1,26 @@
 export default{
   "type": "object",
   "properties": {
-    "productUpdate": {
+    "orderItem": {
       "type": "object",
       "properties": {
-        "productId": {
+        "orderId": {
           "type": "string"
+        },
+        "deliveryAddress": {
+          "type": "string"
+        },
+        "orderStatus": {
+          "type": "number"
         }
       },
       "required": [
-        "productId"
+        "orderId"
       ]
     }
   },
   "required": [
-    "productUpdate"
+    "orderItem"
   ],
   "$schema": "http://json-schema.org/draft-07/schema#"
 }

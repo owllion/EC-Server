@@ -39,6 +39,7 @@
     "@typegoose/typegoose": "^9.9.0",
     "@types/express-serve-static-core": "^4.17.29",
     "ajv": "^8.11.0",
+    "ajv-formats": "^2.1.1",
     "argon2": "^0.28.5",
     "config": "^3.3.7",
     "cors": "^2.8.5",

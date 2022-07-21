@@ -1,21 +1,15 @@
 export default{
   "type": "object",
   "properties": {
-    "productId": {
-      "type": "string"
-    },
-    "cartList": {
+    "productList": {
       "type": "array",
       "items": {
-        "type": "object",
-        "properties": {},
-        "additionalProperties": true
+        "type": "string"
       }
     }
   },
   "required": [
-    "cartList",
-    "productId"
+    "productList"
   ],
   "$schema": "http://json-schema.org/draft-07/schema#"
 }

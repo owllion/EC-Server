@@ -1,21 +1,15 @@
 export default{
   "type": "object",
   "properties": {
-    "productId": {
-      "type": "string"
-    },
-    "favList": {
+    "codeList": {
       "type": "array",
       "items": {
-        "type": "object",
-        "properties": {},
-        "additionalProperties": true
+        "type": "string"
       }
     }
   },
   "required": [
-    "favList",
-    "productId"
+    "codeList"
   ],
   "$schema": "http://json-schema.org/draft-07/schema#"
 }

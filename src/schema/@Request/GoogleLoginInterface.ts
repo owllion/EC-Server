@@ -1,12 +1,13 @@
 export default{
   "type": "object",
   "properties": {
-    "category": {
+    "email": {
+      "format": "email",
       "type": "string"
     }
   },
   "required": [
-    "category"
+    "email"
   ],
   "$schema": "http://json-schema.org/draft-07/schema#"
 }

@@ -62,7 +62,7 @@ const generateSchemas = (generator: TJS.JsonSchemaGenerator): void => {
     const schema = generator.getSchemaForSymbol(item);
     console.log({ schema });
     const prefix = `export default`;
-    const filePath = `${resolve("schema", `${item}.ts`)}`;
+    const filePath = `${resolve("schema", "@Request", `${item}.ts`)}`;
     const fileContents = `${prefix}${JSON.stringify(schema, null, 2)}`;
     //data,replacer(op),space(op)
     fs.writeFileSync(filePath, fileContents);

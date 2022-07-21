@@ -7,22 +7,19 @@ export interface createCouponInterface {
   expiryDate: Date;
 }
 
-export interface DeleteCouponInterface {
+interface ICode {
   code: string;
 }
+export interface DeleteCouponInterface extends ICode {}
 
-export interface DeleteMultipleCouponsInterface
-  extends Partial<Omit<Coupon, "code">> {
-  code: string;
+export interface DeleteMultipleCouponsInterface {
+  codeList: string[];
 }
 
 export interface ModifyCouponInterface {}
 
-export interface ApplyCouponInterface {
+export interface ApplyCouponInterface extends ICode {
   totalPrice: number;
-  code: string;
 }
 
-export interface RedeemCouponInterface {
-  code: string;
-}
+export interface RedeemCouponInterface extends ICode {}

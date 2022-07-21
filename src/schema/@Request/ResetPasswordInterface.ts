@@ -1,15 +1,16 @@
 export default{
   "type": "object",
   "properties": {
-    "deletedProducts": {
-      "type": "array",
-      "items": {
-        "type": "string"
-      }
+    "token": {
+      "type": "string"
+    },
+    "password": {
+      "type": "string"
     }
   },
   "required": [
-    "deletedProducts"
+    "password",
+    "token"
   ],
   "$schema": "http://json-schema.org/draft-07/schema#"
 }

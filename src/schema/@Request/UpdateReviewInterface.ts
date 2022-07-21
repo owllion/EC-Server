@@ -1,17 +1,18 @@
 export default{
   "type": "object",
   "properties": {
-    "name": {
+    "reviewId": {
       "type": "string"
     },
-    "phone": {
-      "pattern": "^[\\+]?[(]?[0-9]{3}[)]?[-\\s\\.]?[0-9]{3}[-\\s\\.]?[0-9]{4,6}$",
+    "comment": {
       "type": "string"
+    },
+    "rating": {
+      "type": "number"
     }
   },
   "required": [
-    "name",
-    "phone"
+    "reviewId"
   ],
   "$schema": "http://json-schema.org/draft-07/schema#"
 }

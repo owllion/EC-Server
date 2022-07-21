@@ -10,8 +10,8 @@ import {
   DocumentType,
 } from "@typegoose/typegoose";
 import validator from "validator";
-import argon2 from "argon2";
-import config from "config";
+import * as argon2 from "argon2";
+import * as config from "config";
 
 import OrderModel, { Order } from "../model/order.model";
 import ReviewModel, { Review } from "../model/review.model";
@@ -83,6 +83,9 @@ export class User {
   @prop({ required: true })
   lastName: string;
 
+  @prop({ default: "", trim: true })
+  phone: string;
+
   @prop()
   avatarUpload: Buffer;
 
@@ -99,28 +102,22 @@ export class User {
       }
     },
   })
-  password?: string;
+  password: string;
 
   @prop()
   tokens?: { token: string }[];
-
-  // @prop({ required: true, default: () => nanoid() })
-  // verificationCode: string;
-
-  @prop()
-  passwordResetCode: string | null; //Type mixed
 
   @prop({ default: false })
   verified: boolean;
 
   @prop()
-  cartList: Product[];
+  cartList: Product[] | [];
 
   @prop()
-  favList: Product[];
+  favList: Product[] | [];
 
   @prop()
-  couponList: Coupon[];
+  couponList: Coupon[] | [];
 
   @prop({
     ref: "Order",

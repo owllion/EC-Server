@@ -1,7 +1,6 @@
 export interface CreateProductInterface {
-  productId: string;
   productName: string;
-  image: Array<string>;
+  imageList: Array<string>;
   price: number;
   salePrice: number;
   brand: string;
@@ -17,17 +16,27 @@ interface baseIdInterface {
 export interface DeleteProductInterface extends baseIdInterface {}
 
 export interface DeleteMultipleProductsInterface {
-  deletedProducts: Array<string>;
+  productList: string[];
 }
-export interface getProductDetailInterface
-  extends Partial<Omit<CreateProductInterface, "productId">>,
-    baseIdInterface {}
+export interface getProductDetailInterface extends baseIdInterface {}
 
-export interface getProductsByCategoryInterface {
-  category: string;
+interface ObjKeys {
+  [key: string]: string | string[] | undefined | Date | number | boolean;
+}
+interface IProduct extends ObjKeys {
+  _id: string;
+  productName?: string;
+  imageList?: string[];
+  price?: number;
+  salePrice?: number;
+  brand?: string;
+  category?: string;
+  description?: string;
+  stock?: number;
+  availability?: boolean;
+  sales?: number;
+  isChecked?: boolean;
 }
 export interface ModifyProductInterface {
-  productUpdate: {
-    productId: string;
-  };
+  productItem: IProduct;
 }
