@@ -1,6 +1,6 @@
 import CouponModel, { Coupon } from "./../model/coupon.model";
 import { RequestHandler } from "express";
-import R from "ramda";
+import { omit } from "ramda";
 
 export const createCoupon: RequestHandler = async (req, res) => {
   const coupon = new CouponModel(req.body as Coupon);
@@ -59,21 +59,17 @@ export const modifyCoupon: RequestHandler = async (req, res) => {
   const { couponItem } = req.body as { couponItem: ICoupon };
 
   try {
-    const fieldList: IList = {};
-    console.log(R.omit(["_id"], couponItem), "omit Test");
-    const updateFields = Object.keys(R.omit(["_id"], couponItem));
+    const updateFields: IList = {};
 
-    updateFields.forEach((item) => {
-      fieldList[item] = couponItem[item];
+    Object.keys(omit(["_id"], couponItem)).forEach((item) => {
+      updateFields[item] = couponItem[item];
     });
 
     const coupon = await CouponModel.findByIdAndUpdate(
       { _id: couponItem._id },
-      fieldList,
+      updateFields,
       { new: true }
     );
-
-    console.log({ coupon });
 
     await coupon!.save();
 

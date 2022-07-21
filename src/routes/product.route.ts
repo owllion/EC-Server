@@ -5,7 +5,7 @@ import auth from "../middleware/auth.middleware";
 const router = express.Router();
 
 //Public endpoint
-router.get("/product_list", ProductController.getProductList); //$facet type
+router.get("/product_list", ProductController.getProductList); //ok
 
 //Protected endpoint
 router.use(auth); //ok
@@ -17,6 +17,6 @@ router.delete(
   ProductController.deleteMultipleProducts
 );
 
-router.post("/product/detail", ProductController.getProductDetail); // review's user data populate
+router.post("/product/detail", ProductController.getProductDetail); //ok
 
 export default router;

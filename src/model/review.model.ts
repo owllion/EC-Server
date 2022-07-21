@@ -2,6 +2,7 @@ import {
   getModelForClass,
   modelOptions,
   prop,
+  pre,
   Ref,
   Severity,
 } from "@typegoose/typegoose";
@@ -19,6 +20,10 @@ import { nanoid } from "nanoid";
   options: {
     allowMixed: Severity.ALLOW,
   },
+})
+@pre<User>("find", function (next) {
+  this.populate("user").populate("product");
+  next();
 })
 export class Review {
   @prop({ ref: "User", required: true })

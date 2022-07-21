@@ -74,7 +74,7 @@ export const modifyProduct: RequestHandler<
   try {
     const updateFields: IList = {};
 
-    Object.keys(productItem).forEach((item) => {
+    Object.keys(omit(["_id"], productItem)).forEach((item) => {
       updateFields[item] = productItem[item];
     });
 
