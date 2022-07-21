@@ -131,7 +131,7 @@ export class User {
 
   @prop({
     ref: "Review",
-    foreignField: "owner",
+    foreignField: "user",
     localField: "_id",
   })
   reviewList: Ref<Review>[];
