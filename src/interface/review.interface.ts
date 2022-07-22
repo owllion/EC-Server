@@ -8,9 +8,11 @@ export interface CreateReviewInterface {
 }
 
 export interface UpdateReviewInterface {
-  reviewId: string;
-  comment?: string;
-  rating?: number;
+  reviewItem: {
+    reviewId: string;
+    comment?: string;
+    rating?: number;
+  };
 }
 
 export interface DeleteReviewInterface {

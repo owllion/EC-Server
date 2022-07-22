@@ -341,9 +341,8 @@ export const passwordModify: RequestHandler<
   {},
   { password: string }
 > = async (req, res) => {
-  const { password } = req.body;
   try {
-    req.user.password = password;
+    req.user.password = req.body.password;
 
     await req.user.save();
 

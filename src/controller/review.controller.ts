@@ -1,6 +1,7 @@
 import ReviewModel, { Review } from "./../model/review.model";
 import { RequestHandler } from "express";
-import { omit } from "ramda";
+import * as ReviewInterface from "../interface/controller/review.controller.interface";
+import * as ReviewServices from "../services/review.service";
 
 export const createReview: RequestHandler = async (req, res) => {
   const review = new ReviewModel({
@@ -29,34 +30,17 @@ export const deleteReview: RequestHandler = async (req, res) => {
     res.status(500).send({ msg: e.message });
   }
 };
-interface IReview extends Record<string, string | number | undefined> {
-  comment?: string;
-  rating?: number;
-  reviewId: string;
-}
-interface IList extends Omit<IReview, "reviewId"> {}
 
 export const modifyReview: RequestHandler<
   unknown,
   unknown,
-  { reviewItem: IReview },
+  { reviewItem: ReviewInterface.IReview },
   unknown
 > = async (req, res) => {
-  const { reviewItem } = req.body;
-
-  let updateFields: IList = {};
-
-  Object.keys(omit(["reviewId"], reviewItem)).forEach(
-    (item) => (updateFields[item] = reviewItem[item])
-  );
-
   try {
-    const review = await ReviewModel.findOneAndUpdate(
-      { reviewId: reviewItem.reviewId },
-      updateFields,
-      { new: true }
-    );
-    if (!review) throw new Error("review does not exist");
+    await ReviewServices.checkIfReviewExists(req.body.reviewItem.reviewId);
+
+    const review = await ReviewServices.getModifiedItem(req.body.reviewItem);
 
     await review!.save();
 
