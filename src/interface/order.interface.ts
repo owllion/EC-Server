@@ -6,7 +6,6 @@ export interface CreateOrderInterface {
   totalPrice: number;
   discount?: number;
   discountCode?: string;
-  owner: string;
 }
 interface baseIdInterface {
   orderId: string;

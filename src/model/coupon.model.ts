@@ -23,6 +23,9 @@ export class Coupon {
 
   @prop({ required: true })
   minimumAmount: number;
+
+  @prop({ default: false })
+  isUsed: boolean;
 }
 
 const CouponModel = getModelForClass(Coupon);

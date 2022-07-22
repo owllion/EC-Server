@@ -1,6 +1,7 @@
-import { RequestHandler, Request, Response } from "express";
+import { IOrderItem } from "./../interface/controller/order.controller.interface";
+import { RequestHandler } from "express";
 import OrderModel, { Order } from "../model/order.model";
-import { omit } from "ramda";
+import * as OrderServices from "../services/order.service";
 
 export const createOrder: RequestHandler = async (req, res) => {
   try {
@@ -15,21 +16,8 @@ export const createOrder: RequestHandler = async (req, res) => {
 
     req.user.cartList = [];
 
-    if (order.discountCode) {
-      const filter = (
-        req.user as {
-          couponList: {
-            code: string;
-            discountType: string;
-            amount: number;
-            expiryDate: Date;
-            minimumAmount: number;
-          }[];
-        }
-      ).couponList.filter((i) => i.code !== order.discountCode);
+    req.user = OrderServices.markUsedCode(req.user, order.discountCode);
 
-      req.user.couponList = filter;
-    }
     await req.user.save();
 
     res.status(201).send({
@@ -37,32 +25,18 @@ export const createOrder: RequestHandler = async (req, res) => {
       order,
     });
   } catch (e) {
-    res.status(400).send({ msg: e.message });
+    res.status(500).send({ msg: e.message });
   }
 };
-interface IOrderItem extends Record<string, string | number | undefined> {
-  orderId: string;
-  deliveryAddress?: string;
-  orderStatus?: number;
-}
-interface IField extends Omit<IOrderItem, "orderId"> {}
 
-export const modifyOrder: RequestHandler = async (req, res) => {
-  const { orderItem } = req.body as { orderItem: IOrderItem };
-  const updateFields: IField = {};
-
-  Object.keys(omit(["orderId"], orderItem)).forEach((item) => {
-    updateFields[item] = orderItem[item];
-  });
-
-  console.log(omit(["orderId"], orderItem));
+export const modifyOrder: RequestHandler<
+  {},
+  {},
+  { orderItem: IOrderItem }
+> = async (req, res) => {
+  const { orderItem } = req.body;
   try {
-    const order = await OrderModel.findOneAndUpdate(
-      { orderId: orderItem.orderId },
-      updateFields,
-      { new: true }
-    );
-    if (!order) throw new Error("order does not exist");
+    const order = await OrderServices.getModifiedItem(orderItem);
 
     await order!.save();
     res.status(200).send({ msg: "success", order });
@@ -71,11 +45,15 @@ export const modifyOrder: RequestHandler = async (req, res) => {
   }
 };
 
-export const getOrderDetail: RequestHandler = async (req, res) => {
-  const { orderId } = req.body as { orderId: string };
+export const getOrderDetail: RequestHandler<
+  {},
+  {},
+  { orderId: string }
+> = async (req, res) => {
+  const { orderId } = req.body;
   try {
     const order = await OrderModel.findOne({ orderId }).populate("owner");
-    console.log(order, "order");
+
     if (!order) throw new Error("order not found");
 
     res.status(200).send({
@@ -83,6 +61,6 @@ export const getOrderDetail: RequestHandler = async (req, res) => {
       order,
     });
   } catch (e) {
-    res.status(400).send({ msg: e.message });
+    res.status(500).send({ msg: e.message });
   }
 };

@@ -1,6 +1,7 @@
 import ProductModel, { Product } from "./../model/product.model";
-import { RequestHandler, Request, Response } from "express";
+import { RequestHandler } from "express";
 import { omit } from "ramda";
+import * as ProductServices from "../services/product.service";
 
 export const createProduct: RequestHandler = async (req, res) => {
   const product = new ProductModel(req.body as Product);
@@ -16,8 +17,12 @@ export const createProduct: RequestHandler = async (req, res) => {
   }
 };
 
-export const deleteProduct: RequestHandler = async (req, res) => {
-  const { productId } = req.body as { productId: string };
+export const deleteProduct: RequestHandler<
+  {},
+  {},
+  { productId: string }
+> = async (req, res) => {
+  const { productId } = req.body;
   try {
     const product = await ProductModel.findOne({ productId });
 
@@ -29,8 +34,12 @@ export const deleteProduct: RequestHandler = async (req, res) => {
   }
 };
 
-export const deleteMultipleProducts: RequestHandler = async (req, res) => {
-  const { productList: batch } = req.body as { productList: string[] };
+export const deleteMultipleProducts: RequestHandler<
+  {},
+  {},
+  { productList: string[] }
+> = async (req, res) => {
+  const { productList: batch } = req.body;
 
   try {
     await ProductModel.deleteMany({
@@ -231,20 +240,21 @@ export const getProductList: RequestHandler<
   }
 };
 
-export const getProductDetail: RequestHandler = async (req, res) => {
-  const { productId } = req.body as { productId: string };
+export const getProductDetail: RequestHandler<
+  {},
+  {},
+  { productId: string }
+> = async (req, res) => {
   try {
-    const product = await ProductModel.findOne({ productId }).populate(
-      "reviews"
+    const productDetail = await ProductServices.getDetailWithReview(
+      req.body.productId
     );
-    if (!product) {
-      throw new Error("Product does not exist");
-    }
+
     res.status(200).send({
       msg: "success",
-      productDetail: product,
+      productDetail,
     });
   } catch (e) {
-    res.status(400).send({ msg: e.message });
+    res.status(500).send({ msg: e.message });
   }
 };
