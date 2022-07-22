@@ -1,8 +1,8 @@
+import express from "express";
 import morgan from "morgan";
 import cors from "cors";
 import "dotenv/config";
 import helmet from "helmet";
-import express from "express";
 
 import dbConnect from "./db/mongoose";
 import config from "config";
@@ -26,58 +26,14 @@ app.listen(port, () => {
   console.log(`Server is up on the ${port} `);
   dbConnect();
 });
+import * as CouponInterface from "./interface/controller/coupon.controller.interface";
+import CouponModel from "./model/coupon.model";
+const main = async () => {
+  const t = CouponModel;
+  const a = "One";
 
-// import { sendLink } from "./utils/email";
-
-// sendLink({
-//   type: "verify",
-//   link: "https://stackoverflow.com/questions/12736269/how-to-declare-return-types-for-functions-in-typescript",
-//   email: "defrag55345@gmail.com",
-// });
-
-import { signJwt, verifyJwt } from "./utils/jwt";
-// import jwt from "jsonwebtoken";
-
-const g = () => {
-  const token: string = signJwt(
-    { email: "test@gmail.com" },
-    config.get<string>("jwtSecret"),
-    {
-      expiresIn: "30s",
-    }
-  );
-  console.log(token);
-  return token;
+  // const b = CouponInterface.;
+  const res = await t[`find${a}`]({ code: "0721Test22" });
+  console.log(res);
 };
-
-// const main = (token: string) => {
-//   try {
-//     const decoded = verifyJwt<{ _id: string }>(
-//       token,
-//       config.get<string>("jwtSecret")
-//     );
-
-//     console.log(decoded);
-//   } catch (e) {
-//     console.log(e.message); //TokenExpiredError: jwt expired
-//     if (e.message.includes("expired")) {
-//       console.log("hello");
-//     }
-//   }
-// };
-// // g();
-// main(
-//   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRlc3RAZ21haWwuY29tIiwiaWF0IjoxNjU4MjE4NTYyLCJleHAiOjE2NTgyMTg1OTJ9.6hBN8BzuY2M8FDZFydNp3K7yJgqd0MlILCsCsj2ORLY"
-// );
-// import path from "path";
-// import fs from "fs";
-// const basePath: string = path.resolve(__dirname, "");
-// console.log(basePath);
-// console.log(__dirname);
-// const resolve = (...route: string[]) => {
-//   return path.join(basePath, ...route);
-// };
-// resolve("interface");
-// console.log(resolve("interface", "Register"));
-// const dtest = fs.readFileSync(`${resolve("schema", "Register")}Interface.ts`);
-// console.log(dtest);
+main();

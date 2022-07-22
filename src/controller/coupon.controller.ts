@@ -1,6 +1,10 @@
+import { IList } from "./../interface/controller/coupon.controller.interface";
 import CouponModel, { Coupon } from "./../model/coupon.model";
 import { RequestHandler } from "express";
 import { omit } from "ramda";
+
+import * as CouponServices from "../services/coupon.service";
+import * as CouponInterface from "../interface/controller/coupon.controller.interface";
 
 export const createCoupon: RequestHandler = async (req, res) => {
   const coupon = new CouponModel(req.body as Coupon);
@@ -18,8 +22,10 @@ export const createCoupon: RequestHandler = async (req, res) => {
 export const deleteCoupon: RequestHandler = async (req, res) => {
   const { code } = req.body as { code: string };
   try {
-    const coupon = await CouponModel.findOne({ code });
-    if (!coupon) throw new Error("Coupon not found");
+    const coupon = await CouponServices.findCoupon({
+      field: "code",
+      value: code,
+    });
     await coupon!.remove();
 
     res.status(200).send({ msg: "success" });
@@ -30,7 +36,7 @@ export const deleteCoupon: RequestHandler = async (req, res) => {
 
 export const deleteMultipleCoupons: RequestHandler = async (req, res) => {
   const { codeList: batch } = req.body as { codeList: string[] };
-  console.log({ batch });
+
   try {
     await CouponModel.deleteMany({
       code: {
@@ -44,33 +50,11 @@ export const deleteMultipleCoupons: RequestHandler = async (req, res) => {
   }
 };
 
-interface ICoupon extends Record<string, string | undefined | Date | number> {
-  id: string;
-  code?: string;
-  description?: string;
-  discount?: string;
-  amount?: number;
-  expiryDate?: Date;
-  minimumAmount?: number;
-}
-interface IList extends Omit<ICoupon, "id"> {}
-
 export const modifyCoupon: RequestHandler = async (req, res) => {
-  const { couponItem } = req.body as { couponItem: ICoupon };
+  const { couponItem } = req.body as { couponItem: CouponInterface.ICoupon };
 
   try {
-    const updateFields: IList = {};
-
-    Object.keys(omit(["_id"], couponItem)).forEach((item) => {
-      updateFields[item] = couponItem[item];
-    });
-
-    const coupon = await CouponModel.findByIdAndUpdate(
-      { _id: couponItem._id },
-      updateFields,
-      { new: true }
-    );
-
+    const coupon = await CouponServices.getModifiedItem(couponItem);
     await coupon!.save();
 
     res.status(200).send({ msg: "success" });
@@ -82,66 +66,46 @@ export const modifyCoupon: RequestHandler = async (req, res) => {
 export const applyCoupon: RequestHandler = async (req, res) => {
   const { totalPrice, code } = req.body as { totalPrice: number; code: string };
   try {
-    const coupon = await CouponModel.findOne({ code });
+    const coupon = await CouponServices.findCoupon({
+      field: "code",
+      value: code,
+    });
 
-    if (!coupon) {
-      throw new Error("Code does not exist");
-    }
+    const {
+      expiryDate,
+      minimumAmount,
+      discountType,
+      amount,
+    }: Required<Omit<Coupon, "description" | "code">> = coupon;
 
-    const { expiryDate, minimumAmount } = coupon as {
-      expiryDate: Date;
-      minimumAmount: number;
-    };
-    const now = Date.now() / 1000;
-    const expire = Math.floor(new Date(expiryDate).valueOf() / 1000);
-    //valueOf -> because ts does not allow us to put the value that type is not equal to number in Math.floor,so we need to add valueOf to turn Date -> number.
+    await CouponServices.isExpired(expiryDate);
 
-    const compare = expire - now;
-    if (compare < 0) {
-      throw new Error("This code is already expired!");
-    }
+    await CouponServices.isShort(minimumAmount, totalPrice);
 
-    //if code has the consumption threshold
-    if (minimumAmount) {
-      //if user does not achieve the threshold
-      if (totalPrice < minimumAmount) {
-        throw new Error(`You are ${minimumAmount - totalPrice} dollars short!`);
-      }
-    }
+    const { finalPrice, discount } = await CouponServices.getPriceAndDiscount(
+      discountType,
+      totalPrice,
+      amount
+    );
 
-    const finalPrice =
-      coupon.discountType === "rebate"
-        ? totalPrice - coupon.amount
-        : Math.round(totalPrice * (coupon.amount * 0.01));
-
-    const discount = totalPrice - finalPrice;
     res.send({
       msg: "success",
       finalPrice,
       discount,
-      code,
+      usedCode: code,
     });
   } catch (e) {
     res.status(500).send({ msg: e.message });
   }
 };
 
-// export const getUserCoupon: RequestHandler = async (req, res) => {
-//   try {
-//     res.status(200).send({
-//       msg: "success",
-//       couponList: req.user.couponList,
-//     });
-//   } catch (e) {
-//     res.status(500).send({ msg: e.message });
-//   }
-// };
-
 export const redeemCoupon: RequestHandler = async (req, res) => {
   const { code } = req.body as { code: string };
   try {
-    const coupon = await CouponModel.findOne({ code });
-    if (!coupon) throw new Error("coupon does not exist");
+    const coupon = await CouponServices.findCoupon({
+      field: "code",
+      value: code,
+    });
 
     req.user.couponList.push(coupon);
 
