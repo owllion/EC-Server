@@ -47,18 +47,18 @@ router.post(
   "/user/cart/remove",
   validateInput(Interface.RemoveItemFromCartInterface),
   UserController.removeCartItem
-);
-router.get("/user/cart/clear", UserController.clearCart);
+); //ok
+router.get("/user/cart/clear", UserController.clearCart); //ok
 router.post(
   "/user/cart/update_qty",
   validateInput(Interface.UpdateQtyInterface),
   UserController.updateItemQty
-);
+); //ok
 router.post(
   "/user/cart/add",
   validateInput(Interface.AddToCartInterface),
   UserController.addToCart
-);
+); //ok
 
 router.post(
   "/user/fav/remove",

@@ -1,19 +1,19 @@
-import { findUser } from "./../services/user.service";
-import { RequestHandler, Request, Response } from "express";
+import { RequestHandler } from "express";
 import validator from "validator";
 import config from "config";
 import { includes } from "ramda";
 
-import UserModel from "../model/user.model";
+import UserModel, { User } from "../model/user.model";
 import ProductModel, { Product } from "../model/product.model";
 import { sendLink } from "../utils/email";
 import { signJwt, verifyJwt } from "../utils/jwt";
+import * as UserServices from "../services/user.service";
 
 //  controller，可以说他是对 http 中 request 的解析，以及对 response 的封装，它对应的是每一个路由，是 http 请求到代码的一个承接，它必须是可单例的，是无状态的。
 
 //controller一般来说有两种，一种是薄Controller，一种是厚Controller。前者Controller只负责搜集参数、调用服务、转发或重定向结果集，其他业务逻辑(例如createUser)都放在Service层。后者则相反，业务逻辑都在Controller中进行处理，服务层只负责一些增删改查的方法。
 
-export const register: RequestHandler = async (req, res) => {
+export const register: RequestHandler<{}, {}, User> = async (req, res) => {
   const user = new UserModel(req.body);
   try {
     await user.save();
@@ -22,8 +22,8 @@ export const register: RequestHandler = async (req, res) => {
 
     const refreshToken = await user.generateRefreshToken();
 
-    // const link = `http://localhost:5001/verify-email/${token}`;
-    // sendLink({ type: "verify", link, email: req.body.email });
+    const link = `http://localhost:5001/verify-email/${token}`;
+    sendLink({ type: "verify", link, email: req.body.email });
 
     res.status(201).json({
       msg: "Registration success",
@@ -40,7 +40,11 @@ export const register: RequestHandler = async (req, res) => {
   }
 };
 
-export const login: RequestHandler = async (req, res) => {
+export const login: RequestHandler<
+  {},
+  {},
+  { email: string; password: string }
+> = async (req, res) => {
   const { email, password } = req.body;
   try {
     const user = await UserModel.findByCredentials(email, password);
@@ -62,7 +66,6 @@ export const login: RequestHandler = async (req, res) => {
 };
 export const logout: RequestHandler = async (req, res) => {
   try {
-    console.log(req.user.tokens, "this is tokens");
     req.user.tokens = req.user.tokens.filter(
       (item: { token: string }) => item.token !== req.token
     );
@@ -75,17 +78,23 @@ export const logout: RequestHandler = async (req, res) => {
   }
 };
 
-export const getRefreshToken: RequestHandler = async (req, res) => {
+export const getRefreshToken: RequestHandler<
+  {},
+  {},
+  { refresh: string }
+> = async (req, res) => {
   try {
-    const { refresh } = req.body as { refresh: string };
-    // if (!refresh) res.status(400).send({ msg: "Refresh token is required" });
+    const { refresh } = req.body;
 
     const decoded = verifyJwt<{ _id: string }>(
       refresh,
       config.get<string>("refreshSecret")
     );
 
-    const user = await UserModel.findOne({ _id: decoded._id });
+    const user = await UserServices.findUser({
+      field: "_id",
+      value: decoded._id,
+    });
     if (!user) throw new Error("User not found");
 
     const token = await user!.generateAuthToken();
@@ -99,11 +108,9 @@ export const getRefreshToken: RequestHandler = async (req, res) => {
     });
   } catch (e) {
     if (e.message.includes("expired")) {
-      //accessToken & refreshToken both are expired.
       res.status(401).send({ msg: "token has expired" });
       return;
     }
-    //something happened when verify the refresh token (malformed .etc)
     res.status(400).send({ msg: e.message });
   }
 };
@@ -122,24 +129,23 @@ export const uploadImg: RequestHandler = async (req, res) => {
   }
 };
 
-export const forgotPassword: RequestHandler = async (req, res) => {
+export const forgotPassword: RequestHandler<{}, {}, { email: string }> = async (
+  req,
+  res
+) => {
   try {
-    const { email } = req.body as { email: string };
+    const { email } = req.body;
 
     if (!validator.isEmail(email)) {
       throw new Error("Email is invalid!");
     }
-    const user = await findUser({ field: "email", value: email });
+    const user = await UserServices.findUser({ field: "email", value: email });
 
     if (!user) throw new Error("No user with that email!");
 
-    const token: string = signJwt(
-      { _id: user._id },
-      config.get<string>("jwtSecret"),
-      {
-        expiresIn: "1d",
-      }
-    );
+    const token = signJwt({ _id: user._id }, config.get<string>("jwtSecret"), {
+      expiresIn: "1d",
+    });
 
     sendLink({
       type: "reset",
@@ -156,21 +162,23 @@ export const forgotPassword: RequestHandler = async (req, res) => {
   }
 };
 
-export const resetPassword: RequestHandler = async (req, res) => {
+export const resetPassword: RequestHandler<
+  {},
+  {},
+  { password: string; token: string }
+> = async (req, res) => {
   try {
-    // const { token } = req.params;
-
-    const { password, token } = req.body as { password: string; token: string };
-
-    //If you don't  include the generic type, <T> would be bound to unknown
+    const { password, token } = req.body;
     const decoded = verifyJwt<{ _id: string }>(
       token,
       config.get<string>("jwtSecret")
     );
 
-    const user = await UserModel.findOne({ _id: decoded!._id });
-
-    if (!user) throw new Error("User does not exist");
+    const user = await UserServices.findUser({
+      field: "_id",
+      value: decoded._id,
+    });
+    if (!user) throw new Error("User not found");
 
     user.password = password;
 
@@ -186,11 +194,15 @@ export const resetPassword: RequestHandler = async (req, res) => {
   }
 };
 
-export const removeCartItem: RequestHandler = async (req, res) => {
-  const { productId, cartList } = req.body as {
+export const removeCartItem: RequestHandler<
+  {},
+  {},
+  {
     productId: string;
     cartList: Product[];
-  };
+  }
+> = async (req, res) => {
+  const { productId, cartList } = req.body;
   try {
     const filteredProduct: Product[] = cartList.filter(
       (item: { productId: string }) => item.productId !== productId
@@ -212,28 +224,31 @@ export const removeCartItem: RequestHandler = async (req, res) => {
 export const clearCart: RequestHandler = async (req, res) => {
   try {
     req.user.cartList = [];
-    req.user.save();
-    res.status(200).send({ msg: "success" });
+    await req.user.save();
+    res.status(200).send({ msg: "success", cartList: req.user });
   } catch (e) {
     res.status(500).send({ msg: e.message });
   }
 };
 
-export const updateItemQty: RequestHandler = async (req, res) => {
-  const { productId, qty, cartList } = req.body as {
+export const updateItemQty: RequestHandler<
+  {},
+  {},
+  {
     productId: string;
     qty: number;
     cartList: Product[];
-  };
+  }
+> = async (req, res) => {
+  const { productId, qty, cartList } = req.body;
   try {
-    const itemIndex: number = cartList.findIndex(
+    const itemIndex = cartList.findIndex(
       (item: { productId: string }) => item.productId === productId
     );
 
     if (itemIndex > -1) {
       const productItem = cartList[itemIndex];
       productItem.qty = qty;
-      //cartList.set(itemIndex, productItem)
     }
     req.user.cartList = cartList;
 
@@ -248,33 +263,23 @@ export const updateItemQty: RequestHandler = async (req, res) => {
   }
 };
 
-export const addToCart: RequestHandler = async (req, res) => {
-  const { productId, qty } = req.body as {
+export const addToCart: RequestHandler<
+  {},
+  {},
+  {
     productId: string;
     qty: number;
-    cartList: Product[];
-  };
+  }
+> = async (req, res) => {
+  const { productId, qty } = req.body;
   try {
     const product = await ProductModel.findOne({ productId });
 
-    //const productProperty = Object.keys(product)
-    const index: number = req.user.cartList.findIndex(
-      (item: { productId: string }) => item.productId === productId
-    );
+    const user = UserServices.addQty(req.user, product, productId, qty);
 
-    //If cart is empty or can not find the product
-    if (!req.user.cartList.length || index === -1) {
-      const item = new ProductModel(product);
-      item.qty = qty;
-      req.user.cartList.push(item);
-    } else if (req.user.cartList.length > 0) {
-      //If cart already have products
-      if (index !== -1) {
-        //if find the product
-        throw new Error("Item already exists in cart!");
-      }
-    }
+    req.user = user;
     await req.user.save();
+
     res.status(200).send({
       msg: "success",
       cartList: req.user.cartList,
@@ -284,11 +289,15 @@ export const addToCart: RequestHandler = async (req, res) => {
   }
 };
 
-export const removeFromFav: RequestHandler = async (req, res) => {
-  const { productId, favList } = req.body as {
+export const removeFromFav: RequestHandler<
+  {},
+  {},
+  {
     productId: string;
     favList: Product[];
-  };
+  }
+> = async (req, res) => {
+  const { productId, favList } = req.body;
   try {
     req.user.favList = favList.filter(
       (product: { productId: string }) => product.productId !== productId
@@ -305,8 +314,11 @@ export const removeFromFav: RequestHandler = async (req, res) => {
   }
 };
 
-export const addToFav: RequestHandler = async (req, res) => {
-  const { productId } = req.body as { productId: string };
+export const addToFav: RequestHandler<{}, {}, { productId: string }> = async (
+  req,
+  res
+) => {
+  const { productId } = req.body;
   try {
     const item = await ProductModel.find({ productId });
     console.log(item[0]); // item = array of object
@@ -324,8 +336,12 @@ export const addToFav: RequestHandler = async (req, res) => {
   }
 };
 
-export const passwordModify: RequestHandler = async (req, res) => {
-  const { password } = req.body as { password: string };
+export const passwordModify: RequestHandler<
+  {},
+  {},
+  { password: string }
+> = async (req, res) => {
+  const { password } = req.body;
   try {
     req.user.password = password;
 
@@ -337,17 +353,21 @@ export const passwordModify: RequestHandler = async (req, res) => {
   }
 };
 
-interface Body extends Request {
-  body: {
+export const userInfoModify: RequestHandler<
+  {},
+  {},
+  {
     firstName: string;
     lastName: string;
     email: string;
-  };
-}
-export const userInfoModify = async (req: Body, res: Response) => {
+  }
+> = async (req, res) => {
   try {
     if (req.body.email) {
-      const user = await findUser({ field: "email", value: req.body.email });
+      const user = await UserServices.findUser({
+        field: "email",
+        value: req.body.email,
+      });
 
       if (user) throw new Error("Duplicate email");
 
@@ -378,7 +398,7 @@ export const getUserList: RequestHandler<{ type: "order" | "review" }> = async (
   if (!type || !includes(type, ["order", "review"]))
     return res
       .status(400)
-      .send({ msg: "List type must be either order or review" });
+      .send({ msg: "params must be either order or review" });
 
   try {
     const list = await UserModel.findById(req.user.id).populate(`${type}List`);

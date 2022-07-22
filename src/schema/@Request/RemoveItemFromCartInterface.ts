@@ -1,75 +1,65 @@
-export default{
-  "type": "object",
-  "properties": {
-    "productId": {
-      "type": "string"
+export default {
+  type: "object",
+  properties: {
+    productId: {
+      type: "string",
     },
-    "cartList": {
-      "type": "array",
-      "items": {
-        "$ref": "#/definitions/Product"
-      }
-    }
-  },
-  "required": [
-    "cartList",
-    "productId"
-  ],
-  "definitions": {
-    "Product": {
-      "type": "object",
-      "properties": {
-        "productId": {
-          "type": "string"
-        },
-        "productName": {
-          "type": "string"
-        },
-        "imageList": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
-        "price": {
-          "type": "number"
-        },
-        "salePrice": {
-          "type": "number"
-        },
-        "brand": {
-          "type": "string"
-        },
-        "category": {
-          "type": "string"
-        },
-        "description": {
-          "type": "string"
-        },
-        "stock": {
-          "type": "number"
-        },
-        "availability": {
-          "type": "boolean"
-        },
-        "sales": {
-          "type": "number"
-        },
-        "reviews": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/Ref<Review,Types.ObjectId|undefined>",
-            "description": "Reference another Model"
-          }
-        },
-        "qty": {
-          "type": "number"
-        },
-        "isChecked": {
-          "type": "boolean"
-        }
+    cartList: {
+      type: "array",
+      items: {
+        $ref: "#/definitions/Product",
       },
-      "required": [
+    },
+  },
+  required: ["cartList", "productId"],
+  definitions: {
+    Product: {
+      type: "object",
+      properties: {
+        productId: {
+          type: "string",
+        },
+        productName: {
+          type: "string",
+        },
+        imageList: {
+          type: "array",
+          items: {
+            type: "string",
+          },
+        },
+        price: {
+          type: "number",
+        },
+        salePrice: {
+          type: "number",
+        },
+        brand: {
+          type: "string",
+        },
+        category: {
+          type: "string",
+        },
+        description: {
+          type: "string",
+        },
+        stock: {
+          type: "number",
+        },
+        availability: {
+          type: "boolean",
+        },
+        sales: {
+          type: "number",
+        },
+        qty: {
+          type: "number",
+        },
+        isChecked: {
+          type: "boolean",
+        },
+      },
+      required: [
         "availability",
         "brand",
         "category",
@@ -77,193 +67,179 @@ export default{
         "price",
         "productId",
         "productName",
-        "reviews",
         "sales",
-        "stock"
-      ]
+        "stock",
+      ],
     },
     "Types.ObjectId": {
-      "type": "object",
-      "properties": {
-        "_id": {
-          "$ref": "#/definitions/Types.ObjectId"
+      type: "object",
+      properties: {
+        _id: {
+          $ref: "#/definitions/Types.ObjectId",
         },
-        "_bsontype": {
-          "type": "string",
-          "enum": [
-            "ObjectID"
-          ]
+        _bsontype: {
+          type: "string",
+          enum: ["ObjectID"],
         },
-        "id": {
-          "description": "The ObjectId bytes",
-          "type": "object",
-          "additionalProperties": false,
-          "patternProperties": {
+        id: {
+          description: "The ObjectId bytes",
+          type: "object",
+          additionalProperties: false,
+          patternProperties: {
             "^[0-9]+$": {
-              "type": "number"
-            }
-          }
+              type: "number",
+            },
+          },
         },
-        "generationTime": {
-          "description": "The generation time of this ObjectId instance",
-          "type": "number"
-        }
+        generationTime: {
+          description: "The generation time of this ObjectId instance",
+          type: "number",
+        },
       },
-      "required": [
-        "_bsontype",
-        "_id",
-        "generationTime",
-        "id"
-      ]
+      required: ["_bsontype", "_id", "generationTime", "id"],
     },
-    "Review": {
-      "type": "object",
-      "properties": {
-        "user": {
-          "$ref": "#/definitions/Ref<User,Types.ObjectId|undefined>",
-          "description": "Reference another Model"
+    Review: {
+      type: "object",
+      properties: {
+        user: {
+          $ref: "#/definitions/Ref<User,Types.ObjectId|undefined>",
+          description: "Reference another Model",
         },
-        "product": {
-          "description": "Reference another Model",
-          "anyOf": [
+        product: {
+          description: "Reference another Model",
+          anyOf: [
             {
-              "$ref": "#/definitions/Types.ObjectId"
+              $ref: "#/definitions/Types.ObjectId",
             },
             {
-              "$ref": "#/definitions/Product"
-            }
-          ]
+              $ref: "#/definitions/Product",
+            },
+          ],
         },
-        "reviewId": {
-          "type": "string"
+        reviewId: {
+          type: "string",
         },
-        "rating": {
-          "type": "number"
+        rating: {
+          type: "number",
         },
-        "comment": {
-          "type": "string"
-        }
+        comment: {
+          type: "string",
+        },
       },
-      "required": [
-        "comment",
-        "rating",
-        "reviewId"
-      ]
+      required: ["comment", "rating", "reviewId"],
     },
-    "User": {
-      "type": "object",
-      "properties": {
-        "email": {
-          "type": "string"
+    User: {
+      type: "object",
+      properties: {
+        email: {
+          type: "string",
         },
-        "firstName": {
-          "type": "string"
+        firstName: {
+          type: "string",
         },
-        "lastName": {
-          "type": "string"
+        lastName: {
+          type: "string",
         },
-        "phone": {
-          "type": "string"
+        phone: {
+          type: "string",
         },
-        "avatarUpload": {
-          "type": "object",
-          "additionalProperties": false,
-          "patternProperties": {
+        avatarUpload: {
+          type: "object",
+          additionalProperties: false,
+          patternProperties: {
             "^[0-9]+$": {
-              "type": "number"
-            }
-          }
-        },
-        "avatarDefault": {
-          "type": "string"
-        },
-        "password": {
-          "type": "string"
-        },
-        "tokens": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "properties": {
-              "token": {
-                "type": "string"
-              }
+              type: "number",
             },
-            "required": [
-              "token"
-            ]
-          }
+          },
         },
-        "verified": {
-          "type": "boolean"
+        avatarDefault: {
+          type: "string",
         },
-        "cartList": {
-          "anyOf": [
+        password: {
+          type: "string",
+        },
+        tokens: {
+          type: "array",
+          items: {
+            type: "object",
+            properties: {
+              token: {
+                type: "string",
+              },
+            },
+            required: ["token"],
+          },
+        },
+        verified: {
+          type: "boolean",
+        },
+        cartList: {
+          anyOf: [
             {
-              "type": "array",
-              "minItems": 0,
-              "maxItems": 0
+              type: "array",
+              minItems: 0,
+              maxItems: 0,
             },
             {
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/Product"
-              }
-            }
-          ]
+              type: "array",
+              items: {
+                $ref: "#/definitions/Product",
+              },
+            },
+          ],
         },
-        "favList": {
-          "anyOf": [
+        favList: {
+          anyOf: [
             {
-              "type": "array",
-              "minItems": 0,
-              "maxItems": 0
+              type: "array",
+              minItems: 0,
+              maxItems: 0,
             },
             {
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/Product"
-              }
-            }
-          ]
+              type: "array",
+              items: {
+                $ref: "#/definitions/Product",
+              },
+            },
+          ],
         },
-        "couponList": {
-          "anyOf": [
+        couponList: {
+          anyOf: [
             {
-              "type": "array",
-              "minItems": 0,
-              "maxItems": 0
+              type: "array",
+              minItems: 0,
+              maxItems: 0,
             },
             {
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/Coupon"
-              }
-            }
-          ]
+              type: "array",
+              items: {
+                $ref: "#/definitions/Coupon",
+              },
+            },
+          ],
         },
-        "orderList": {
-          "type": "array",
-          "items": {
-            "description": "Reference another Model",
-            "anyOf": [
+        orderList: {
+          type: "array",
+          items: {
+            description: "Reference another Model",
+            anyOf: [
               {
-                "$ref": "#/definitions/Types.ObjectId"
+                $ref: "#/definitions/Types.ObjectId",
               },
               {
-                "$ref": "#/definitions/Order"
-              }
-            ]
-          }
+                $ref: "#/definitions/Order",
+              },
+            ],
+          },
         },
-        "reviewList": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/Ref<Review,Types.ObjectId|undefined>"
-          }
-        }
+        reviewList: {
+          type: "array",
+          items: {
+            $ref: "#/definitions/Ref<Review,Types.ObjectId|undefined>",
+          },
+        },
       },
-      "required": [
+      required: [
         "avatarDefault",
         "avatarUpload",
         "cartList",
@@ -276,83 +252,83 @@ export default{
         "password",
         "phone",
         "reviewList",
-        "verified"
-      ]
+        "verified",
+      ],
     },
-    "Coupon": {
-      "type": "object",
-      "properties": {
-        "code": {
-          "type": "string"
+    Coupon: {
+      type: "object",
+      properties: {
+        code: {
+          type: "string",
         },
-        "description": {
-          "type": "string"
+        description: {
+          type: "string",
         },
-        "discountType": {
-          "type": "string"
+        discountType: {
+          type: "string",
         },
-        "amount": {
-          "type": "number"
+        amount: {
+          type: "number",
         },
-        "expiryDate": {
-          "type": "string",
-          "format": "date-time"
+        expiryDate: {
+          type: "string",
+          format: "date-time",
         },
-        "minimumAmount": {
-          "type": "number"
-        }
+        minimumAmount: {
+          type: "number",
+        },
       },
-      "required": [
+      required: [
         "amount",
         "code",
         "description",
         "discountType",
         "expiryDate",
-        "minimumAmount"
-      ]
+        "minimumAmount",
+      ],
     },
-    "Order": {
-      "type": "object",
-      "properties": {
-        "orderStatus": {
-          "type": "number"
+    Order: {
+      type: "object",
+      properties: {
+        orderStatus: {
+          type: "number",
         },
-        "orderId": {
-          "type": "string"
+        orderId: {
+          type: "string",
         },
-        "owner": {
-          "$ref": "#/definitions/Ref<User,Types.ObjectId|undefined>"
+        owner: {
+          $ref: "#/definitions/Ref<User,Types.ObjectId|undefined>",
         },
-        "deliveryAddress": {
-          "type": "string"
+        deliveryAddress: {
+          type: "string",
         },
-        "orderItem": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/CreateProductInterface"
-          }
+        orderItem: {
+          type: "array",
+          items: {
+            $ref: "#/definitions/CreateProductInterface",
+          },
         },
-        "discount": {
-          "type": "number"
+        discount: {
+          type: "number",
         },
-        "discountCode": {
-          "type": "string"
+        discountCode: {
+          type: "string",
         },
-        "totalPrice": {
-          "type": "number"
+        totalPrice: {
+          type: "number",
         },
-        "paymentMethod": {
-          "type": "string"
+        paymentMethod: {
+          type: "string",
         },
-        "paymentStatus": {
-          "type": "number"
+        paymentStatus: {
+          type: "number",
         },
-        "paymentDate": {
-          "type": "string",
-          "format": "date-time"
-        }
+        paymentDate: {
+          type: "string",
+          format: "date-time",
+        },
       },
-      "required": [
+      required: [
         "deliveryAddress",
         "orderId",
         "orderItem",
@@ -360,58 +336,58 @@ export default{
         "paymentDate",
         "paymentMethod",
         "paymentStatus",
-        "totalPrice"
-      ]
+        "totalPrice",
+      ],
     },
     "Ref<User,Types.ObjectId|undefined>": {
-      "description": "Reference another Model",
-      "anyOf": [
+      description: "Reference another Model",
+      anyOf: [
         {
-          "$ref": "#/definitions/Types.ObjectId"
+          $ref: "#/definitions/Types.ObjectId",
         },
         {
-          "$ref": "#/definitions/User"
-        }
-      ]
+          $ref: "#/definitions/User",
+        },
+      ],
     },
-    "CreateProductInterface": {
-      "type": "object",
-      "properties": {
-        "productName": {
-          "type": "string"
+    CreateProductInterface: {
+      type: "object",
+      properties: {
+        productName: {
+          type: "string",
         },
-        "imageList": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
+        imageList: {
+          type: "array",
+          items: {
+            type: "string",
+          },
         },
-        "price": {
-          "type": "number"
+        price: {
+          type: "number",
         },
-        "salePrice": {
-          "type": "number"
+        salePrice: {
+          type: "number",
         },
-        "brand": {
-          "type": "string"
+        brand: {
+          type: "string",
         },
-        "category": {
-          "type": "string"
+        category: {
+          type: "string",
         },
-        "description": {
-          "type": "string"
+        description: {
+          type: "string",
         },
-        "stock": {
-          "type": "number"
+        stock: {
+          type: "number",
         },
-        "availability": {
-          "type": "string"
+        availability: {
+          type: "string",
         },
-        "sales": {
-          "type": "number"
-        }
+        sales: {
+          type: "number",
+        },
       },
-      "required": [
+      required: [
         "availability",
         "brand",
         "category",
@@ -421,20 +397,20 @@ export default{
         "productName",
         "salePrice",
         "sales",
-        "stock"
-      ]
+        "stock",
+      ],
     },
     "Ref<Review,Types.ObjectId|undefined>": {
-      "description": "Reference another Model",
-      "anyOf": [
+      description: "Reference another Model",
+      anyOf: [
         {
-          "$ref": "#/definitions/Types.ObjectId"
+          $ref: "#/definitions/Types.ObjectId",
         },
         {
-          "$ref": "#/definitions/Review"
-        }
-      ]
-    }
+          $ref: "#/definitions/Review",
+        },
+      ],
+    },
   },
-  "$schema": "http://json-schema.org/draft-07/schema#"
-}
+  $schema: "http://json-schema.org/draft-07/schema#",
+};
