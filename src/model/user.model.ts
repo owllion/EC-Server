@@ -10,8 +10,8 @@ import {
   DocumentType,
 } from "@typegoose/typegoose";
 import validator from "validator";
-import * as argon2 from "argon2";
-import * as config from "config";
+import argon2 from "argon2";
+import config from "config";
 
 import OrderModel, { Order } from "../model/order.model";
 import ReviewModel, { Review } from "../model/review.model";

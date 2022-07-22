@@ -81,7 +81,6 @@ router.post(
   validateInput(Interface.UserPasswordModifyInterface),
   UserController.passwordModify
 ); //ok
-router.get("/user/order_list", UserController.getUserOrderList); //ok
-router.get("/user/review_list", UserController.getUserReviewList); //ok
+router.get("/user/:type/list", UserController.getUserList); //ok
 
 export default router;

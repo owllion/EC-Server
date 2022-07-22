@@ -1,8 +1,6 @@
 import { IList } from "./../interface/controller/coupon.controller.interface";
-import CouponModel, { Coupon } from "./../model/coupon.model";
 import { RequestHandler } from "express";
-import { omit } from "ramda";
-
+import CouponModel, { Coupon } from "./../model/coupon.model";
 import * as CouponServices from "../services/coupon.service";
 import * as CouponInterface from "../interface/controller/coupon.controller.interface";
 

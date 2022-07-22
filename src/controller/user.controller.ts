@@ -2,6 +2,7 @@ import { findUser } from "./../services/user.service";
 import { RequestHandler, Request, Response } from "express";
 import validator from "validator";
 import config from "config";
+import { includes } from "ramda";
 
 import UserModel from "../model/user.model";
 import ProductModel, { Product } from "../model/product.model";
@@ -97,15 +98,13 @@ export const getRefreshToken: RequestHandler = async (req, res) => {
       refreshToken,
     });
   } catch (e) {
-    if (e.message) {
-      if (e.message.includes("expired")) {
-        //accessToken & refreshToken both are expired.
-        res.status(401).send({ msg: "token has expired" });
-        return;
-      }
-      //something happened when verify the refresh token (malformed .etc)
-      res.status(400).send({ msg: e.message });
+    if (e.message.includes("expired")) {
+      //accessToken & refreshToken both are expired.
+      res.status(401).send({ msg: "token has expired" });
+      return;
     }
+    //something happened when verify the refresh token (malformed .etc)
+    res.status(400).send({ msg: e.message });
   }
 };
 
@@ -371,20 +370,19 @@ export const userInfoModify = async (req: Body, res: Response) => {
   }
 };
 
-export const getUserOrderList: RequestHandler = async (req, res) => {
-  try {
-    const list = await UserModel.findById(req.user.id).populate("orderList");
-    //If user has not placed any order, orderList will be an empty array added in req.user's document.
+export const getUserList: RequestHandler<{ type: "order" | "review" }> = async (
+  req,
+  res
+) => {
+  const { type } = req.params;
+  if (!type || !includes(type, ["order", "review"]))
+    return res
+      .status(400)
+      .send({ msg: "List type must be either order or review" });
 
-    res.status(200).send({ message: "success", list });
-  } catch (e) {
-    res.status(500).send({ msg: e.message });
-  }
-};
-
-export const getUserReviewList: RequestHandler = async (req, res) => {
   try {
-    const list = await UserModel.findById(req.user.id).populate("reviewList");
+    const list = await UserModel.findById(req.user.id).populate(`${type}List`);
+    //If user has not placed any order/review, list will be an empty array added in req.user's document.
 
     res.status(200).send({ message: "success", list });
   } catch (e) {

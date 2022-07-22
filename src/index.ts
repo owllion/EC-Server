@@ -20,20 +20,9 @@ app.use("/api", router);
 app.use(errorHandler);
 app.use(notFoundHandler);
 
-const port = config.get("port");
+const port = config.get<number>("port");
 
 app.listen(port, () => {
   console.log(`Server is up on the ${port} `);
   dbConnect();
 });
-import * as CouponInterface from "./interface/controller/coupon.controller.interface";
-import CouponModel from "./model/coupon.model";
-const main = async () => {
-  const t = CouponModel;
-  const a = "One";
-
-  // const b = CouponInterface.;
-  const res = await t[`find${a}`]({ code: "0721Test22" });
-  console.log(res);
-};
-main();

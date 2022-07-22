@@ -1,4 +1,4 @@
-import CouponModel, { Coupon } from "../model/Coupon.model";
+import CouponModel from "../model/Coupon.model";
 import { omit } from "ramda";
 import * as CouponInterface from "../interface/controller/coupon.controller.interface";
 
