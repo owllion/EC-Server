@@ -10,7 +10,7 @@ const router = express.Router();
 router.get("/product_list", ProductController.getProductList); //ok
 
 //Protected endpoint
-router.use(auth); //ok
+// router.use(auth); //ok
 router.post(
   "/product/create",
   validateInput(Interface.CreateProductInterface),

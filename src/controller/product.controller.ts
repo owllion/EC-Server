@@ -44,7 +44,7 @@ export const deleteMultipleProducts: RequestHandler<
   try {
     await ProductModel.deleteMany({
       productId: {
-        $in: [...batch],
+        $in: batch,
       },
     });
 
