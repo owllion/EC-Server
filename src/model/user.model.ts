@@ -141,7 +141,6 @@ export class User {
     password: string
   ) {
     const user = await this.findOne({ email });
-
     if (!user) {
       throw new Error("No user with that email!");
     }
@@ -152,7 +151,7 @@ export class User {
     if (!isMatch) {
       throw new Error("Incorrect Password ");
     }
-    return user; //this is instance of UserModel and mongoose.Document
+    return user; //instance of UserModel and mongoose.Document
   }
 
   public async generateAuthToken(this: DocumentType<User>) {

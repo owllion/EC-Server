@@ -6,29 +6,33 @@ import * as Interface from "../schema";
 
 const router = express.Router();
 
-router.use(auth);
 router.post(
-  "/coupon/create",
+  "/coupon",
+  auth,
   validateInput(Interface.CreateCouponInterface),
   CouponController.createCoupon
 ); //ok
 router.patch(
-  "/coupon/update",
+  "/coupon",
+  auth,
   validateInput(Interface.ModifyCouponInterface),
   CouponController.modifyCoupon
 ); //ok
 router.delete(
-  "/coupon/delete",
+  "/coupon",
+  auth,
   validateInput(Interface.DeleteCouponInterface),
   CouponController.deleteCoupon
 ); //ok
 router.post(
   "/coupon/redeem",
+  auth,
   validateInput(Interface.RedeemCouponInterface),
   CouponController.redeemCoupon
 );
 router.post(
   "/coupon/apply",
+  auth,
   validateInput(Interface.ApplyCouponInterface),
   CouponController.applyCoupon
 ); //ok

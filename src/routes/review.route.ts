@@ -6,19 +6,21 @@ import * as Interface from "../schema";
 
 const router = express.Router();
 
-router.use(auth);
 router.post(
-  "/review/create",
+  "/review",
+  auth,
   validateInput(Interface.CreateReviewInterface),
   ReviewController.createReview
 ); //ok
 router.patch(
-  "/review/update",
+  "/review",
+  auth,
   validateInput(Interface.UpdateReviewInterface),
   ReviewController.modifyReview
 ); //ok
 router.delete(
-  "/review/delete",
+  "/review",
+  auth,
   validateInput(Interface.DeleteReviewInterface),
   ReviewController.deleteReview
 ); //ok

@@ -7,33 +7,38 @@ import * as Interface from "../schema";
 const router = express.Router();
 
 //Public endpoint
-router.get("/product_list", ProductController.getProductList); //ok
+router.get("/product-list", ProductController.getProductList); //ok
 
 //Protected endpoint
-// router.use(auth); //ok
+
 router.post(
-  "/product/create",
+  "/product",
+  auth,
   validateInput(Interface.CreateProductInterface),
   ProductController.createProduct
 ); //ok
 router.patch(
-  "/product/update",
+  "/product",
+  auth,
   validateInput(Interface.ModifyProductInterface),
   ProductController.modifyProduct
 ); //ok
 router.delete(
-  "/product/delete",
+  "/product",
+  auth,
   validateInput(Interface.DeleteProductInterface),
   ProductController.deleteProduct
 ); //ok
 router.delete(
   "/product/multi_delete",
+  auth,
   validateInput(Interface.DeleteMultipleProductsInterface),
   ProductController.deleteMultipleProducts
 );
 
 router.post(
   "/product/detail",
+  auth,
   validateInput(Interface.GetProductDetailInterface),
   ProductController.getProductDetail
 ); //ok

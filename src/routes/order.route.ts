@@ -6,19 +6,22 @@ import * as Interface from "../schema";
 
 const router = express.Router();
 
-router.use(auth);
+// router.use(auth);
 router.post(
-  "/order/create",
+  "/order",
+  auth,
   validateInput(Interface.CreateOrderInterface),
   OrderController.createOrder
 ); //ok
 router.patch(
-  "/order/update",
+  "/order",
+  auth,
   validateInput(Interface.UpdateOrderInterface),
   OrderController.modifyOrder
 ); //ok
 router.post(
   "/order/detail",
+  auth,
   validateInput(Interface.GetOrderDetailInterface),
   OrderController.getOrderDetail
 ); //ok

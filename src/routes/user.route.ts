@@ -18,69 +18,76 @@ router.post(
   UserController.register
 ); //ok
 router.post(
-  "/forgot_password",
+  "/forgot-password",
   validateInput(Interface.ForgotPasswordInterface),
   UserController.forgotPassword
 ); //ok
 router.post(
-  "/reset_password",
+  "/reset-password",
   validateInput(Interface.ResetPasswordInterface),
   UserController.resetPassword
 ); //ok
 router.post(
-  "/refresh_token",
+  "/refresh-token",
   validateInput(Interface.GetRefreshTokenInterface),
   UserController.getRefreshToken
 ); //ok
 
 //Protected API endpoint
-router.use(auth); //ok
-router.get("/logout", UserController.logout); //ok
+router.get("/logout", auth, UserController.logout); //ok
 
 router.post(
   "/user/upload",
+  auth,
   validateInput(Interface.UploadAvatarInterface),
   UserController.uploadImg
 );
 
 router.post(
   "/user/cart/remove",
+  auth,
   validateInput(Interface.RemoveItemFromCartInterface),
   UserController.removeCartItem
 ); //ok
-router.get("/user/cart/clear", UserController.clearCart); //ok
+router.get("/user/cart/clear", auth, UserController.clearCart); //ok
 router.post(
   "/user/cart/update_qty",
+  auth,
   validateInput(Interface.UpdateQtyInterface),
   UserController.updateItemQty
 ); //ok
 router.post(
   "/user/cart/add",
+  auth,
   validateInput(Interface.AddToCartInterface),
   UserController.addToCart
 ); //ok
 
 router.post(
   "/user/fav/remove",
+  auth,
   validateInput(Interface.RemoveFromFavInterface),
   UserController.removeFromFav
 );
 router.post(
   "/user/fav/add",
+  auth,
   validateInput(Interface.AddToFavInterface),
   UserController.addToFav
 );
 
 router.patch(
-  "/user/update/info",
+  "/user/info",
+  auth,
   validateInput(Interface.UserInfoModifyInterface),
   UserController.userInfoModify
 ); //ok
-router.post(
-  "/user/update/password",
+router.put(
+  "/user/password",
+  auth,
   validateInput(Interface.UserPasswordModifyInterface),
   UserController.passwordModify
 ); //ok
-router.get("/user/:type/list", UserController.getUserList); //ok
+router.get("/user/:type/list", auth, UserController.getUserList); //ok
 
 export default router;
