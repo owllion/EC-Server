@@ -8,12 +8,17 @@ const router = express.Router();
 
 //public API endpoint
 router.post(
-  "/login",
+  "/auth/login",
   validateInput(Interface.LoginInterface),
   UserController.login
 ); //ok
 router.post(
-  "/register",
+  "/auth/check-account",
+  validateInput(Interface.CheckIfAccountExistsInterface),
+  UserController.checkAccount
+);
+router.post(
+  "/auth/register",
   validateInput(Interface.RegisterInterface),
   UserController.register
 ); //ok

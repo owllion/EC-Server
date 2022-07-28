@@ -9,16 +9,19 @@ const validateInput = (schema: object) => {
   const validate = ajv.compile(schema);
 
   return (req: Request, res: Response, next: NextFunction) => {
-    const data: {} = req.body;
+    const data = req.body;
     // console.log(data);
 
-    if (isEmpty(data)) return res.status(400).send({ msg: "Can not be empty" });
+    if (isEmpty(data))
+      return res.status(400).send({ msg: "Payload can not be empty" });
 
     const isValid = validate(data);
     // console.log(isValid);
 
-    if (!isValid)
+    if (!isValid) {
+      console.log(validate.errors);
       return res.status(400).send({ msg: validate?.errors?.[0].message });
+    }
     next();
   };
 };

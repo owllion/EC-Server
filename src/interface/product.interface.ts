@@ -2,12 +2,12 @@ export interface CreateProductInterface {
   productName: string;
   imageList: Array<string>;
   price: number;
-  salePrice: number;
+  salePrice?: number;
   brand: string;
   category: string;
   description: string;
   stock: number;
-  availability: string;
+  availability: boolean;
   sales: number;
 }
 interface baseIdInterface {

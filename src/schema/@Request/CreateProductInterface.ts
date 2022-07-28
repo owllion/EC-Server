@@ -1,41 +1,41 @@
-export default{
-  "type": "object",
-  "properties": {
-    "productName": {
-      "type": "string"
+export default {
+  type: "object",
+  properties: {
+    productName: {
+      type: "string",
     },
-    "imageList": {
-      "type": "array",
-      "items": {
-        "type": "string"
-      }
+    imageList: {
+      type: "array",
+      items: {
+        type: "string",
+      },
     },
-    "price": {
-      "type": "number"
+    price: {
+      type: "number",
     },
-    "salePrice": {
-      "type": "number"
+    salePrice: {
+      type: "number",
     },
-    "brand": {
-      "type": "string"
+    brand: {
+      type: "string",
     },
-    "category": {
-      "type": "string"
+    category: {
+      type: "string",
     },
-    "description": {
-      "type": "string"
+    description: {
+      type: "string",
     },
-    "stock": {
-      "type": "number"
+    stock: {
+      type: "number",
     },
-    "availability": {
-      "type": "string"
+    availability: {
+      type: "boolean",
     },
-    "sales": {
-      "type": "number"
-    }
+    sales: {
+      type: "number",
+    },
   },
-  "required": [
+  required: [
     "availability",
     "brand",
     "category",
@@ -43,9 +43,8 @@ export default{
     "imageList",
     "price",
     "productName",
-    "salePrice",
     "sales",
-    "stock"
+    "stock",
   ],
-  "$schema": "http://json-schema.org/draft-07/schema#"
-}
+  $schema: "http://json-schema.org/draft-07/schema#",
+};

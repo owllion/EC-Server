@@ -1,4 +1,5 @@
 export { default as LoginInterface } from "./@Request/LoginInterface";
+export { default as CheckIfAccountExistsInterface } from "./@Request/CheckIfAccountExistsInterface";
 export { default as AddToCartInterface } from "./@Request/AddToCartInterface";
 export { default as AddToFavInterface } from "./@Request/AddToFavInterface";
 export { default as ApplyCouponInterface } from "./@Request/ApplyCouponInterface";

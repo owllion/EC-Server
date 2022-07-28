@@ -64,6 +64,22 @@ export const login: RequestHandler<
     res.status(500).send({ msg: e.message });
   }
 };
+export const checkAccount: RequestHandler<{}, {}, { email: string }> = async (
+  req,
+  res
+) => {
+  const { email } = req.body;
+
+  try {
+    const user = await UserServices.findUser({ field: "email", value: email });
+    console.log("this is user", user);
+    res.status(200).send({
+      hasAccount: user ? true : false,
+    });
+  } catch (e) {
+    res.status(500).send({ msg: e.message });
+  }
+};
 export const logout: RequestHandler = async (req, res) => {
   try {
     req.user.tokens = req.user.tokens.filter(

@@ -1,10 +1,8 @@
 import express from "express";
-import cluster from "cluster";
 import morgan from "morgan";
 import cors from "cors";
 import "dotenv/config";
 import helmet from "helmet";
-import os from "os";
 import dbConnect from "./db/mongoose";
 import config from "config";
 import router from "./routes";

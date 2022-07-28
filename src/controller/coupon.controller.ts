@@ -97,8 +97,11 @@ export const applyCoupon: RequestHandler = async (req, res) => {
   }
 };
 
-export const redeemCoupon: RequestHandler = async (req, res) => {
-  const { code } = req.body as { code: string };
+export const redeemCoupon: RequestHandler<{}, {}, { code: string }> = async (
+  req,
+  res
+) => {
+  const { code } = req.body;
   try {
     const coupon = await CouponServices.findCoupon({
       field: "code",
