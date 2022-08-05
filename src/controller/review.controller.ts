@@ -3,15 +3,25 @@ import { RequestHandler } from "express";
 import * as ReviewInterface from "../interface/controller/review.controller.interface";
 import * as ReviewServices from "../services/review.service";
 
-export const createReview: RequestHandler = async (req, res) => {
-  const review = new ReviewModel({
-    ...(req.body as Review),
-    user: req.user.id,
-  });
+export const createReview: RequestHandler<
+  {},
+  {},
+  ReviewInterface.IReview
+> = async (req, res) => {
   try {
+    await ReviewServices.checkIfUserHasCommented(
+      req.body.product as unknown as string,
+      req.user.id
+    );
+
+    const review = new ReviewModel({
+      ...req.body,
+      user: req.user.id,
+    });
+
     await review.save();
     res.status(201).send({
-      msg: "Review has been created",
+      msg: "successfully created",
       review,
     });
   } catch (e) {
@@ -19,8 +29,12 @@ export const createReview: RequestHandler = async (req, res) => {
   }
 };
 
-export const deleteReview: RequestHandler = async (req, res) => {
-  const { reviewId } = req.body as { reviewId: string };
+export const deleteReview: RequestHandler<
+  {},
+  {},
+  { reviewId: string }
+> = async (req, res) => {
+  const { reviewId } = req.body;
   try {
     const review = await ReviewModel.findOneAndDelete({ reviewId });
     if (!review) throw new Error("Review not found");

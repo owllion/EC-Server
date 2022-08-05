@@ -40,6 +40,9 @@ export class Product {
   @prop({ required: true })
   category: string;
 
+  @prop({ default: "F" })
+  size: string;
+
   @prop({ default: "", trim: true })
   description?: string;
 

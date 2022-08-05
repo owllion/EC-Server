@@ -12,8 +12,8 @@ export const getDetailWithReview = async (productId: string) => {
 
 export const getPriceRange = (price: string) => {
   return {
-    max_: Number(price.substring(0, price.indexOf("-"))) || 0,
-    min_: Number(price.substring(price.indexOf("-"))) || 0,
+    min_: Number(price.substring(0, price.indexOf("-"))) || 0,
+    max_: Number(price.substring(price.indexOf("-") + 1)) || 0,
   };
 };
 
@@ -41,8 +41,8 @@ export const generatePipeline = async (query: ProductInterface.IQuery) => {
   };
   if (price) {
     AMatch.$match["price"] = {
-      $gte: getPriceRange(price).max_,
-      $lte: getPriceRange(price).min_,
+      $gte: getPriceRange(price).min_,
+      $lte: getPriceRange(price).max_,
     };
   }
   if (brands) {
@@ -80,7 +80,7 @@ export const generatePipeline = async (query: ProductInterface.IQuery) => {
     };
     AFacet.$facet.list.push(ASort);
   }
-  AFacet.$facet.list.push({ $skip: (page - 1) * 10 }, { $limit: 10 });
+  AFacet.$facet.list.push({ $skip: (page - 1) * 12 }, { $limit: 12 });
 
   pipeline.push(AFacet);
 

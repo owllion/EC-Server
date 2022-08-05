@@ -16,6 +16,11 @@ router.post(
   "/auth/check-account",
   validateInput(Interface.CheckIfAccountExistsInterface),
   UserController.checkAccount
+); //ok
+router.post(
+  "/auth/verify-user",
+  validateInput(Interface.VerifyUserInterface),
+  UserController.verifyUser
 );
 router.post(
   "/auth/register",

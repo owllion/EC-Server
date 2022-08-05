@@ -9,6 +9,11 @@ const router = express.Router();
 //Public endpoint
 router.get("/product-list", ProductController.getProductList); //ok
 
+router.post(
+  "/product/detail",
+  validateInput(Interface.GetProductDetailInterface),
+  ProductController.getProductDetail
+); //ok
 //Protected endpoint
 
 router.post(
@@ -35,12 +40,5 @@ router.delete(
   validateInput(Interface.DeleteMultipleProductsInterface),
   ProductController.deleteMultipleProducts
 );
-
-router.post(
-  "/product/detail",
-  auth,
-  validateInput(Interface.GetProductDetailInterface),
-  ProductController.getProductDetail
-); //ok
 
 export default router;

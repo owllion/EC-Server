@@ -7,10 +7,10 @@ import review from "./review.route";
 
 const router = express.Router();
 
+router.use(product);
 router.use(user);
 router.use(coupon);
 router.use(order);
-router.use(product);
 router.use(review);
 
 export default router;

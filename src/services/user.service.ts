@@ -20,11 +20,12 @@ export const findUser = async ({
   return user;
 };
 
-export const addQty = (
+export const addItem = (
   user: User,
   product: any,
   productId: string,
-  qty: number
+  qtyProps: number,
+  sizeProps: string
 ) => {
   const index: number = user.cartList.findIndex(
     (item: { productId: string }) => item.productId === productId
@@ -32,7 +33,9 @@ export const addQty = (
 
   if (!user.cartList.length || index === -1) {
     const item = new ProductModel(product);
-    item.qty = qty;
+    item.qty = qtyProps;
+    item.size = sizeProps;
+
     (user.cartList as Product[]).push(item);
 
     return user;

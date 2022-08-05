@@ -1,10 +1,8 @@
-import { Product } from "../model/product.model";
-
 export interface CreateReviewInterface {
   comment: string;
   rating: number;
-  user: string;
-  product: Product;
+  user?: string;
+  product: string;
 }
 
 export interface UpdateReviewInterface {

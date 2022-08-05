@@ -22,7 +22,7 @@ export const register: RequestHandler<{}, {}, User> = async (req, res) => {
 
     const refreshToken = await user.generateRefreshToken();
 
-    const link = `http://localhost:5001/verify-email/${token}`;
+    const link = `http://localhost:3000/auth/verify-email/${token}`;
     sendLink({ type: "verify", link, email: req.body.email });
 
     res.status(201).json({
@@ -30,7 +30,14 @@ export const register: RequestHandler<{}, {}, User> = async (req, res) => {
       result: {
         token,
         refreshToken,
-        user,
+        user: {
+          firstName: user.firstName,
+          lastName: user.lastName,
+          email: user.email,
+          cartLength: user.cartList.length,
+          avatarDefault: user.avatarDefault,
+          avatarUpload: user.avatarUpload,
+        },
       },
     });
   } catch (e) {
@@ -55,9 +62,16 @@ export const login: RequestHandler<
     res.status(200).send({
       msg: "success",
       result: {
-        user,
         token,
         refreshToken,
+        user: {
+          firstName: user.firstName,
+          lastName: user.lastName,
+          email: user.email,
+          cartLength: user.cartList.length,
+          avatarDefault: user.avatarDefault,
+          avatarUpload: user.avatarUpload,
+        },
       },
     });
   } catch (e) {
@@ -80,6 +94,36 @@ export const checkAccount: RequestHandler<{}, {}, { email: string }> = async (
     res.status(500).send({ msg: e.message });
   }
 };
+
+export const verifyUser: RequestHandler<{}, {}, { token: string }> = async (
+  req,
+  res
+) => {
+  try {
+    const decoded = verifyJwt<{ _id: string }>(
+      req.body.token,
+      config.get<string>("jwtSecret")
+    );
+    console.log({ decoded });
+
+    const user = await UserServices.findUser({
+      field: "_id",
+      value: decoded._id,
+    });
+    if (!user) throw new Error("User not found");
+
+    user.verified = true;
+    await user.save();
+    res.status(200).send({ msg: "Verified!" });
+  } catch (e) {
+    if (e.message.includes("expired")) {
+      res.status(401).send({ msg: "token has expired" });
+      return;
+    }
+    res.status(500).send({ msg: e.message });
+  }
+};
+
 export const logout: RequestHandler = async (req, res) => {
   try {
     req.user.tokens = req.user.tokens.filter(
@@ -166,12 +210,11 @@ export const forgotPassword: RequestHandler<{}, {}, { email: string }> = async (
     sendLink({
       type: "reset",
       email,
-      link: `http://localhost:8080/reset-password/${token}`,
+      link: `http://localhost:5000/auth/reset-password/${token}`,
     });
 
     res.status(200).json({
       message: "Successfully sent email",
-      token,
     });
   } catch (e) {
     res.status(500).send({ msg: e.message });
@@ -285,13 +328,14 @@ export const addToCart: RequestHandler<
   {
     productId: string;
     qty: number;
+    size: string;
   }
 > = async (req, res) => {
-  const { productId, qty } = req.body;
+  const { productId, qty, size } = req.body;
   try {
     const product = await ProductModel.findOne({ productId });
 
-    const user = UserServices.addQty(req.user, product, productId, qty);
+    const user = UserServices.addItem(req.user, product, productId, qty, size);
 
     req.user = user;
     await req.user.save();

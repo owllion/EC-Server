@@ -86,8 +86,8 @@ export class User {
   @prop({ default: "", trim: true })
   phone: string;
 
-  @prop()
-  avatarUpload: Buffer;
+  @prop({ default: "" })
+  avatarUpload: string;
 
   @prop({ default: "https://upload.cc/i1/2021/04/08/yGs8hR.png" })
   avatarDefault: string;
