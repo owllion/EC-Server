@@ -160,7 +160,7 @@ export class User {
       { _id: this._id.toString() },
       config.get<string>("jwtSecret"),
       {
-        expiresIn: "1d",
+        expiresIn: "1m",
       }
     );
     this.tokens = this.tokens?.concat({ token });
@@ -174,11 +174,23 @@ export class User {
       { _id: this._id.toString() },
       config.get<string>("refreshSecret"),
       {
-        expiresIn: "15m",
+        expiresIn: "1d",
       }
     );
 
     return refreshToken;
+  }
+  //for reset password & verify email link's token
+  public async generateLinkToken(this: DocumentType<User>) {
+    const linkToken = signJwt(
+      { _id: this._id.toString() },
+      config.get<string>("linkSecret"),
+      {
+        expiresIn: "5m",
+      }
+    );
+
+    return linkToken;
   }
 }
 

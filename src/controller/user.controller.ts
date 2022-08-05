@@ -34,6 +34,7 @@ export const register: RequestHandler<{}, {}, User> = async (req, res) => {
           firstName: user.firstName,
           lastName: user.lastName,
           email: user.email,
+          phone: user.phone,
           cartLength: user.cartList.length,
           avatarDefault: user.avatarDefault,
           avatarUpload: user.avatarUpload,
@@ -68,6 +69,7 @@ export const login: RequestHandler<
           firstName: user.firstName,
           lastName: user.lastName,
           email: user.email,
+          phone: user.phone,
           cartLength: user.cartList.length,
           avatarDefault: user.avatarDefault,
           avatarUpload: user.avatarUpload,
@@ -104,7 +106,6 @@ export const verifyUser: RequestHandler<{}, {}, { token: string }> = async (
       req.body.token,
       config.get<string>("jwtSecret")
     );
-    console.log({ decoded });
 
     const user = await UserServices.findUser({
       field: "_id",
@@ -114,7 +115,7 @@ export const verifyUser: RequestHandler<{}, {}, { token: string }> = async (
 
     user.verified = true;
     await user.save();
-    res.status(200).send({ msg: "Verified!" });
+    res.status(200).send({ msg: "Verified!", verified: true });
   } catch (e) {
     if (e.message.includes("expired")) {
       res.status(401).send({ msg: "token has expired" });

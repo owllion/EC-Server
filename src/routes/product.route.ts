@@ -8,14 +8,15 @@ const router = express.Router();
 
 //Public endpoint
 router.get("/product-list", ProductController.getProductList); //ok
+router.get("/best-seller-list", ProductController.getBestSellerList); //ok
 
 router.post(
   "/product/detail",
   validateInput(Interface.GetProductDetailInterface),
   ProductController.getProductDetail
 ); //ok
-//Protected endpoint
 
+//Protected endpoint
 router.post(
   "/product",
   auth,

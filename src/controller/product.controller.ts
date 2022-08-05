@@ -107,3 +107,16 @@ export const getProductDetail: RequestHandler<
     res.status(500).send({ msg: e.message });
   }
 };
+
+export const getBestSellerList: RequestHandler = async (req, res) => {
+  try {
+    const list = await ProductModel.find({}).sort({ sales: -1 }).limit(20);
+
+    res.status(200).send({
+      msg: "success",
+      list,
+    });
+  } catch (e) {
+    res.status(500).send({ msg: e.message });
+  }
+};
