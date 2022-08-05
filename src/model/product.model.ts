@@ -4,6 +4,7 @@ import {
   Ref,
   prop,
   Severity,
+  index,
 } from "@typegoose/typegoose";
 import { nanoid } from "nanoid";
 import { Review } from "./review.model";
@@ -18,6 +19,7 @@ import { Review } from "./review.model";
     allowMixed: Severity.ALLOW,
   },
 })
+@index({ sales: -1 })
 export class Product {
   @prop({ required: true, default: () => nanoid() })
   productId: string;
