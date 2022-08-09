@@ -26,14 +26,10 @@ const getInterfaceFiles = (): string[] => {
   // Search interface files
   const files = (() => {
     const files = fs.readdirSync(resolve("interface"));
-    console.log("這是files", { files });
     return files.map((file) => resolve("interface", file));
   })();
-  console.log("呼叫files", { files });
   return files;
 };
-
-// getInterfaceFiles();
 
 //get all interfaces,then generate schema
 const schemaGenerator = (files: string[]): TJS.JsonSchemaGenerator => {

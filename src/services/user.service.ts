@@ -39,7 +39,10 @@ export const addItem = (
     (user.cartList as Product[]).push(item);
 
     return user;
-  } else if (user.cartList.length > 0) {
-    if (index !== -1) throw new Error("Item already exists in your cart!");
+  } else if (user.cartList.length > 0 || index !== -1) {
+    user.cartList = user.cartList.map((item, idx) =>
+      idx === index ? { ...item, qty: qtyProps } : item
+    );
+    return user;
   }
 };

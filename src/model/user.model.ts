@@ -174,7 +174,7 @@ export class User {
       { _id: this._id.toString() },
       config.get<string>("refreshSecret"),
       {
-        expiresIn: "1d",
+        expiresIn: "10m",
       }
     );
 

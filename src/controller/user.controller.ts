@@ -77,7 +77,7 @@ export const login: RequestHandler<
       },
     });
   } catch (e) {
-    res.status(500).send({ msg: e.message });
+    res.status(400).send({ msg: e.message });
   }
 };
 export const checkAccount: RequestHandler<{}, {}, { email: string }> = async (
@@ -135,7 +135,7 @@ export const logout: RequestHandler = async (req, res) => {
 
     res.status(200).send({ msg: "logout!" });
   } catch (e) {
-    res.status(500).send({ msg: e });
+    res.status(500).send({ msg: e.message });
   }
 };
 
@@ -204,14 +204,12 @@ export const forgotPassword: RequestHandler<{}, {}, { email: string }> = async (
 
     if (!user) throw new Error("No user with that email!");
 
-    const token = signJwt({ _id: user._id }, config.get<string>("jwtSecret"), {
-      expiresIn: "1d",
-    });
+    const token = await user.generateLinkToken();
 
     sendLink({
       type: "reset",
       email,
-      link: `http://localhost:5000/auth/reset-password/${token}`,
+      link: `http://localhost:3000/auth/reset-password/token/${token}`,
     });
 
     res.status(200).json({
@@ -231,7 +229,7 @@ export const resetPassword: RequestHandler<
     const { password, token } = req.body;
     const decoded = verifyJwt<{ _id: string }>(
       token,
-      config.get<string>("jwtSecret")
+      config.get<string>("linkSecret")
     );
 
     const user = await UserServices.findUser({
