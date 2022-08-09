@@ -417,7 +417,8 @@ export const userInfoModify: RequestHandler<
   {
     firstName: string;
     lastName: string;
-    email: string;
+    email?: string;
+    phone: string;
   }
 > = async (req, res) => {
   try {
@@ -430,18 +431,16 @@ export const userInfoModify: RequestHandler<
       if (user) throw new Error("Duplicate email");
 
       // const fields: (keyof typeof req.body)[] = ["name", "email"];
-
       // fields.forEach((field) => (req.user[field] = req.body[field]));
-      (["firstName", "lastName", "email"] as const).forEach(
-        (field) => (req.user[field] = req.body[field])
-      );
     }
+    (["firstName", "lastName", "phone"] as const).forEach(
+      (field) => (req.user[field] = req.body[field])
+    );
 
     await req.user.save();
 
     res.status(200).send({
       msg: "success",
-      user: req.user,
     });
   } catch (e) {
     res.status(500).send({ msg: e.message });

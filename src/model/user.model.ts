@@ -160,7 +160,7 @@ export class User {
       { _id: this._id.toString() },
       config.get<string>("jwtSecret"),
       {
-        expiresIn: "1m",
+        expiresIn: "1y",
       }
     );
     this.tokens = this.tokens?.concat({ token });
