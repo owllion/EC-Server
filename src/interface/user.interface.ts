@@ -48,7 +48,7 @@ export interface UserInfoModifyInterface {
   /**
    * @TJS-pattern ^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$
    */
-  phone?: string | undefined;
+  phone?: string | null;
 }
 export interface UserPasswordModifyInterface {
   password: string;

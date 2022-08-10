@@ -20,7 +20,9 @@ import { Coupon } from "../model/coupon.model";
 import { signJwt } from "./../utils/jwt";
 
 @pre<User>("save", async function (next) {
-  //Arrow Functions cannot be used here, because the binding of this is required to get & modify the document.
+  /**
+   * Arrow Functions cannot be used here, because the binding of this is required to get & modify the document.
+   */
   const user = this;
 
   if (user.isModified("password")) {
@@ -60,7 +62,10 @@ import { signJwt } from "./../utils/jwt";
     },
   },
   options: {
-    allowMixed: Severity.ALLOW, //allow the use and execution of mongoose.Schema.Types.Mixed, if the inferred type cannot be set otherwise)
+    /**
+     * allow the use and execution of mongoose.Schema.Types.Mixed, if the inferred type cannot be set otherwise
+     */
+    allowMixed: Severity.ALLOW,
   },
 })
 export class User {
@@ -84,7 +89,7 @@ export class User {
   lastName: string;
 
   @prop({ default: "", trim: true })
-  phone: string;
+  phone: string | null;
 
   @prop({ default: "" })
   avatarUpload: string;
@@ -111,13 +116,13 @@ export class User {
   verified: boolean;
 
   @prop()
-  cartList: Product[] | [];
+  cartList: DocumentType<Product>[] | [];
 
   @prop()
-  favList: Product[] | [];
+  favList: DocumentType<Product>[] | [];
 
   @prop()
-  couponList: Coupon[] | [];
+  couponList: DocumentType<Coupon>[] | [];
 
   @prop({
     ref: "Order",
@@ -134,9 +139,13 @@ export class User {
   reviewList: Ref<Review>[];
 
   public static async findByCredentials(
-    //static -> model method
+    /**
+     * static -> model method
+     */
     this: ReturnModelType<typeof User>,
-    //this -> refer to whole model
+    /**
+     * this -> refer to whole model
+     */
     email: string,
     password: string
   ) {
@@ -155,7 +164,9 @@ export class User {
   }
 
   public async generateAuthToken(this: DocumentType<User>) {
-    // this -> refer to one document
+    /**
+     *  this -> refer to one document
+     */
     const token = signJwt(
       { _id: this._id.toString() },
       config.get<string>("jwtSecret"),
@@ -174,13 +185,15 @@ export class User {
       { _id: this._id.toString() },
       config.get<string>("refreshSecret"),
       {
-        expiresIn: "10m",
+        expiresIn: "10y",
       }
     );
 
     return refreshToken;
   }
-  //for reset password & verify email link's token
+  /**
+   * reset password & verify email link's token
+   */
   public async generateLinkToken(this: DocumentType<User>) {
     const linkToken = signJwt(
       { _id: this._id.toString() },

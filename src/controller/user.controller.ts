@@ -332,7 +332,8 @@ export const addToCart: RequestHandler<
 > = async (req, res) => {
   const { productId, qty, size } = req.body;
   try {
-    const product = await ProductModel.findOne({ productId });
+    const product = await ProductModel.findOne({ _id: productId });
+    if (!product) throw new Error("Product not found");
 
     const user = UserServices.addItem(req.user, product, productId, qty, size);
 
