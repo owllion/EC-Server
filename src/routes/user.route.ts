@@ -2,7 +2,9 @@ import express from "express";
 import * as UserController from "../controller/user.controller";
 import auth from "../middleware/auth.middleware";
 import validateInput from "../middleware/validate.middleware";
+import validateParams from "../middleware/validate.params.middleware";
 import * as Interface from "../schema";
+import GetNormalListInterface from "../schema/@Request/GetNormalListInterface";
 
 const router = express.Router();
 
@@ -98,6 +100,17 @@ router.put(
   validateInput(Interface.UserPasswordModifyInterface),
   UserController.passwordModify
 ); //ok
-router.get("/user/:type/list", auth, UserController.getUserList); //ok
+router.get(
+  "/user/populate/:type/list",
+  auth,
+
+  UserController.getPopulatedList
+); //ok
+router.get(
+  "/user/:type/List",
+  auth,
+  validateParams(GetNormalListInterface),
+  UserController.getNormalList
+); //ok
 
 export default router;

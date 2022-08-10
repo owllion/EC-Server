@@ -1,6 +1,5 @@
 import UserModel, { User } from "../model/user.model";
-import ProductModel, { Product } from "../model/product.model";
-import { Document, ObjectId } from "mongoose";
+import { Product } from "../model/product.model";
 import { DocumentType } from "@typegoose/typegoose";
 
 // service 顾名思义是为了服务而生，为了业务而生，是为了一个抽象而生，可以写一个 EmailService 去处理邮件的相关逻辑，写一个 AuthorizationService 去处理登录注册，总之是为了处理一系列的业务，在这个层次你不应该去访问 http 中的参数，而是在 controller 中传递一个参数，或者构造一个对象传递到 service。
@@ -30,7 +29,7 @@ export const addItem = (
   sizeProps: string
 ) => {
   const index: number = user.cartList.findIndex((item) =>
-    item._id.equals(productId)
+    item._id?.equals(productId)
   );
   if (!user.cartList.length || index === -1) {
     product.size = sizeProps;

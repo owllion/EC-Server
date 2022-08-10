@@ -380,12 +380,13 @@ export const addToFav: RequestHandler<{}, {}, { productId: string }> = async (
 ) => {
   const { productId } = req.body;
   try {
-    const item = await ProductModel.find({ productId });
-    console.log(item[0]); // item = array of object
+    const item = await ProductModel.findOne({ productId });
+    if (!item) throw new Error("Product not found");
+    console.log(item, "這是item"); // item = array of object
 
-    req.user.favList.push(item[0]);
+    // req.user.favList.push(item);
 
-    await req.user.save();
+    // await req.user.save();
 
     res.status(200).send({
       msg: "success",
@@ -448,10 +449,9 @@ export const userInfoModify: RequestHandler<
   }
 };
 
-export const getUserList: RequestHandler<{ type: "order" | "review" }> = async (
-  req,
-  res
-) => {
+export const getPopulatedList: RequestHandler<{
+  type: "order" | "review";
+}> = async (req, res) => {
   const { type } = req.params;
   if (!type || !includes(type, ["order", "review"]))
     return res
@@ -463,6 +463,17 @@ export const getUserList: RequestHandler<{ type: "order" | "review" }> = async (
     //If user has not placed any order/review, list will be an empty array added in req.user's document.
 
     res.status(200).send({ message: "success", list });
+  } catch (e) {
+    res.status(500).send({ msg: e.message });
+  }
+};
+
+export const getNormalList: RequestHandler<{
+  type: "cartList" | "favList" | "couponList";
+}> = (req, res) => {
+  const { type } = req.params;
+  try {
+    res.status(200).send({ message: "success", list: req.user[type] });
   } catch (e) {
     res.status(500).send({ msg: e.message });
   }
