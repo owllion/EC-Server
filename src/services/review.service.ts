@@ -26,11 +26,11 @@ export const checkIfUserHasCommented = async (
   productId: string,
   userId: string
 ) => {
-  const hasCommented = await ReviewModel.find({
+  const hasCommented = await ReviewModel.findOne({
     user: userId,
     product: productId,
   });
   if (hasCommented)
-    throw new Error("user has already commented on this product");
+    throw new Error("You have already commented on this product");
   return false;
 };

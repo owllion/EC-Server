@@ -10,7 +10,7 @@ export const createReview: RequestHandler<
 > = async (req, res) => {
   try {
     await ReviewServices.checkIfUserHasCommented(
-      req.body.product as unknown as string,
+      req.body.product as string,
       req.user.id
     );
 

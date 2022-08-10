@@ -473,9 +473,11 @@ export const getPopulatedList: RequestHandler<{
 export const getNormalList: RequestHandler<{
   type: "cartList" | "favList" | "couponList";
 }> = (req, res) => {
-  const { type } = req.params;
+  const { type: typeList } = req.params;
   try {
-    res.status(200).send({ message: "success", list: req.user[type] });
+    res
+      .status(200)
+      .send({ message: "success", [typeList]: req.user[typeList] });
   } catch (e) {
     res.status(500).send({ msg: e.message });
   }
