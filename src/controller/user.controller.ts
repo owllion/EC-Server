@@ -459,10 +459,12 @@ export const getPopulatedList: RequestHandler<{
       .send({ msg: "params must be either order or review" });
 
   try {
-    const list = await UserModel.findById(req.user.id).populate(`${type}List`);
+    const user = await UserModel.findById(req.user.id).populate(`${type}List`);
     //If user has not placed any order/review, list will be an empty array added in req.user's document.
 
-    res.status(200).send({ message: "success", list });
+    res
+      .status(200)
+      .send({ message: "success", [`${type}List`]: user?.[`${type}List`] });
   } catch (e) {
     res.status(500).send({ msg: e.message });
   }

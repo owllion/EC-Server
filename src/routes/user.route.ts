@@ -100,12 +100,7 @@ router.put(
   validateInput(Interface.UserPasswordModifyInterface),
   UserController.passwordModify
 ); //ok
-router.get(
-  "/user/populate/:type/list",
-  auth,
-
-  UserController.getPopulatedList
-); //ok
+router.get("/user/populate/:type/list", auth, UserController.getPopulatedList); //ok
 router.get(
   "/user/:type/List",
   auth,
