@@ -35,7 +35,7 @@ export const register: RequestHandler<{}, {}, User> = async (req, res) => {
           lastName: user.lastName,
           email: user.email,
           phone: user.phone,
-          cartLength: user.cartList.length,
+          cartLength: 0,
           avatarDefault: user.avatarDefault,
           avatarUpload: user.avatarUpload,
         },
@@ -59,7 +59,7 @@ export const login: RequestHandler<
 
     const token = await user.generateAuthToken();
     const refreshToken = await user.generateRefreshToken();
-    const cartLength = () => {
+    const getCartLength = () => {
       return (user.cartList as DocumentType<Product>[]).reduce(
         (total, cur) => total + cur?.qty!,
         0
@@ -75,7 +75,8 @@ export const login: RequestHandler<
           lastName: user.lastName,
           email: user.email,
           phone: user.phone,
-          cartLength: cartLength(),
+          cartLength: getCartLength(),
+          favList: user.favList,
           avatarDefault: user.avatarDefault,
           avatarUpload: user.avatarUpload,
         },
@@ -93,7 +94,7 @@ export const checkAccount: RequestHandler<{}, {}, { email: string }> = async (
 
   try {
     const user = await UserServices.findUser({ field: "email", value: email });
-    console.log("this is user", user);
+
     res.status(200).send({
       hasAccount: user ? true : false,
     });
@@ -387,11 +388,10 @@ export const addToFav: RequestHandler<{}, {}, { productId: string }> = async (
   try {
     const item = await ProductModel.findOne({ productId });
     if (!item) throw new Error("Product not found");
-    console.log(item, "這是item"); // item = array of object
 
-    // req.user.favList.push(item);
+    req.user.favList.push(item);
 
-    // await req.user.save();
+    await req.user.save();
 
     res.status(200).send({
       msg: "success",

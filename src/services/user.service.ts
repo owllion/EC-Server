@@ -15,10 +15,7 @@ export const findUser = async ({
   field: string;
   value: string;
 }) => {
-  const user = await UserModel.findOne({ [field]: value });
-
-  //If user does not exist, you will get null.
-  return user;
+  return await UserModel.findOne({ [field]: value });
 };
 
 export const addItem = (
@@ -28,8 +25,8 @@ export const addItem = (
   qtyProps: number,
   sizeProps: string
 ) => {
-  const index: number = user.cartList.findIndex((item) =>
-    item._id?.equals(productId)
+  const index: number = user.cartList.findIndex(
+    (item) => item._id?.equals(productId) && item.size === sizeProps
   );
   if (!user.cartList.length || index === -1) {
     product.size = sizeProps;
