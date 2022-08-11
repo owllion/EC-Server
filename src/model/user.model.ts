@@ -171,7 +171,7 @@ export class User {
       { _id: this._id.toString() },
       config.get<string>("jwtSecret"),
       {
-        expiresIn: "1y",
+        expiresIn: "1d",
       }
     );
     this.tokens = this.tokens?.concat({ token });
@@ -185,7 +185,7 @@ export class User {
       { _id: this._id.toString() },
       config.get<string>("refreshSecret"),
       {
-        expiresIn: "10y",
+        expiresIn: "1y",
       }
     );
 
@@ -199,7 +199,7 @@ export class User {
       { _id: this._id.toString() },
       config.get<string>("linkSecret"),
       {
-        expiresIn: "5m",
+        expiresIn: "30m",
       }
     );
 
