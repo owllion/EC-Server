@@ -43,3 +43,14 @@ export const addItem = (
     return user;
   }
 };
+
+export const checkIfProductExistsInFavList = (
+  user: User,
+  productId: string
+) => {
+  const res = (user.favList as Product[]).find(
+    (item) => item.productId === productId
+  );
+  console.log(res);
+  if (res) throw new Error("Product is already in the list");
+};

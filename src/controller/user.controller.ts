@@ -358,15 +358,12 @@ export const addToCart: RequestHandler<
 export const removeFromFav: RequestHandler<
   {},
   {},
-  {
-    productId: string;
-    favList: Product[];
-  }
+  { productId: string }
 > = async (req, res) => {
-  const { productId, favList } = req.body;
   try {
-    req.user.favList = favList.filter(
-      (product: { productId: string }) => product.productId !== productId
+    req.user.favList = req.user.favList.filter(
+      (product: { productId: string }) =>
+        product.productId !== req.body.productId
     );
 
     await req.user.save();
@@ -388,6 +385,8 @@ export const addToFav: RequestHandler<{}, {}, { productId: string }> = async (
   try {
     const item = await ProductModel.findOne({ productId });
     if (!item) throw new Error("Product not found");
+
+    await UserServices.checkIfProductExistsInFavList(req.user, productId);
 
     req.user.favList.push(item);
 

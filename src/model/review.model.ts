@@ -35,7 +35,7 @@ export class Review {
   @prop({ required: true, default: () => nanoid() })
   reviewId: string;
 
-  @prop({ required: true, min: 1, max: 5 })
+  @prop({ required: true, min: 0.5, max: 5 })
   rating: number;
 
   @prop({ required: true })
