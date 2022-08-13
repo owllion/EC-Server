@@ -297,26 +297,27 @@ export const clearCart: RequestHandler = async (req, res) => {
 
 interface IUpdateQty {
   productId: string;
-  qty: number;
+  type: string;
   size: string;
+  qty?: number;
 }
 export const updateItemQty: RequestHandler<{}, {}, IUpdateQty> = async (
   req,
   res
 ) => {
-  const { productId, qty, size } = req.body;
+  const { productId, type, size } = req.body;
   try {
-    req.user.cartList = req.user.cartList.map((item: Omit<IUpdateQty, "qty">) =>
+    req.user.cartList = req.user.cartList.map((item: IUpdateQty) =>
       item.productId === productId && item.size === size
         ? {
             ...item,
-            qty,
+            qty: type === "inc" ? item.qty! + 1 : item.qty! - 1,
           }
         : item
     );
     await req.user.save();
 
-    res.status(200).send({ msg: "success", updatedQty: qty });
+    res.status(200).send({ msg: "success" });
   } catch (e) {
     res.status(500).send({ msg: e.message });
   }
