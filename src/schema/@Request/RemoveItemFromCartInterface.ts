@@ -4,14 +4,17 @@ export default {
     productId: {
       type: "string",
     },
-    cartList: {
-      type: "array",
-      items: {
-        $ref: "#/definitions/Product",
-      },
+    size: {
+      type: "string",
     },
+    // cartList: {
+    //   type: "array",
+    //   items: {
+    //     $ref: "#/definitions/Product",
+    //   },
+    // },
   },
-  required: ["cartList", "productId"],
+  required: ["productId", "size"],
   definitions: {
     Product: {
       type: "object",

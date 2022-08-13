@@ -258,28 +258,25 @@ export const resetPassword: RequestHandler<
   }
 };
 
-export const removeCartItem: RequestHandler<
-  {},
-  {},
-  {
-    productId: string;
-    cartList: Product[];
-  }
-> = async (req, res) => {
-  const { productId, cartList } = req.body;
+interface ICartRemoveAction extends Pick<ICartAction, "productId" | "size"> {}
+export const removeCartItem: RequestHandler<{}, {}, ICartRemoveAction> = async (
+  req,
+  res
+) => {
   try {
-    const filteredProduct: Product[] = cartList.filter(
-      (item: { productId: string }) => item.productId !== productId
+    const index = req.user.cartList.findIndex(
+      (item: ICartRemoveAction) =>
+        item.productId === req.body.productId && item.size === req.body.size
     );
-
-    req.user.cartList = filteredProduct;
+    if (index > -1)
+      req.user.cartList = [
+        ...req.user.cartList.slice(0, index),
+        ...req.user.cartList.slice(index + 1),
+      ];
 
     await req.user.save();
 
-    res.status(200).send({
-      msg: "success",
-      cartList: req.user.cartList,
-    });
+    res.status(200).send({ msg: "success" });
   } catch (e) {
     res.status(500).send({ msg: e.message });
   }
@@ -289,25 +286,25 @@ export const clearCart: RequestHandler = async (req, res) => {
   try {
     req.user.cartList = [];
     await req.user.save();
-    res.status(200).send({ msg: "success", cartList: req.user });
+    res.status(200).send({ msg: "success" });
   } catch (e) {
     res.status(500).send({ msg: e.message });
   }
 };
 
-interface IUpdateQty {
+interface ICartAction {
   productId: string;
   type: string;
   size: string;
   qty?: number;
 }
-export const updateItemQty: RequestHandler<{}, {}, IUpdateQty> = async (
+export const updateItemQty: RequestHandler<{}, {}, ICartAction> = async (
   req,
   res
 ) => {
   const { productId, type, size } = req.body;
   try {
-    req.user.cartList = req.user.cartList.map((item: IUpdateQty) =>
+    req.user.cartList = req.user.cartList.map((item: ICartAction) =>
       item.productId === productId && item.size === size
         ? {
             ...item,

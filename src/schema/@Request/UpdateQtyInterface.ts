@@ -11,8 +11,11 @@ export default {
     size: {
       type: "string",
     },
+    type: {
+      type: "string",
+    },
   },
-  required: ["productId", "size", "qty"],
+  required: ["productId", "size", "qty", "type"],
   definitions: {
     Product: {
       type: "object",
