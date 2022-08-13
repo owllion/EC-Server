@@ -295,33 +295,28 @@ export const clearCart: RequestHandler = async (req, res) => {
   }
 };
 
-export const updateItemQty: RequestHandler<
-  {},
-  {},
-  {
-    productId: string;
-    qty: number;
-    cartList: Product[];
-  }
-> = async (req, res) => {
-  const { productId, qty, cartList } = req.body;
+interface IUpdateQty {
+  productId: string;
+  qty: number;
+  size: string;
+}
+export const updateItemQty: RequestHandler<{}, {}, IUpdateQty> = async (
+  req,
+  res
+) => {
+  const { productId, qty, size } = req.body;
   try {
-    const itemIndex = cartList.findIndex(
-      (item: { productId: string }) => item.productId === productId
+    req.user.cartList = req.user.cartList.map((item: Omit<IUpdateQty, "qty">) =>
+      item.productId === productId && item.size === size
+        ? {
+            ...item,
+            qty,
+          }
+        : item
     );
-
-    if (itemIndex > -1) {
-      const productItem = cartList[itemIndex];
-      productItem.qty = qty;
-    }
-    req.user.cartList = cartList;
-
     await req.user.save();
 
-    res.status(200).send({
-      msg: "success",
-      cartList: req.user.cartList,
-    });
+    res.status(200).send({ msg: "success", updatedQty: qty });
   } catch (e) {
     res.status(500).send({ msg: e.message });
   }

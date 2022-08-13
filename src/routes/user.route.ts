@@ -63,7 +63,7 @@ router.post(
 ); //ok
 router.get("/user/cart/clear", auth, UserController.clearCart); //ok
 router.post(
-  "/user/cart/update_qty",
+  "/user/cart/update-qty",
   auth,
   validateInput(Interface.UpdateQtyInterface),
   UserController.updateItemQty
@@ -102,7 +102,7 @@ router.put(
 ); //ok
 router.get("/user/populate/:type/list", auth, UserController.getPopulatedList); //ok
 router.get(
-  "/user/:type/List",
+  "/user/:type/list",
   auth,
   validateParams(GetNormalListInterface),
   UserController.getNormalList

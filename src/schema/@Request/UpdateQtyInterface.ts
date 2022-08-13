@@ -4,17 +4,15 @@ export default {
     productId: {
       type: "string",
     },
-    cartList: {
-      type: "array",
-      items: {
-        $ref: "#/definitions/Product",
-      },
-    },
+
     qty: {
       type: "number",
     },
+    size: {
+      type: "string",
+    },
   },
-  required: ["cartList", "productId", "qty"],
+  required: ["productId", "size", "qty"],
   definitions: {
     Product: {
       type: "object",
