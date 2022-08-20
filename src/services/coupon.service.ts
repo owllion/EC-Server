@@ -41,7 +41,7 @@ export const getPriceAndDiscount = async (
       : Math.round(totalPrice * (amount * 0.01));
 
   return {
-    finalPrice,
+    discountTotal: finalPrice,
     discount: totalPrice - finalPrice,
   };
 };

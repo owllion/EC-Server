@@ -61,8 +61,12 @@ export const modifyCoupon: RequestHandler = async (req, res) => {
   }
 };
 
-export const applyCoupon: RequestHandler = async (req, res) => {
-  const { totalPrice, code } = req.body as { totalPrice: number; code: string };
+export const applyCoupon: RequestHandler<
+  {},
+  {},
+  { totalPrice: number; code: string }
+> = async (req, res) => {
+  const { totalPrice, code } = req.body;
   try {
     const coupon = await CouponServices.findCoupon({
       field: "code",
@@ -80,15 +84,16 @@ export const applyCoupon: RequestHandler = async (req, res) => {
 
     await CouponServices.isShort(minimumAmount, totalPrice);
 
-    const { finalPrice, discount } = await CouponServices.getPriceAndDiscount(
-      discountType,
-      totalPrice,
-      amount
-    );
+    const { discountTotal, discount } =
+      await CouponServices.getPriceAndDiscount(
+        discountType,
+        totalPrice,
+        amount
+      );
 
     res.send({
       msg: "success",
-      finalPrice,
+      discountTotal,
       discount,
       usedCode: code,
     });

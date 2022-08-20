@@ -19,7 +19,8 @@ export const getModifiedItem = async (reviewItem: ReviewInterface.IReview) => {
 };
 
 export const checkIfReviewExists = async (reviewId: string) => {
-  return await ReviewModel.findOne({ reviewId });
+  if (!(await ReviewModel.findOne({ reviewId })))
+    throw new Error(`Review not found`);
 };
 
 export const checkIfUserHasCommented = async (
@@ -32,5 +33,4 @@ export const checkIfUserHasCommented = async (
   });
   if (hasCommented)
     throw new Error("You have already commented on this product");
-  return false;
 };

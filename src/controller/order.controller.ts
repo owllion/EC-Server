@@ -16,13 +16,13 @@ export const createOrder: RequestHandler = async (req, res) => {
 
     req.user.cartList = [];
 
-    req.user = OrderServices.markUsedCode(req.user, order.discountCode);
+    if (order.discountCode)
+      req.user = OrderServices.markUsedCode(req.user, order.discountCode);
 
     await req.user.save();
 
     res.status(201).send({
       msg: "success",
-      order,
     });
   } catch (e) {
     res.status(500).send({ msg: e.message });
@@ -58,7 +58,7 @@ export const getOrderDetail: RequestHandler<
 
     res.status(200).send({
       msg: "success",
-      order,
+      detail: order,
     });
   } catch (e) {
     res.status(500).send({ msg: e.message });

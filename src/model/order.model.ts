@@ -39,13 +39,25 @@ export class Order {
   orderItem: CreateProductInterface[];
 
   @prop({ default: 0 })
-  discount?: number;
+  discount: number;
 
   @prop({ default: "" })
-  discountCode?: string;
+  discountCode: string;
 
   @prop({ required: true })
-  totalPrice: number;
+  total: number;
+
+  /**
+   * @description: This property is used to store the total price that have used coupon.
+   */
+  @prop({ default: 0 })
+  discountTotal: number;
+
+  @prop({ default: 0, required: true })
+  shipping: number;
+
+  @prop({ required: true })
+  receiverName: string;
 
   @prop({ required: true, default: "creditCard" })
   paymentMethod: string;

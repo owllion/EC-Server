@@ -10,8 +10,17 @@ export default {
     deliveryAddress: {
       type: "string",
     },
-    totalPrice: {
+    total: {
       type: "number",
+    },
+    discountTotal: {
+      type: "number",
+    },
+    shipping: {
+      type: "number",
+    },
+    receiverName: {
+      type: "string",
     },
     discount: {
       type: "number",
@@ -23,7 +32,16 @@ export default {
       type: "string",
     },
   },
-  required: ["deliveryAddress", "orderItem", "totalPrice"],
+  required: [
+    "deliveryAddress",
+    "discount",
+    "discountCode",
+    "orderItem",
+    "total",
+    "discountTotal",
+    "shipping",
+    "receiverName",
+  ],
   definitions: {
     CreateProductInterface: {
       type: "object",
@@ -56,7 +74,7 @@ export default {
           type: "number",
         },
         availability: {
-          type: "string",
+          type: "boolean",
         },
         sales: {
           type: "number",

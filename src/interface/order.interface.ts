@@ -4,6 +4,7 @@ export interface CreateOrderInterface {
   orderItem: Array<CreateProductInterface>;
   deliveryAddress: string;
   totalPrice: number;
+  receiverName: string;
   discount?: number;
   discountCode?: string;
 }

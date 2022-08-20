@@ -6,7 +6,6 @@ import * as Interface from "../schema";
 
 const router = express.Router();
 
-// router.use(auth);
 router.post(
   "/order",
   auth,
