@@ -1,7 +1,8 @@
 import UserModel, { User } from "../model/user.model";
 import { Product } from "../model/product.model";
 import { DocumentType } from "@typegoose/typegoose";
-
+import { OAuth2Client } from "google-auth-library";
+import config from "config";
 // service 顾名思义是为了服务而生，为了业务而生，是为了一个抽象而生，可以写一个 EmailService 去处理邮件的相关逻辑，写一个 AuthorizationService 去处理登录注册，总之是为了处理一系列的业务，在这个层次你不应该去访问 http 中的参数，而是在 controller 中传递一个参数，或者构造一个对象传递到 service。
 
 //controller 和 service 也应该是多对多的关系，一个 controller 中当然是可以调用多个 service，一个 service 当然也可以被多个 controller 调用，service 还可以是互相调用。
@@ -16,6 +17,21 @@ export const findUser = async ({
   value: string;
 }) => {
   return await UserModel.findOne({ [field]: value });
+};
+
+/**
+ * Google Login
+ */
+export const oAuth2Client = new OAuth2Client(config.get<string>("clientID"));
+export const getGoogleAuthTokens = async (code: string) => {
+  const { tokens } = await oAuth2Client.getToken(code);
+  return tokens;
+};
+export const verifyIdToken = async (idToken: string) => {
+  return await oAuth2Client.verifyIdToken({
+    idToken,
+    expectedAudience: config.get<string>("clientID"),
+  });
 };
 
 export const addItem = (

@@ -1,3 +1,4 @@
+import { GoogleLoginInterface } from "./../interface/user.interface";
 import express from "express";
 import * as UserController from "../controller/user.controller";
 import auth from "../middleware/auth.middleware";
@@ -14,6 +15,13 @@ router.post(
   validateInput(Interface.LoginInterface),
   UserController.login
 ); //ok
+
+router.post(
+  "/auth/google-login",
+  validateInput(Interface.GoogleLoginInterface),
+  UserController.googleLogin
+); //ok
+
 router.post(
   "/auth/check-account",
   validateInput(Interface.CheckIfAccountExistsInterface),
