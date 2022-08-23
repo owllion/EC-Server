@@ -82,11 +82,14 @@ export class User {
   })
   email: string;
 
-  @prop({ required: true })
+  @prop({ default: "", trim: true })
   firstName: string;
 
-  @prop({ required: true })
+  @prop({ default: "", trim: true })
   lastName: string;
+
+  @prop({ default: "", trim: true })
+  fullName: string;
 
   @prop({ default: "", trim: true })
   phone: string | null;
@@ -98,7 +101,6 @@ export class User {
   avatarDefault: string;
 
   @prop({
-    required: true,
     trim: true,
     minlength: 7,
     validate(value: string) {

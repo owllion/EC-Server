@@ -58,15 +58,10 @@ export const login: RequestHandler<
   const { email, password } = req.body;
   try {
     const user = await UserModel.findByCredentials(email, password);
+    const { token, refreshToken } = await UserServices.getTokens(
+      user as DocumentType<User>
+    );
 
-    const token = await user.generateAuthToken();
-    const refreshToken = await user.generateRefreshToken();
-    const getCartLength = () => {
-      return (user.cartList as DocumentType<Product>[]).reduce(
-        (total, cur) => total + cur?.qty!,
-        0
-      );
-    };
     res.status(200).send({
       msg: "success",
       result: {
@@ -77,7 +72,9 @@ export const login: RequestHandler<
           lastName: user.lastName,
           email: user.email,
           phone: user.phone,
-          cartLength: getCartLength(),
+          cartLength: UserServices.getCartLength(
+            user.cartList as DocumentType<Product>[]
+          ),
           favList: user.favList,
           avatarDefault: user.avatarDefault,
           avatarUpload: user.avatarUpload,
@@ -96,13 +93,37 @@ export const googleLogin: RequestHandler<{}, {}, { code: string }> = async (
   try {
     const tokens = await UserServices.getGoogleAuthTokens(req.body.code);
     const ticket = await UserServices.verifyIdToken(tokens.id_token);
-    const { name, given_name, email, picture, locale } = ticket.getPayload();
+
+    const { name, email, picture, locale } = ticket.getPayload();
+    const user = await UserServices.findUser({ field: "email", value: email });
+
+    let newUser;
+    if (!user)
+      newUser = await UserServices.createUser({
+        fullName: name,
+        email,
+        avatarUpload: picture,
+      });
+
+    const { token, refreshToken } = await UserServices.getTokens(
+      (user || newUser) as DocumentType<User>
+    );
     res.status(200).send({
-      name,
-      given_name,
-      email,
-      picture,
-      locale,
+      msg: "success",
+      result: {
+        token,
+        refreshToken,
+        user: {
+          name,
+          email,
+          avatarUpload: picture,
+          cartLength: UserServices.getCartLength(
+            (user || newUser)?.cartList as DocumentType<Product>[]
+          ),
+          favList: (user || newUser)?.favList,
+          locale,
+        },
+      },
     });
   } catch (e) {
     res.status(500).send({ msg: e.message });

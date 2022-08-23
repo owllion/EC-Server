@@ -19,10 +19,28 @@ export const findUser = async ({
   return await UserModel.findOne({ [field]: value });
 };
 
+export const createUser = async (info: Partial<User>) => {
+  const user = new UserModel(info);
+  await user.save();
+  return user;
+};
+export const getTokens = async (user: DocumentType<User>) => ({
+  token: await user.generateAuthToken(),
+  refreshToken: await user.generateRefreshToken(),
+});
+
+export const getCartLength = (cartList: DocumentType<Product>[]) => {
+  return cartList.reduce((total, cur) => total + cur?.qty!, 0);
+};
+
 /**
  * Google Login
  */
-export const oAuth2Client = new OAuth2Client(config.get<string>("clientID"));
+const oAuth2Client = new OAuth2Client(
+  config.get<string>("clientID"),
+  config.get<string>("clientSecret"),
+  "postmessage"
+);
 export const getGoogleAuthTokens = async (code: string) => {
   const { tokens } = await oAuth2Client.getToken(code);
   return tokens;
