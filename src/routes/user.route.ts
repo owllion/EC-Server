@@ -60,7 +60,7 @@ router.post(
   "/user/upload",
   auth,
   validateInput(Interface.UploadAvatarInterface),
-  UserController.uploadImg
+  UserController.uploadAvatar
 );
 
 router.post(

@@ -229,15 +229,15 @@ export const getRefreshToken: RequestHandler<
   }
 };
 
-export const uploadImg: RequestHandler = async (req, res) => {
-  console.log(req.file);
+export const uploadAvatar: RequestHandler<{}, {}, { url: string }> = async (
+  req,
+  res
+) => {
   try {
+    req.user.avatarUpload = req.body.url;
     await req.user.save();
 
-    res.status(200).send({
-      msg: "success",
-      user: req.user,
-    });
+    res.status(200).send({ msg: "success" });
   } catch (e) {
     res.status(500).send({ msg: e.message });
   }
