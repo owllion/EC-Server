@@ -10,6 +10,7 @@ import { signJwt, verifyJwt } from "../utils/jwt";
 import * as UserServices from "../services/user.service";
 import { DocumentType } from "@typegoose/typegoose";
 import { OAuth2Client } from "google-auth-library";
+import { Name } from "ajv";
 
 //  controller，可以说他是对 http 中 request 的解析，以及对 response 的封装，它对应的是每一个路由，是 http 请求到代码的一个承接，它必须是可单例的，是无状态的。
 
@@ -102,7 +103,7 @@ export const googleLogin: RequestHandler<{}, {}, { code: string }> = async (
       newUser = await UserServices.createUser({
         fullName: name,
         email,
-        avatarUpload: picture,
+        avatarDefault: picture,
       });
 
     const { token, refreshToken } = await UserServices.getTokens(
@@ -114,9 +115,11 @@ export const googleLogin: RequestHandler<{}, {}, { code: string }> = async (
         token,
         refreshToken,
         user: {
-          name,
+          fullName: user?.fullName || name,
           email,
-          avatarUpload: picture,
+          phone: user?.phone,
+          avatarDefault: picture,
+          avatarUpload: user?.avatarUpload,
           cartLength: UserServices.getCartLength(
             (user || newUser)?.cartList as DocumentType<Product>[]
           ),
@@ -458,25 +461,14 @@ export const userInfoModify: RequestHandler<
   {},
   {},
   {
-    firstName: string;
-    lastName: string;
-    email?: string;
+    firstName?: string;
+    lastName?: string;
+    fullName?: string;
     phone: string;
   }
 > = async (req, res) => {
   try {
-    if (req.body.email) {
-      const user = await UserServices.findUser({
-        field: "email",
-        value: req.body.email,
-      });
-
-      if (user) throw new Error("Duplicate email");
-
-      // const fields: (keyof typeof req.body)[] = ["name", "email"];
-      // fields.forEach((field) => (req.user[field] = req.body[field]));
-    }
-    (["firstName", "lastName", "phone"] as const).forEach(
+    (["firstName", "lastName", "fullName", "phone"] as const).forEach(
       (field) => (req.user[field] = req.body[field])
     );
 

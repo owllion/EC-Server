@@ -7,6 +7,9 @@ export default {
     lastName: {
       type: "string",
     },
+    fullName: {
+      type: "string",
+    },
     phone: {
       anyOf: [
         {
@@ -20,6 +23,6 @@ export default {
       ],
     },
   },
-  required: ["firstName", "lastName"],
+  required: ["firstName" || "lastName" || "fullName"],
   $schema: "http://json-schema.org/draft-07/schema#",
 };
