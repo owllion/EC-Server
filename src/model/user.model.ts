@@ -155,8 +155,11 @@ export class User {
     if (!user) {
       throw new Error("No user with that email!");
     }
-
-    const isMatch: boolean = await argon2.verify(user.password!, password);
+    console.log("這是pwd", password);
+    const isMatch: boolean = await argon2.verify(
+      user.password!,
+      password.trim()
+    );
     // argon2.verify("<big long hash>", "password");
 
     if (!isMatch) {

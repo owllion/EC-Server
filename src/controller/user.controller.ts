@@ -137,9 +137,12 @@ export const checkAccount: RequestHandler<{}, {}, { email: string }> = async (
   req,
   res
 ) => {
-  const { email } = req.body;
-
   try {
+    const { email } = req.body;
+
+    if (await UserServices.checkIfEmailIsRegisteredWithGoogleLogin(email))
+      throw new Error("This email is already registered with google login");
+
     const user = await UserServices.findUser({ field: "email", value: email });
 
     res.status(200).send({
