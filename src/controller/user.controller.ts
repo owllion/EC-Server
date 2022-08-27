@@ -143,11 +143,10 @@ export const checkAccount: RequestHandler<{}, {}, { email: string }> = async (
       value: req.body.email,
     });
 
-    if (
-      !!user &&
-      UserServices.checkIfEmailIsRegisteredWithGoogleLogin(user.password)
-    )
-      throw new Error("This email is already registered with google login");
+    if (user) {
+      UserServices.checkIfEmailIsRegisteredWithGoogleLogin(user.password);
+      UserServices.checkIfEmailIsVerified(user.verified);
+    }
 
     res.status(200).send({
       hasAccount: user ? true : false,
@@ -175,7 +174,30 @@ export const verifyUser: RequestHandler<{}, {}, { token: string }> = async (
 
     user.verified = true;
     await user.save();
-    res.status(200).send({ msg: "Verified!", verified: true });
+
+    //return necessary info for login
+    const { token, refreshToken } = await UserServices.getTokens(
+      user as DocumentType<User>
+    );
+
+    res.status(200).send({
+      msg: "verified",
+      verified: true,
+      result: {
+        token,
+        refreshToken,
+        user: {
+          firstName: user.firstName,
+          lastName: user.lastName,
+          email: user.email,
+          phone: user.phone,
+          cartLength: UserServices.getCartLength(user.cartList),
+          favList: user.favList,
+          avatarDefault: user.avatarDefault,
+          avatarUpload: user.avatarUpload,
+        },
+      },
+    });
   } catch (e) {
     if (e.message.includes("expired")) {
       res.status(401).send({ msg: "token has expired" });

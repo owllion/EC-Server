@@ -11,10 +11,17 @@ import config from "config";
 
 export const checkIfEmailIsRegisteredWithGoogleLogin = (
   password: string | undefined
-) =>
+) => {
   // has password -> register with email(false) .
   // no password -> register with google login(true) .
-  password ? false : true;
+  if (!password) {
+    throw new Error("This email is already registered with google login");
+  }
+};
+
+export const checkIfEmailIsVerified = (verified: boolean) => {
+  if (!verified) throw new Error("Please verify your email!");
+};
 
 export const findUser = async ({
   field,
