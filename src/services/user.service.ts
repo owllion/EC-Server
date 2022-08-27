@@ -9,9 +9,12 @@ import config from "config";
 
 //service 可以被各种环境调用，虽然更多时候它只有一种能力，仅仅去处理 controller 发过来的 http 请求
 
-export const checkIfEmailIsRegisteredWithGoogleLogin = async (email: string) =>
-  //If user register with google login, there would be no password.
-  (await findUser({ field: "email", value: email }))?.password ? false : true;
+export const checkIfEmailIsRegisteredWithGoogleLogin = (
+  password: string | undefined
+) =>
+  // has password -> register with email(false) .
+  // no password -> register with google login(true) .
+  password ? false : true;
 
 export const findUser = async ({
   field,
