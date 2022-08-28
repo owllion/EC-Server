@@ -23,6 +23,11 @@ router.post(
 ); //ok
 
 router.post(
+  "/auth/send-verify-link",
+  validateInput(Interface.SendVerifyLinkInterface),
+  UserController.sendVerifyEmailLink
+);
+router.post(
   "/auth/check-account",
   validateInput(Interface.CheckIfAccountExistsInterface),
   UserController.checkAccount

@@ -1,32 +1,30 @@
 import { RequestHandler } from "express";
-import validator from "validator";
 import config from "config";
 import { includes } from "ramda";
 
 import UserModel, { User } from "../model/user.model";
 import ProductModel, { Product } from "../model/product.model";
 import { sendLink } from "../utils/email";
-import { signJwt, verifyJwt } from "../utils/jwt";
+import { verifyJwt } from "../utils/jwt";
 import * as UserServices from "../services/user.service";
 import { DocumentType } from "@typegoose/typegoose";
-import { OAuth2Client } from "google-auth-library";
-import { Name } from "ajv";
 
 //  controller，可以说他是对 http 中 request 的解析，以及对 response 的封装，它对应的是每一个路由，是 http 请求到代码的一个承接，它必须是可单例的，是无状态的。
 
 //controller一般来说有两种，一种是薄Controller，一种是厚Controller。前者Controller只负责搜集参数、调用服务、转发或重定向结果集，其他业务逻辑(例如createUser)都放在Service层。后者则相反，业务逻辑都在Controller中进行处理，服务层只负责一些增删改查的方法。
 
 export const register: RequestHandler<{}, {}, User> = async (req, res) => {
-  const user = new UserModel(req.body);
   try {
+    const user = new UserModel(req.body);
     await user.save();
+    await UserServices.sendVerifyOrResetLink({
+      user,
+      email: user.email,
+      linkType: "verify",
+      urlParams: "verify-email",
+    });
 
-    const token = await user.generateAuthToken();
-
-    const refreshToken = await user.generateRefreshToken();
-
-    const link = `http://localhost:3000/auth/verify-email/${token}`;
-    sendLink({ type: "verify", link, email: req.body.email });
+    const { token, refreshToken } = await UserServices.getTokens(user);
 
     res.status(201).json({
       msg: "Registration success",
@@ -133,6 +131,24 @@ export const googleLogin: RequestHandler<{}, {}, { code: string }> = async (
   }
 };
 
+export const sendVerifyEmailLink: RequestHandler<
+  {},
+  {},
+  { email: string }
+> = async (req, res) => {
+  try {
+    await UserServices.sendVerifyOrResetLink({
+      user: req.user,
+      email: req.body.email,
+      linkType: "verify",
+      urlParams: "verify-email",
+    });
+    res.status(200).send({ msg: "email has been sent successfully" });
+  } catch (e) {
+    res.status(500).send({ msg: e.message });
+  }
+};
+
 export const checkAccount: RequestHandler<{}, {}, { email: string }> = async (
   req,
   res
@@ -163,13 +179,14 @@ export const verifyUser: RequestHandler<{}, {}, { token: string }> = async (
   try {
     const decoded = verifyJwt<{ _id: string }>(
       req.body.token,
-      config.get<string>("jwtSecret")
+      config.get<string>("linkSecret")
     );
-
+    console.log(decoded);
     const user = await UserServices.findUser({
       field: "_id",
       value: decoded._id,
     });
+    console.log(user, user);
     if (!user) throw new Error("User not found");
 
     user.verified = true;
@@ -279,23 +296,19 @@ export const forgotPassword: RequestHandler<{}, {}, { email: string }> = async (
   try {
     const { email } = req.body;
 
-    if (!validator.isEmail(email)) {
-      throw new Error("Email is invalid!");
-    }
     const user = await UserServices.findUser({ field: "email", value: email });
 
     if (!user) throw new Error("No user with that email!");
 
-    const token = await user.generateLinkToken();
-
-    sendLink({
-      type: "reset",
+    await UserServices.sendVerifyOrResetLink({
+      user,
       email,
-      link: `http://localhost:3000/auth/reset-password/token/${token}`,
+      linkType: "reset",
+      urlParams: "reset-password/token",
     });
 
     res.status(200).json({
-      message: "Successfully sent email",
+      message: "email has been sent successfully",
     });
   } catch (e) {
     res.status(500).send({ msg: e.message });

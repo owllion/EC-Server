@@ -1,8 +1,11 @@
-import UserModel, { User } from "../model/user.model";
-import { Product } from "../model/product.model";
 import { DocumentType } from "@typegoose/typegoose";
-import { OAuth2Client } from "google-auth-library";
 import config from "config";
+
+import { Product } from "../model/product.model";
+import { OAuth2Client } from "google-auth-library";
+import { sendLink } from "../utils/email";
+import UserModel, { User } from "../model/user.model";
+
 // service 顾名思义是为了服务而生，为了业务而生，是为了一个抽象而生，可以写一个 EmailService 去处理邮件的相关逻辑，写一个 AuthorizationService 去处理登录注册，总之是为了处理一系列的业务，在这个层次你不应该去访问 http 中的参数，而是在 controller 中传递一个参数，或者构造一个对象传递到 service。
 
 //controller 和 service 也应该是多对多的关系，一个 controller 中当然是可以调用多个 service，一个 service 当然也可以被多个 controller 调用，service 还可以是互相调用。
@@ -38,6 +41,25 @@ export const createUser = async (info: Partial<User>) => {
   await user.save();
   return user;
 };
+
+interface ISendLink {
+  user: DocumentType<User>;
+  email: string;
+  linkType: string;
+  urlParams: string;
+}
+
+export const sendVerifyOrResetLink = async ({
+  user,
+  email,
+  linkType,
+  urlParams,
+}: ISendLink) => {
+  const verifyToken = await user.generateLinkToken();
+  const link = `http://localhost:3000/auth/${urlParams}/${verifyToken}`;
+  sendLink({ type: linkType, link, email });
+};
+
 export const getTokens = async (user: DocumentType<User>) => ({
   token: await user.generateAuthToken(),
   refreshToken: await user.generateRefreshToken(),
