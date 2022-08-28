@@ -137,8 +137,14 @@ export const sendVerifyEmailLink: RequestHandler<
   { email: string }
 > = async (req, res) => {
   try {
+    const user = await UserServices.findUser({
+      field: "email",
+      value: req.body.email,
+    });
+    if (!user) throw new Error("User not found");
+
     await UserServices.sendVerifyOrResetLink({
-      user: req.user,
+      user,
       email: req.body.email,
       linkType: "verify",
       urlParams: "verify-email",
