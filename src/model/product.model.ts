@@ -45,6 +45,9 @@ export class Product {
   @prop({ default: "F" })
   size: string;
 
+  @prop({ default: "" })
+  color: string;
+
   @prop({ default: "", trim: true })
   description?: string;
 

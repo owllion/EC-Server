@@ -5,7 +5,10 @@ export default {
       format: "email",
       type: "string",
     },
+    type: {
+      type: "string",
+    },
   },
-  required: ["email"],
+  required: ["email", "type"],
   $schema: "http://json-schema.org/draft-07/schema#",
 };

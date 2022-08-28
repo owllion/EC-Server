@@ -103,42 +103,40 @@ export const googleLogin: RequestHandler<{}, {}, { code: string }> = async (
         email,
         avatarDefault: picture,
       });
-    else {
-      if (user.password)
-        throw new Error("This email has already been registered");
-
-      const { token, refreshToken } = await UserServices.getTokens(
-        (user || newUser) as DocumentType<User>
-      );
-      res.status(200).send({
-        msg: "success",
-        result: {
-          token,
-          refreshToken,
-          user: {
-            fullName: user?.fullName || name,
-            email,
-            phone: user?.phone,
-            avatarDefault: picture,
-            avatarUpload: user?.avatarUpload,
-            cartLength: UserServices.getCartLength(
-              (user || newUser)?.cartList as DocumentType<Product>[]
-            ),
-            favList: (user || newUser)?.favList,
-            locale,
-          },
-        },
-      });
+    else if (user && user.password) {
+      throw new Error("This email has already been registered");
     }
+    const { token, refreshToken } = await UserServices.getTokens(
+      (user || newUser) as DocumentType<User>
+    );
+    res.status(200).send({
+      msg: "success",
+      result: {
+        token,
+        refreshToken,
+        user: {
+          fullName: user?.fullName || name,
+          email,
+          phone: user?.phone,
+          avatarDefault: picture,
+          avatarUpload: user?.avatarUpload,
+          cartLength: UserServices.getCartLength(
+            (user || newUser)?.cartList as DocumentType<Product>[]
+          ),
+          favList: (user || newUser)?.favList,
+          locale,
+        },
+      },
+    });
   } catch (e) {
     res.status(500).send({ msg: e.message });
   }
 };
 
-export const sendVerifyEmailLink: RequestHandler<
+export const sendVerifyOrResetLink: RequestHandler<
   {},
   {},
-  { email: string }
+  { email: string; type: string }
 > = async (req, res) => {
   try {
     const user = await UserServices.findUser({
@@ -150,8 +148,9 @@ export const sendVerifyEmailLink: RequestHandler<
     await UserServices.sendVerifyOrResetLink({
       user,
       email: req.body.email,
-      linkType: "verify",
-      urlParams: "verify-email",
+      linkType: req.body.type,
+      urlParams:
+        req.body.type === "verify" ? "verify-email" : "reset-password/token",
     });
     res.status(200).send({ msg: "email has been sent successfully" });
   } catch (e) {
@@ -191,7 +190,7 @@ export const verifyUser: RequestHandler<{}, {}, { token: string }> = async (
       req.body.token,
       config.get<string>("linkSecret")
     );
-    console.log(decoded);
+
     const user = await UserServices.findUser({
       field: "_id",
       value: decoded._id,
@@ -351,9 +350,7 @@ export const resetPassword: RequestHandler<
       msg: "success",
     });
   } catch (e) {
-    res.status(500).send({
-      msg: e.message,
-    });
+    res.status(500).send({ msg: e.message });
   }
 };
 

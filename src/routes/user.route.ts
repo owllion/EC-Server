@@ -23,9 +23,9 @@ router.post(
 ); //ok
 
 router.post(
-  "/auth/send-verify-link",
-  validateInput(Interface.SendVerifyLinkInterface),
-  UserController.sendVerifyEmailLink
+  "/auth/send-link",
+  validateInput(Interface.SendVerifyOrResetLinkInterface),
+  UserController.sendVerifyOrResetLink
 );
 router.post(
   "/auth/check-account",
