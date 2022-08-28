@@ -204,7 +204,7 @@ export class User {
       { _id: this._id.toString() },
       config.get<string>("linkSecret"),
       {
-        expiresIn: "1d",
+        expiresIn: "20s",
       }
     );
 

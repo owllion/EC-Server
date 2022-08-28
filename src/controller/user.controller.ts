@@ -103,29 +103,33 @@ export const googleLogin: RequestHandler<{}, {}, { code: string }> = async (
         email,
         avatarDefault: picture,
       });
+    else {
+      if (user.password)
+        throw new Error("This email has already been registered");
 
-    const { token, refreshToken } = await UserServices.getTokens(
-      (user || newUser) as DocumentType<User>
-    );
-    res.status(200).send({
-      msg: "success",
-      result: {
-        token,
-        refreshToken,
-        user: {
-          fullName: user?.fullName || name,
-          email,
-          phone: user?.phone,
-          avatarDefault: picture,
-          avatarUpload: user?.avatarUpload,
-          cartLength: UserServices.getCartLength(
-            (user || newUser)?.cartList as DocumentType<Product>[]
-          ),
-          favList: (user || newUser)?.favList,
-          locale,
+      const { token, refreshToken } = await UserServices.getTokens(
+        (user || newUser) as DocumentType<User>
+      );
+      res.status(200).send({
+        msg: "success",
+        result: {
+          token,
+          refreshToken,
+          user: {
+            fullName: user?.fullName || name,
+            email,
+            phone: user?.phone,
+            avatarDefault: picture,
+            avatarUpload: user?.avatarUpload,
+            cartLength: UserServices.getCartLength(
+              (user || newUser)?.cartList as DocumentType<Product>[]
+            ),
+            favList: (user || newUser)?.favList,
+            locale,
+          },
         },
-      },
-    });
+      });
+    }
   } catch (e) {
     res.status(500).send({ msg: e.message });
   }
