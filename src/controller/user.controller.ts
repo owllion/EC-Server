@@ -243,11 +243,7 @@ export const checkIfTokenIsValid: RequestHandler<
     );
     res.status(200).send({ isValid: true });
   } catch (e) {
-    if (e.message.includes("expired")) {
-      res.status(401).send({ isValid: false });
-      return;
-    }
-    res.status(500).send({ msg: e.message });
+    res.status(500).send({ isValid: false });
   }
 };
 
