@@ -31,14 +31,14 @@ import { signJwt } from "./../utils/jwt";
 
   next();
 })
-@pre<User>("remove", async function (next) {
-  const user = this;
-  await OrderModel.deleteMany({ owner: user._id });
-  await ReviewModel.deleteMany({ owner: user._id });
+@pre<User>("deleteOne", async function (next) {
+  const id = this.getFilter()["_id"];
+  await OrderModel.deleteMany({ owner: id });
+  await ReviewModel.deleteMany({ owner: id });
   next();
 })
 @post<User>("save", function () {
-  console.log("this is @post");
+  console.log("after save");
 })
 @modelOptions({
   schemaOptions: {

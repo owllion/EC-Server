@@ -24,3 +24,9 @@ app.listen(port, () => {
   console.log(`Server is up on the ${port} `);
   dbConnect();
 });
+
+import UserModel from "./model/user.model";
+
+const main = async () =>
+  await UserModel.deleteOne({ _id: "630ae316e3913c5e81522154" });
+main();
