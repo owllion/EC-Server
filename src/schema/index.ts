@@ -2,6 +2,8 @@ export { default as LoginInterface } from "./@Request/LoginInterface";
 export { default as CheckIfAccountExistsInterface } from "./@Request/CheckIfAccountExistsInterface";
 export { default as VerifyUserInterface } from "./@Request/VerifyUserInterface";
 
+export { default as CheckIfTokenIsValidInterface } from "./@Request/CheckIfTokenIsValidInterface";
+
 export { default as SendVerifyOrResetLinkInterface } from "./@Request/sendVerifyOrResetLinkInterface";
 
 export { default as AddToCartInterface } from "./@Request/AddToCartInterface";

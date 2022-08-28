@@ -27,6 +27,12 @@ router.post(
   validateInput(Interface.SendVerifyOrResetLinkInterface),
   UserController.sendVerifyOrResetLink
 );
+
+router.post(
+  "/auth/check-token",
+  validateInput(Interface.CheckIfTokenIsValidInterface),
+  UserController.checkIfTokenIsValid
+);
 router.post(
   "/auth/check-account",
   validateInput(Interface.CheckIfAccountExistsInterface),

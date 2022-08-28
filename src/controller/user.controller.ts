@@ -195,9 +195,7 @@ export const verifyUser: RequestHandler<{}, {}, { token: string }> = async (
       field: "_id",
       value: decoded._id,
     });
-    console.log(user, user);
     if (!user) throw new Error("User not found");
-
     user.verified = true;
     await user.save();
 
@@ -227,6 +225,26 @@ export const verifyUser: RequestHandler<{}, {}, { token: string }> = async (
   } catch (e) {
     if (e.message.includes("expired")) {
       res.status(401).send({ msg: "token has expired" });
+      return;
+    }
+    res.status(500).send({ msg: e.message });
+  }
+};
+
+export const checkIfTokenIsValid: RequestHandler<
+  {},
+  {},
+  { token: string }
+> = async (req, res) => {
+  try {
+    verifyJwt<{ _id: string }>(
+      req.body.token,
+      config.get<string>("linkSecret")
+    );
+    res.status(200).send({ isValid: true });
+  } catch (e) {
+    if (e.message.includes("expired")) {
+      res.status(401).send({ isValid: false });
       return;
     }
     res.status(500).send({ msg: e.message });
