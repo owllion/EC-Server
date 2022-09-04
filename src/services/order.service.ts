@@ -2,6 +2,7 @@ import { omit } from "ramda";
 import * as OrderInterface from "../interface/controller/order.controller.interface";
 import OrderModel from "../model/order.model";
 import { User } from "../model/user.model";
+import { Coupon } from "../model/coupon.model";
 
 export const getModifiedItem = async (orderItem: OrderInterface.IOrderItem) => {
   const updateFields: OrderInterface.IField = {};
@@ -21,7 +22,7 @@ export const getModifiedItem = async (orderItem: OrderInterface.IOrderItem) => {
 
 export const markUsedCode = (user: User, discountCode: string | undefined) => {
   if (discountCode) {
-    user.couponList = user.couponList.map((coupon) =>
+    (user.couponList as Coupon[]) = user.couponList.map((coupon) =>
       coupon.code === discountCode ? { ...coupon, isUsed: true } : coupon
     );
     return user;
