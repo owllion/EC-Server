@@ -91,7 +91,7 @@ export class User {
   @prop({ default: "", trim: true })
   fullName: string;
 
-  @prop({ default: "", trim: true })
+  @prop({ default: "" })
   phone: string | null;
 
   @prop({ default: "" })
