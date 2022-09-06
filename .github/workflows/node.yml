@@ -21,7 +21,7 @@ jobs:
         uses: actions/setup-node@v2
         with: #with 表示要用哪個版本的工具
           node-version: "16"
-      - run: npm install #新的指令 uses完 要開始安裝
+      - run: npm ci --save --legacy-peer-deps #新的指令 uses完 要開始安裝
       - run: npm run watch #就像docker依樣，安裝完成 最後就可以run指令，這邊我趙老師的，他說他想要build前端的專案，我這邊只有後端，但不管，要build就是watch~
 
 
