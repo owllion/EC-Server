@@ -1,30 +1,30 @@
 name: EC Server
 on: #要偵測的行為
-  push:  
-    branches: [main] #push後會對其執行動作的對象 
+  push:
+    branches: [main] #push後會對其執行動作的對象
   pull_request:
     branches: [main]
-jobs: #執行的動作細節，也就是最重要的workflows
+jobs:
+  #執行的動作細節，也就是最重要的workflows
   build:
-    runs-on:ubuntu-latest 
+    runs-on: ubuntu-latest
     #當然也有windows-ubuntu .etc
-    steps: 
-    #This is where we define the different actions that are gonna be taken on ubuntu whenever  our build job is triggered by a push or pull request to the main branch.
-    
-    # The actions that we list under steps are these reusable scripts that help us to automate the different things we might want to do in our job. 
+    steps:
+      #This is where we define the different actions that are gonna be taken on ubuntu whenever  our build job is triggered by a push or pull request to the main branch.
 
-      - uses: actions/checkout@v2  
-        #check out -> check out code from main branch ，然後這些checkout啥的 都是refer to script，所以最好可以標明版本，如@v2 
+      # The actions that we list under steps are these reusable scripts that help us to automate the different things we might want to do in our job.
+
+      - uses: actions/checkout@v2
+        #check out -> check out code from main branch ，然後這些checkout啥的 都是refer to script，所以最好可以標明版本，如@v2
 
       - name: User Node.js version 16 #name有點像是test的describe的概念，就是用來說明這一個uses是在幹嘛
         uses: actions/setup-node@v2
         with: #with 表示要用哪個版本的工具
-          node-version: '16'
-      - run: npm install  #新的指令 uses完 要開始安裝
+          node-version: "16"
+      - run: npm install #新的指令 uses完 要開始安裝
       - run: npm run watch #就像docker依樣，安裝完成 最後就可以run指令，這邊我趙老師的，他說他想要build前端的專案，我這邊只有後端，但不管，要build就是watch~
 
 
-
   # deploy: #目前用不到
-  #   need: build 
-    #github預設是build和deploy會同時進行(平行) 但我們可能需要等到build完才能deploy，這時可以使用need: build來代表這種意思，最後執行順序就會變成 build -> deploy
+  #   need: build
+  #github預設是build和deploy會同時進行(平行) 但我們可能需要等到build完才能deploy，這時可以使用need: build來代表這種意思，最後執行順序就會變成 build -> deploy
