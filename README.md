@@ -23,7 +23,7 @@ This repository contains the back-end part.
 - local
 
 ```
-git clone https://github.com/owllion/React-ecommerce.git
+git clone https://github.com/owllion/EC-Server.git
 
 npm install
 
