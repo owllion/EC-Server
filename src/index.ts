@@ -20,13 +20,7 @@ app.use(errorHandler);
 app.use(notFoundHandler);
 const port = config.get<number>("port");
 
-app.listen(port, () => {
+app.listen(port, "0.0.0.0", () => {
   console.log(`Server is up on the ${port} `);
   dbConnect();
 });
-
-import UserModel from "./model/user.model";
-
-const main = async () =>
-  await UserModel.deleteOne({ _id: "630ae316e3913c5e81522154" });
-main();
