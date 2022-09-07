@@ -170,7 +170,7 @@ export const checkAccount: RequestHandler<{}, {}, { email: string }> = async (
 
     if (user) {
       UserServices.checkIfEmailIsRegisteredWithGoogleLogin(user.password);
-      UserServices.checkIfEmailIsVerified(user.verified);
+      // UserServices.checkIfEmailIsVerified(user.verified);
     }
 
     res.status(200).send({

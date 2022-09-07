@@ -1,6 +1,9 @@
+import { DocumentType } from "@typegoose/typegoose";
 import CouponModel from "../model/coupon.model";
 import { omit } from "ramda";
 import * as CouponInterface from "../interface/controller/coupon.controller.interface";
+import { User } from "../model/user.model";
+import { Coupon } from "../model/coupon.model";
 
 export const findCoupon = async ({
   field,
@@ -60,4 +63,15 @@ export const getModifiedItem = async (couponItem: CouponInterface.ICoupon) => {
   );
   if (!coupon) throw new Error("Coupon not found");
   return coupon;
+};
+
+export const addCouponToUserCouponList = async (code: string, user: User) => {
+  const coupon = await findCoupon({
+    field: "code",
+    value: code,
+  });
+
+  (user.couponList as Coupon[]).push(coupon);
+
+  await (user as DocumentType<User>).save();
 };

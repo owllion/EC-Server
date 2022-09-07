@@ -1,3 +1,4 @@
+import { DocumentType } from "@typegoose/typegoose";
 import { IList } from "./../interface/controller/coupon.controller.interface";
 import { RequestHandler } from "express";
 import CouponModel, { Coupon } from "./../model/coupon.model";
@@ -106,16 +107,8 @@ export const redeemCoupon: RequestHandler<{}, {}, { code: string }> = async (
   req,
   res
 ) => {
-  const { code } = req.body;
   try {
-    const coupon = await CouponServices.findCoupon({
-      field: "code",
-      value: code,
-    });
-
-    req.user.couponList.push(coupon);
-
-    await req.user.save();
+    await CouponServices.addCouponToUserCouponList(req.body.code, req.user);
 
     res.status(200).send({ msg: "success" });
   } catch (e) {
