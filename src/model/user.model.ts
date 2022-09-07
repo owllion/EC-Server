@@ -97,7 +97,10 @@ export class User {
   @prop({ default: "" })
   avatarUpload: string;
 
-  @prop({ default: "https://upload.cc/i1/2021/04/08/yGs8hR.png" })
+  @prop({
+    default:
+      "https://res.cloudinary.com/azainseong/image/upload/v1662517415/mij3ogxe5cqxitevri9z.png",
+  })
   avatarDefault: string;
 
   @prop({

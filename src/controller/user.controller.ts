@@ -1,13 +1,13 @@
 import { RequestHandler } from "express";
 import config from "config";
 import { includes } from "ramda";
+import { DocumentType } from "@typegoose/typegoose";
 
+import * as CouponServices from "../services/coupon.service";
 import UserModel, { User } from "../model/user.model";
 import ProductModel, { Product } from "../model/product.model";
-import { sendLink } from "../utils/email";
 import { verifyJwt } from "../utils/jwt";
 import * as UserServices from "../services/user.service";
-import { DocumentType } from "@typegoose/typegoose";
 
 //  controller，可以说他是对 http 中 request 的解析，以及对 response 的封装，它对应的是每一个路由，是 http 请求到代码的一个承接，它必须是可单例的，是无状态的。
 
@@ -16,6 +16,7 @@ import { DocumentType } from "@typegoose/typegoose";
 export const register: RequestHandler<{}, {}, User> = async (req, res) => {
   try {
     const user = new UserModel(req.body);
+    await CouponServices.addCouponToUserCouponList("new123", user);
     await user.save();
     await UserServices.sendVerifyOrResetLink({
       user,
