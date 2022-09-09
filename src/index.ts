@@ -20,6 +20,10 @@ app.use(errorHandler);
 app.use(notFoundHandler);
 const port = config.get<number>("port");
 
+app.get("/", (req, res) => {
+  res.send("Hello!");
+});
+
 app.listen(port, "0.0.0.0", () => {
   console.log(`Server is up on the ${port} `);
   dbConnect();
