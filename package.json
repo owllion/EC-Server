@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "watch": "tsc -w",
+    "build": "tsc -w",
     "dev": "ts-node-dev --respawn --pretty --transpile-only src/index.ts",
     "start": "node dist/index.js",
     "cluster": "pm2 start src/index.ts -i 0 --watch",
