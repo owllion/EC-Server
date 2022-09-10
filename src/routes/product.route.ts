@@ -1,5 +1,5 @@
 import express from "express";
-import * as ProductController from "../controller/Product.controller";
+import * as ProductController from "../controller/product.controller";
 import auth from "../middleware/auth.middleware";
 import validateInput from "../middleware/validate.middleware";
 import * as Interface from "../schema";
