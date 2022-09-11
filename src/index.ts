@@ -3,7 +3,7 @@ import morgan from "morgan";
 import cors from "cors";
 import "dotenv/config";
 import helmet from "helmet";
-import dbConnect from "./db/mongoose";
+import dbConnect from "./db/mongoose.js";
 import config from "config";
 import router from "./routes";
 import { errorHandler } from "./middleware/error.middleware";

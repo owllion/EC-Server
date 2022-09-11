@@ -1,1 +1,1 @@
-web: --loader ts-node/esm src/index.ts
+web: npm run start
