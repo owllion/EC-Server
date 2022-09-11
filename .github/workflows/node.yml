@@ -28,7 +28,6 @@ jobs:
           tags: traversal/react-shopapp:1.0
   vercel:
     runs-on: ubuntu-latest
-    name: "Deploy back-end"
 
     steps:
       - uses: actions/checkout@v2
