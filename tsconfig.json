@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "target": "es6",
-    "module": "commonjs",
+    "module": "ESNext",
     "lib": ["es6", "es2017", "esnext.asynciterable"],
     //If the current project's tsconfig also includes compilerOptions.lib with dom, then the types from Typegoose and Typescript will conflict.
     // Solution is to remove dom from the lib array.
@@ -25,6 +25,9 @@
     "experimentalDecorators": true,
     "resolveJsonModule": true,
     "baseUrl": "."
+  },
+  "ts-node": {
+    "esm": true
   },
   "exclude": ["node_modules", "dist/**/*"],
   "include": ["./src/**/*.tsx", "./src/**/*.ts", "src/**/*"]
