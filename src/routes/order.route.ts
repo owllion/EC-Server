@@ -1,8 +1,8 @@
 import express from "express";
-import * as OrderController from "../controller/order.controller";
-import auth from "../middleware/auth.middleware";
-import validateInput from "../middleware/validate.middleware";
-import * as Interface from "../schema";
+import * as OrderController from "../controller/order.controller.js";
+import auth from "../middleware/auth.middleware.js";
+import validateInput from "../middleware/validate.middleware.js";
+import * as Interface from "../schema/index.js";
 
 const router = express.Router();
 

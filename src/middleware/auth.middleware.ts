@@ -1,7 +1,7 @@
-import config from "config";
-import UserModel from "../model/user.model";
 import { NextFunction, Request, Response } from "express";
-import { verifyJwt } from "../utils/jwt";
+import config from "config";
+import UserModel from "../model/user.model.js";
+import { verifyJwt } from "../utils/jwt.js";
 
 interface JwtPayload {
   _id: string;
@@ -14,14 +14,10 @@ const auth = async (req: Request, res: Response, next: NextFunction) => {
       req.header("Authorization")?.replace("Bearer ", "");
     if (!token) throw new Error("No token provided!");
 
-    // console.log({ token });
-
     const decoded = verifyJwt(
       token,
       config.get<string>("jwtSecret")
     ) as JwtPayload;
-
-    // console.log(decoded);
 
     const user = await UserModel.findOne({
       _id: decoded._id,

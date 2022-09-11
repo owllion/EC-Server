@@ -1,8 +1,8 @@
 import { omit } from "ramda";
-import * as OrderInterface from "../interface/controller/order.controller.interface";
-import OrderModel from "../model/order.model";
-import { User } from "../model/user.model";
-import { Coupon } from "../model/coupon.model";
+import * as OrderInterface from "../interface/controller/order.controller.interface.js";
+import OrderModel from "../model/order.model.js";
+import { User } from "../model/user.model.js";
+import { Coupon } from "../model/coupon.model.js";
 
 export const getModifiedItem = async (orderItem: OrderInterface.IOrderItem) => {
   const updateFields: OrderInterface.IField = {};

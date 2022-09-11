@@ -1,9 +1,7 @@
-import { DocumentType } from "@typegoose/typegoose";
-import { IList } from "./../interface/controller/coupon.controller.interface";
 import { RequestHandler } from "express";
-import CouponModel, { Coupon } from "./../model/coupon.model";
-import * as CouponServices from "../services/coupon.service";
-import * as CouponInterface from "../interface/controller/coupon.controller.interface";
+import CouponModel, { Coupon } from "./../model/coupon.model.js";
+import * as CouponServices from "../services/coupon.service.js";
+import * as CouponInterface from "../interface/controller/coupon.controller.interface.js";
 
 export const createCoupon: RequestHandler = async (req, res) => {
   const coupon = new CouponModel(req.body as Coupon);

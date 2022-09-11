@@ -1,6 +1,6 @@
 import { omit } from "ramda";
-import * as ReviewInterface from "../interface/controller/review.controller.interface";
-import ReviewModel from "../model/review.model";
+import * as ReviewInterface from "../interface/controller/review.controller.interface.js";
+import ReviewModel from "../model/review.model.js";
 
 export const getModifiedItem = async (reviewItem: ReviewInterface.IReview) => {
   let updateFields: ReviewInterface.IList = {};

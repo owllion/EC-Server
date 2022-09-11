@@ -1,6 +1,6 @@
 import { omit } from "ramda";
-import ProductModel from "../model/product.model";
-import * as ProductInterface from "../interface/controller/product.controller.interface";
+import ProductModel from "../model/product.model.js";
+import * as ProductInterface from "../interface/controller/product.controller.interface.js";
 
 export const getDetailWithReview = async (productId: string) => {
   const product = await ProductModel.findOne({ productId }).populate("reviews");

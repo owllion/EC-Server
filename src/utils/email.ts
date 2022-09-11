@@ -1,8 +1,8 @@
 import config from "config";
 import nodemailer from "nodemailer";
 
-import { getMailText } from "./getMailText";
-import { setTemplate } from "../data/emailTemplate";
+import { getMailText } from "./getMailText.js";
+import { setTemplate } from "../data/emailTemplate.js";
 
 export const sendLink = async ({
   type,

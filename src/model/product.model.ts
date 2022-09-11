@@ -1,13 +1,9 @@
-import {
-  getModelForClass,
-  modelOptions,
-  Ref,
-  prop,
-  Severity,
-  index,
-} from "@typegoose/typegoose";
+import { Ref } from "@typegoose/typegoose";
+import pkg from "@typegoose/typegoose";
+const { getModelForClass, modelOptions, prop, Severity, index } = pkg;
+
 import { nanoid } from "nanoid";
-import { Review } from "./review.model";
+import { Review } from "./review.model.js";
 
 @modelOptions({
   schemaOptions: {
