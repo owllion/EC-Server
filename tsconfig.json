@@ -1,8 +1,8 @@
 {
   "compilerOptions": {
     "target": "es6",
-    "module": "nodenext",
-    "lib": ["es6", "es2017", "ESNext", "esnext.asynciterable"],
+    "module": "esnext",
+    "lib": ["es6", "es2017", "esnext", "esnext.asynciterable"],
     //If the current project's tsconfig also includes compilerOptions.lib with dom, then the types from Typegoose and Typescript will conflict.
     // Solution is to remove dom from the lib array.
     "skipLibCheck": true,
