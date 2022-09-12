@@ -1,3 +1,4 @@
+"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -7,57 +8,78 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 var User_1;
-import pkg from "@typegoose/typegoose";
-const { modelOptions, getModelForClass, prop, Severity, pre, post } = pkg;
-import validator from "validator";
-import argon2 from "argon2";
-import config from "config";
-import OrderModel from "../model/order.model.js";
-import ReviewModel from "../model/review.model.js";
-import { signJwt } from "./../utils/jwt.js";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.User = void 0;
+const typegoose_1 = require("@typegoose/typegoose");
+const validator_1 = __importDefault(require("validator"));
+const argon2_1 = __importDefault(require("argon2"));
+const config_1 = __importDefault(require("config"));
+const order_model_1 = __importDefault(require("../model/order.model"));
+const review_model_1 = __importDefault(require("../model/review.model"));
+const jwt_1 = require("./../utils/jwt");
 let User = User_1 = class User {
-    static async findByCredentials(email, password) {
-        const user = await this.findOne({ email });
-        if (!user) {
-            throw new Error("No user with that email!");
-        }
-        console.log("這是pwd", password);
-        const isMatch = await argon2.verify(user.password, password.trim());
-        if (!isMatch) {
-            throw new Error("Incorrect Password ");
-        }
-        return user;
-    }
-    async generateAuthToken() {
-        const token = signJwt({ _id: this._id.toString() }, config.get("jwtSecret"), {
-            expiresIn: "1d",
+    static findByCredentials(email, password) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const user = yield this.findOne({ email });
+            if (!user) {
+                throw new Error("No user with that email!");
+            }
+            const isMatch = yield argon2_1.default.verify(user.password, password.trim());
+            if (!isMatch) {
+                throw new Error("Incorrect Password ");
+            }
+            return user;
         });
-        this.tokens = this.tokens?.concat({ token });
-        await this.save();
-        return token;
     }
-    async generateRefreshToken() {
-        const refreshToken = signJwt({ _id: this._id.toString() }, config.get("refreshSecret"), {
-            expiresIn: "1y",
+    generateAuthToken() {
+        var _a;
+        return __awaiter(this, void 0, void 0, function* () {
+            const token = (0, jwt_1.signJwt)({ _id: this._id.toString() }, config_1.default.get("jwtSecret"), {
+                expiresIn: "1d",
+            });
+            this.tokens = (_a = this.tokens) === null || _a === void 0 ? void 0 : _a.concat({ token });
+            yield this.save();
+            return token;
         });
-        return refreshToken;
     }
-    async generateLinkToken() {
-        const linkToken = signJwt({ _id: this._id.toString() }, config.get("linkSecret"), {
-            expiresIn: "1d",
+    generateRefreshToken() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const refreshToken = (0, jwt_1.signJwt)({ _id: this._id.toString() }, config_1.default.get("refreshSecret"), {
+                expiresIn: "1y",
+            });
+            return refreshToken;
         });
-        return linkToken;
+    }
+    generateLinkToken() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const linkToken = (0, jwt_1.signJwt)({ _id: this._id.toString() }, config_1.default.get("linkSecret"), {
+                expiresIn: "1d",
+            });
+            return linkToken;
+        });
     }
 };
 __decorate([
-    prop({
+    (0, typegoose_1.prop)({
         lowercase: true,
         required: true,
         unique: true,
         trim: true,
         validate(value) {
-            if (!validator.isEmail(value)) {
+            if (!validator_1.default.isEmail(value)) {
                 throw new Error("Email is invalid");
             }
         },
@@ -65,33 +87,33 @@ __decorate([
     __metadata("design:type", String)
 ], User.prototype, "email", void 0);
 __decorate([
-    prop({ default: "", trim: true }),
+    (0, typegoose_1.prop)({ default: "", trim: true }),
     __metadata("design:type", String)
 ], User.prototype, "firstName", void 0);
 __decorate([
-    prop({ default: "", trim: true }),
+    (0, typegoose_1.prop)({ default: "", trim: true }),
     __metadata("design:type", String)
 ], User.prototype, "lastName", void 0);
 __decorate([
-    prop({ default: "", trim: true }),
+    (0, typegoose_1.prop)({ default: "", trim: true }),
     __metadata("design:type", String)
 ], User.prototype, "fullName", void 0);
 __decorate([
-    prop({ default: "" }),
+    (0, typegoose_1.prop)({ default: "" }),
     __metadata("design:type", Object)
 ], User.prototype, "phone", void 0);
 __decorate([
-    prop({ default: "" }),
+    (0, typegoose_1.prop)({ default: "" }),
     __metadata("design:type", String)
 ], User.prototype, "avatarUpload", void 0);
 __decorate([
-    prop({
+    (0, typegoose_1.prop)({
         default: "https://res.cloudinary.com/azainseong/image/upload/v1662517415/mij3ogxe5cqxitevri9z.png",
     }),
     __metadata("design:type", String)
 ], User.prototype, "avatarDefault", void 0);
 __decorate([
-    prop({
+    (0, typegoose_1.prop)({
         trim: true,
         minlength: 7,
         validate(value) {
@@ -103,27 +125,27 @@ __decorate([
     __metadata("design:type", String)
 ], User.prototype, "password", void 0);
 __decorate([
-    prop(),
+    (0, typegoose_1.prop)(),
     __metadata("design:type", Array)
 ], User.prototype, "tokens", void 0);
 __decorate([
-    prop({ default: false }),
+    (0, typegoose_1.prop)({ default: false }),
     __metadata("design:type", Boolean)
 ], User.prototype, "verified", void 0);
 __decorate([
-    prop(),
+    (0, typegoose_1.prop)(),
     __metadata("design:type", Array)
 ], User.prototype, "cartList", void 0);
 __decorate([
-    prop(),
+    (0, typegoose_1.prop)(),
     __metadata("design:type", Array)
 ], User.prototype, "favList", void 0);
 __decorate([
-    prop(),
+    (0, typegoose_1.prop)(),
     __metadata("design:type", Array)
 ], User.prototype, "couponList", void 0);
 __decorate([
-    prop({
+    (0, typegoose_1.prop)({
         ref: "Order",
         foreignField: "owner",
         localField: "_id",
@@ -131,7 +153,7 @@ __decorate([
     __metadata("design:type", Array)
 ], User.prototype, "orderList", void 0);
 __decorate([
-    prop({
+    (0, typegoose_1.prop)({
         ref: "Review",
         foreignField: "user",
         localField: "_id",
@@ -139,23 +161,27 @@ __decorate([
     __metadata("design:type", Array)
 ], User.prototype, "reviewList", void 0);
 User = User_1 = __decorate([
-    pre("save", async function (next) {
-        const user = this;
-        if (user.isModified("password")) {
-            user.password = await argon2.hash(user.password);
-        }
-        next();
+    (0, typegoose_1.pre)("save", function (next) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const user = this;
+            if (user.isModified("password")) {
+                user.password = yield argon2_1.default.hash(user.password);
+            }
+            next();
+        });
     }),
-    pre("deleteOne", async function (next) {
-        const id = this.getFilter()["_id"];
-        await OrderModel.deleteMany({ owner: id });
-        await ReviewModel.deleteMany({ owner: id });
-        next();
+    (0, typegoose_1.pre)("deleteOne", function (next) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const id = this.getFilter()["_id"];
+            yield order_model_1.default.deleteMany({ owner: id });
+            yield review_model_1.default.deleteMany({ owner: id });
+            next();
+        });
     }),
-    post("save", function () {
+    (0, typegoose_1.post)("save", function () {
         console.log("after save");
     }),
-    modelOptions({
+    (0, typegoose_1.modelOptions)({
         schemaOptions: {
             timestamps: true,
             toObject: { virtuals: true },
@@ -168,11 +194,11 @@ User = User_1 = __decorate([
             },
         },
         options: {
-            allowMixed: Severity.ALLOW,
+            allowMixed: typegoose_1.Severity.ALLOW,
         },
     })
 ], User);
-export { User };
-const UserModel = getModelForClass(User);
-export default UserModel;
+exports.User = User;
+const UserModel = (0, typegoose_1.getModelForClass)(User);
+exports.default = UserModel;
 //# sourceMappingURL=user.model.js.map

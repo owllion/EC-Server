@@ -1,4 +1,7 @@
-export const getMailText = (type, link) => {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.getMailText = void 0;
+const getMailText = (type, link) => {
     const isReset = type === "reset";
     return {
         btnText: isReset ? "Reset Password" : "Verify Email",
@@ -9,4 +12,5 @@ export const getMailText = (type, link) => {
         action: isReset ? "resetting password" : "email verification",
     };
 };
+exports.getMailText = getMailText;
 //# sourceMappingURL=getMailText.js.map

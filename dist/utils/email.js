@@ -1,24 +1,39 @@
-import config from "config";
-import nodemailer from "nodemailer";
-import { getMailText } from "./getMailText.js";
-import { setTemplate } from "../data/emailTemplate.js";
-export const sendLink = async ({ type, link, email, }) => {
-    const { btnText, title, content, type: actionType, action, } = getMailText(type, link);
+"use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.sendLink = void 0;
+const config_1 = __importDefault(require("config"));
+const nodemailer_1 = __importDefault(require("nodemailer"));
+const getMailText_1 = require("./getMailText");
+const emailTemplate_1 = require("../data/emailTemplate");
+const sendLink = ({ type, link, email, }) => __awaiter(void 0, void 0, void 0, function* () {
+    const { btnText, title, content, type: actionType, action, } = (0, getMailText_1.getMailText)(type, link);
     try {
-        let transporter = nodemailer.createTransport({
-            host: config.get("host"),
-            port: config.get("mailPort"),
+        let transporter = nodemailer_1.default.createTransport({
+            host: config_1.default.get("host"),
+            port: config_1.default.get("mailPort"),
             secure: true,
             auth: {
-                user: config.get("mailFrom"),
-                pass: config.get("mailPwd"),
+                user: config_1.default.get("mailFrom"),
+                pass: config_1.default.get("mailPwd"),
             },
         });
-        const info = await transporter.sendMail({
+        const info = yield transporter.sendMail({
             to: email,
-            from: config.get("mailFrom"),
+            from: config_1.default.get("mailFrom"),
             subject: title,
-            html: setTemplate({
+            html: (0, emailTemplate_1.setTemplate)({
                 btnText,
                 btnLink: link,
                 title,
@@ -32,5 +47,6 @@ export const sendLink = async ({ type, link, email, }) => {
     catch (error) {
         console.log("Something went wrong!", error);
     }
-};
+});
+exports.sendLink = sendLink;
 //# sourceMappingURL=email.js.map

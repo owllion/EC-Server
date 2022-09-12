@@ -1,7 +1,32 @@
-import * as path from "path";
-import * as fs from "fs";
-import * as TJS from "typescript-json-schema";
-import { pipe } from "ramda";
+"use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const path = __importStar(require("path"));
+const fs = __importStar(require("fs"));
+const TJS = __importStar(require("typescript-json-schema"));
+const ramda_1 = require("ramda");
 const settings = {
     required: true,
 };
@@ -39,5 +64,5 @@ const generateSchemas = (generator) => {
         fs.writeFileSync(filePath, fileContents);
     });
 };
-pipe(getInterfaceFiles, schemaGenerator, generateSchemas)();
+(0, ramda_1.pipe)(getInterfaceFiles, schemaGenerator, generateSchemas)();
 //# sourceMappingURL=interfaceToSchema.js.map

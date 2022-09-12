@@ -7,7 +7,8 @@
     // Solution is to remove dom from the lib array.
     "skipLibCheck": true,
     "sourceMap": true,
-    "outDir": "./dist",
+    "outDir": "dist",
+    "rootDir": "src",
     "moduleResolution": "node",
     "strictPropertyInitialization": false, // Checks for class properties that are declared but not set in the constructor.
     "removeComments": true,

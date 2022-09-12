@@ -19,14 +19,14 @@ app.use("/api", router);
 app.use(errorHandler);
 app.use(notFoundHandler);
 // const port = config.get<number>("port");
-const port = (Number(process.env.PORT) || 5000) as 5000 | number;
+const port = (Number(process.env.PORT) || 3000) as 3000 | number;
 
 app.get("/", (req, res) => {
   res.send("Hello!");
 });
+dbConnect();
 console.log("ffggdfg");
 app.listen(port, "0.0.0.0", () => {
   console.log(`Server is up on the ${port} `);
-  dbConnect();
 });
 console.log("第二航");

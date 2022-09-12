@@ -1,22 +1,60 @@
-import config from "config";
-import { includes } from "ramda";
-import * as CouponServices from "../services/coupon.service.js";
-import UserModel from "../model/user.model.js";
-import ProductModel from "../model/product.model.js";
-import { verifyJwt } from "../utils/jwt.js";
-import * as UserServices from "../services/user.service.js";
-export const register = async (req, res) => {
+"use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.getNormalList = exports.getPopulatedList = exports.userInfoModify = exports.passwordModify = exports.addToFav = exports.removeFromFav = exports.addToCart = exports.updateItemQty = exports.clearCart = exports.removeCartItem = exports.resetPassword = exports.forgotPassword = exports.uploadAvatar = exports.getRefreshToken = exports.logout = exports.checkIfTokenIsValid = exports.verifyUser = exports.checkAccount = exports.sendVerifyOrResetLink = exports.googleLogin = exports.login = exports.register = void 0;
+const config_1 = __importDefault(require("config"));
+const ramda_1 = require("ramda");
+const CouponServices = __importStar(require("../services/coupon.service"));
+const user_model_1 = __importDefault(require("../model/user.model"));
+const product_model_1 = __importDefault(require("../model/product.model"));
+const jwt_1 = require("../utils/jwt");
+const UserServices = __importStar(require("../services/user.service"));
+const register = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const user = new UserModel(req.body);
-        await CouponServices.addCouponToUserCouponList("new123", user);
-        await user.save();
-        await UserServices.sendVerifyOrResetLink({
+        const user = new user_model_1.default(req.body);
+        yield CouponServices.addCouponToUserCouponList("new123", user);
+        yield user.save();
+        yield UserServices.sendVerifyOrResetLink({
             user,
             email: user.email,
             linkType: "verify",
             urlParams: "verify-email",
         });
-        const { token, refreshToken } = await UserServices.getTokens(user);
+        const { token, refreshToken } = yield UserServices.getTokens(user);
         res.status(201).json({
             msg: "Registration success",
             result: {
@@ -39,12 +77,13 @@ export const register = async (req, res) => {
             msg: e.message,
         });
     }
-};
-export const login = async (req, res) => {
+});
+exports.register = register;
+const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { email, password } = req.body;
     try {
-        const user = await UserModel.findByCredentials(email, password);
-        const { token, refreshToken } = await UserServices.getTokens(user);
+        const user = yield user_model_1.default.findByCredentials(email, password);
+        const { token, refreshToken } = yield UserServices.getTokens(user);
         res.status(200).send({
             msg: "success",
             result: {
@@ -66,16 +105,18 @@ export const login = async (req, res) => {
     catch (e) {
         res.status(400).send({ msg: e.message });
     }
-};
-export const googleLogin = async (req, res) => {
+});
+exports.login = login;
+const googleLogin = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a, _b;
     try {
-        const tokens = await UserServices.getGoogleAuthTokens(req.body.code);
-        const ticket = await UserServices.verifyIdToken(tokens.id_token);
+        const tokens = yield UserServices.getGoogleAuthTokens(req.body.code);
+        const ticket = yield UserServices.verifyIdToken(tokens.id_token);
         const { name, email, picture, locale } = ticket.getPayload();
-        const user = await UserServices.findUser({ field: "email", value: email });
+        const user = yield UserServices.findUser({ field: "email", value: email });
         let newUser;
         if (!user)
-            newUser = await UserServices.createUser({
+            newUser = yield UserServices.createUser({
                 fullName: name,
                 email,
                 avatarDefault: picture,
@@ -83,20 +124,20 @@ export const googleLogin = async (req, res) => {
         else if (user && user.password) {
             throw new Error("This email has already been registered");
         }
-        const { token, refreshToken } = await UserServices.getTokens((user || newUser));
+        const { token, refreshToken } = yield UserServices.getTokens((user || newUser));
         res.status(200).send({
             msg: "success",
             result: {
                 token,
                 refreshToken,
                 user: {
-                    fullName: user?.fullName || name,
+                    fullName: (user === null || user === void 0 ? void 0 : user.fullName) || name,
                     email,
-                    phone: user?.phone,
+                    phone: user === null || user === void 0 ? void 0 : user.phone,
                     avatarDefault: picture,
-                    avatarUpload: user?.avatarUpload,
-                    cartLength: UserServices.getCartLength((user || newUser)?.cartList),
-                    favList: (user || newUser)?.favList,
+                    avatarUpload: user === null || user === void 0 ? void 0 : user.avatarUpload,
+                    cartLength: UserServices.getCartLength((_a = (user || newUser)) === null || _a === void 0 ? void 0 : _a.cartList),
+                    favList: (_b = (user || newUser)) === null || _b === void 0 ? void 0 : _b.favList,
                     locale,
                 },
             },
@@ -105,16 +146,17 @@ export const googleLogin = async (req, res) => {
     catch (e) {
         res.status(500).send({ msg: e.message });
     }
-};
-export const sendVerifyOrResetLink = async (req, res) => {
+});
+exports.googleLogin = googleLogin;
+const sendVerifyOrResetLink = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const user = await UserServices.findUser({
+        const user = yield UserServices.findUser({
             field: "email",
             value: req.body.email,
         });
         if (!user)
             throw new Error("User not found");
-        await UserServices.sendVerifyOrResetLink({
+        yield UserServices.sendVerifyOrResetLink({
             user,
             email: req.body.email,
             linkType: req.body.type,
@@ -125,10 +167,11 @@ export const sendVerifyOrResetLink = async (req, res) => {
     catch (e) {
         res.status(500).send({ msg: e.message });
     }
-};
-export const checkAccount = async (req, res) => {
+});
+exports.sendVerifyOrResetLink = sendVerifyOrResetLink;
+const checkAccount = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const user = await UserServices.findUser({
+        const user = yield UserServices.findUser({
             field: "email",
             value: req.body.email,
         });
@@ -142,19 +185,20 @@ export const checkAccount = async (req, res) => {
     catch (e) {
         res.status(500).send({ msg: e.message });
     }
-};
-export const verifyUser = async (req, res) => {
+});
+exports.checkAccount = checkAccount;
+const verifyUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const decoded = verifyJwt(req.body.token, config.get("linkSecret"));
-        const user = await UserServices.findUser({
+        const decoded = (0, jwt_1.verifyJwt)(req.body.token, config_1.default.get("linkSecret"));
+        const user = yield UserServices.findUser({
             field: "_id",
             value: decoded._id,
         });
         if (!user)
             throw new Error("User not found");
         user.verified = true;
-        await user.save();
-        const { token, refreshToken } = await UserServices.getTokens(user);
+        yield user.save();
+        const { token, refreshToken } = yield UserServices.getTokens(user);
         res.status(200).send({
             msg: "verified",
             verified: true,
@@ -181,38 +225,41 @@ export const verifyUser = async (req, res) => {
         }
         res.status(500).send({ msg: e.message });
     }
-};
-export const checkIfTokenIsValid = async (req, res) => {
+});
+exports.verifyUser = verifyUser;
+const checkIfTokenIsValid = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        verifyJwt(req.body.token, config.get("linkSecret"));
+        (0, jwt_1.verifyJwt)(req.body.token, config_1.default.get("linkSecret"));
         res.status(200).send({ isValid: true });
     }
     catch (e) {
         res.status(500).send({ isValid: false });
     }
-};
-export const logout = async (req, res) => {
+});
+exports.checkIfTokenIsValid = checkIfTokenIsValid;
+const logout = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         req.user.tokens = req.user.tokens.filter((item) => item.token !== req.token);
-        await req.user.save();
+        yield req.user.save();
         res.status(200).send({ msg: "logout!" });
     }
     catch (e) {
         res.status(500).send({ msg: e.message });
     }
-};
-export const getRefreshToken = async (req, res) => {
+});
+exports.logout = logout;
+const getRefreshToken = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { refresh } = req.body;
-        const decoded = verifyJwt(refresh, config.get("refreshSecret"));
-        const user = await UserServices.findUser({
+        const decoded = (0, jwt_1.verifyJwt)(refresh, config_1.default.get("refreshSecret"));
+        const user = yield UserServices.findUser({
             field: "_id",
             value: decoded._id,
         });
         if (!user)
             throw new Error("User not found");
-        const token = await user.generateAuthToken();
-        const refreshToken = await user.generateRefreshToken();
+        const token = yield user.generateAuthToken();
+        const refreshToken = yield user.generateRefreshToken();
         res.status(200).send({
             msg: "success",
             token,
@@ -226,24 +273,26 @@ export const getRefreshToken = async (req, res) => {
         }
         res.status(400).send({ msg: e.message });
     }
-};
-export const uploadAvatar = async (req, res) => {
+});
+exports.getRefreshToken = getRefreshToken;
+const uploadAvatar = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         req.user.avatarUpload = req.body.url;
-        await req.user.save();
+        yield req.user.save();
         res.status(200).send({ msg: "success" });
     }
     catch (e) {
         res.status(500).send({ msg: e.message });
     }
-};
-export const forgotPassword = async (req, res) => {
+});
+exports.uploadAvatar = uploadAvatar;
+const forgotPassword = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { email } = req.body;
-        const user = await UserServices.findUser({ field: "email", value: email });
+        const user = yield UserServices.findUser({ field: "email", value: email });
         if (!user)
             throw new Error("No user with that email!");
-        await UserServices.sendVerifyOrResetLink({
+        yield UserServices.sendVerifyOrResetLink({
             user,
             email,
             linkType: "reset",
@@ -256,19 +305,20 @@ export const forgotPassword = async (req, res) => {
     catch (e) {
         res.status(500).send({ msg: e.message });
     }
-};
-export const resetPassword = async (req, res) => {
+});
+exports.forgotPassword = forgotPassword;
+const resetPassword = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { password, token } = req.body;
-        const decoded = verifyJwt(token, config.get("linkSecret"));
-        const user = await UserServices.findUser({
+        const decoded = (0, jwt_1.verifyJwt)(token, config_1.default.get("linkSecret"));
+        const user = yield UserServices.findUser({
             field: "_id",
             value: decoded._id,
         });
         if (!user)
             throw new Error("User not found");
         user.password = password;
-        await user.save();
+        yield user.save();
         res.status(200).send({
             msg: "success",
         });
@@ -276,8 +326,9 @@ export const resetPassword = async (req, res) => {
     catch (e) {
         res.status(500).send({ msg: e.message });
     }
-};
-export const removeCartItem = async (req, res) => {
+});
+exports.resetPassword = resetPassword;
+const removeCartItem = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const index = req.user.cartList.findIndex((item) => item.productId === req.body.productId && item.size === req.body.size);
         if (index > -1)
@@ -285,48 +336,47 @@ export const removeCartItem = async (req, res) => {
                 ...req.user.cartList.slice(0, index),
                 ...req.user.cartList.slice(index + 1),
             ];
-        await req.user.save();
+        yield req.user.save();
         res.status(200).send({ msg: "success" });
     }
     catch (e) {
         res.status(500).send({ msg: e.message });
     }
-};
-export const clearCart = async (req, res) => {
+});
+exports.removeCartItem = removeCartItem;
+const clearCart = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         req.user.cartList = [];
-        await req.user.save();
+        yield req.user.save();
         res.status(200).send({ msg: "success" });
     }
     catch (e) {
         res.status(500).send({ msg: e.message });
     }
-};
-export const updateItemQty = async (req, res) => {
+});
+exports.clearCart = clearCart;
+const updateItemQty = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { productId, type, size } = req.body;
     try {
         req.user.cartList = req.user.cartList.map((item) => item.productId === productId && item.size === size
-            ? {
-                ...item,
-                qty: type === "inc" ? item.qty + 1 : item.qty - 1,
-            }
-            : item);
-        await req.user.save();
+            ? Object.assign(Object.assign({}, item), { qty: type === "inc" ? item.qty + 1 : item.qty - 1 }) : item);
+        yield req.user.save();
         res.status(200).send({ msg: "success" });
     }
     catch (e) {
         res.status(500).send({ msg: e.message });
     }
-};
-export const addToCart = async (req, res) => {
+});
+exports.updateItemQty = updateItemQty;
+const addToCart = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { productId, qty, size } = req.body;
     try {
-        const product = await ProductModel.findOne({ _id: productId });
+        const product = yield product_model_1.default.findOne({ _id: productId });
         if (!product)
             throw new Error("Product not found");
         const user = UserServices.addItem(req.user, product, productId, qty, size);
         req.user = user;
-        await req.user.save();
+        yield req.user.save();
         res.status(200).send({
             msg: "success",
             cartList: req.user.cartList,
@@ -335,11 +385,12 @@ export const addToCart = async (req, res) => {
     catch (e) {
         res.status(500).send({ msg: e.message });
     }
-};
-export const removeFromFav = async (req, res) => {
+});
+exports.addToCart = addToCart;
+const removeFromFav = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         req.user.favList = req.user.favList.filter((product) => product.productId !== req.body.productId);
-        await req.user.save();
+        yield req.user.save();
         res.status(200).send({
             msg: "success",
             favList: req.user.favList,
@@ -348,16 +399,17 @@ export const removeFromFav = async (req, res) => {
     catch (e) {
         res.status(500).send({ msg: e.message });
     }
-};
-export const addToFav = async (req, res) => {
+});
+exports.removeFromFav = removeFromFav;
+const addToFav = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { productId } = req.body;
     try {
-        const item = await ProductModel.findOne({ productId });
+        const item = yield product_model_1.default.findOne({ productId });
         if (!item)
             throw new Error("Product not found");
-        await UserServices.checkIfProductExistsInFavList(req.user, productId);
+        yield UserServices.checkIfProductExistsInFavList(req.user, productId);
         req.user.favList.push(item);
-        await req.user.save();
+        yield req.user.save();
         res.status(200).send({
             msg: "success",
             favList: req.user.favList,
@@ -366,21 +418,23 @@ export const addToFav = async (req, res) => {
     catch (e) {
         res.status(500).send({ msg: e.message });
     }
-};
-export const passwordModify = async (req, res) => {
+});
+exports.addToFav = addToFav;
+const passwordModify = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         req.user.password = req.body.password;
-        await req.user.save();
+        yield req.user.save();
         res.status(200).send({ msg: "update successfully" });
     }
     catch (e) {
         res.status(500).send({ msg: e.message });
     }
-};
-export const userInfoModify = async (req, res) => {
+});
+exports.passwordModify = passwordModify;
+const userInfoModify = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         ["firstName", "lastName", "fullName", "phone"].forEach((field) => (req.user[field] = req.body[field]));
-        await req.user.save();
+        yield req.user.save();
         res.status(200).send({
             msg: "success",
         });
@@ -388,24 +442,26 @@ export const userInfoModify = async (req, res) => {
     catch (e) {
         res.status(500).send({ msg: e.message });
     }
-};
-export const getPopulatedList = async (req, res) => {
+});
+exports.userInfoModify = userInfoModify;
+const getPopulatedList = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { type } = req.params;
-    if (!type || !includes(type, ["order", "review"]))
+    if (!type || !(0, ramda_1.includes)(type, ["order", "review"]))
         return res
             .status(400)
             .send({ msg: "params must be either order or review" });
     try {
-        const user = await UserModel.findById(req.user.id).populate(`${type}List`);
+        const user = yield user_model_1.default.findById(req.user.id).populate(`${type}List`);
         res
             .status(200)
-            .send({ message: "success", [`${type}List`]: user?.[`${type}List`] });
+            .send({ message: "success", [`${type}List`]: user === null || user === void 0 ? void 0 : user[`${type}List`] });
     }
     catch (e) {
         res.status(500).send({ msg: e.message });
     }
-};
-export const getNormalList = (req, res) => {
+});
+exports.getPopulatedList = getPopulatedList;
+const getNormalList = (req, res) => {
     const { type: typeList } = req.params;
     try {
         res
@@ -416,4 +472,5 @@ export const getNormalList = (req, res) => {
         res.status(500).send({ msg: e.message });
     }
 };
+exports.getNormalList = getNormalList;
 //# sourceMappingURL=user.controller.js.map

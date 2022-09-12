@@ -1,3 +1,4 @@
+"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -7,48 +8,49 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-import pkg from "@typegoose/typegoose";
-const { getModelForClass, modelOptions, prop, pre, Severity } = pkg;
-import { nanoid } from "nanoid";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Review = void 0;
+const typegoose_1 = require("@typegoose/typegoose");
+const nanoid_1 = require("nanoid");
 let Review = class Review {
 };
 __decorate([
-    prop({ ref: "User", required: true }),
+    (0, typegoose_1.prop)({ ref: "User", required: true }),
     __metadata("design:type", Object)
 ], Review.prototype, "user", void 0);
 __decorate([
-    prop({ ref: "Product", required: true }),
+    (0, typegoose_1.prop)({ ref: "Product", required: true }),
     __metadata("design:type", Object)
 ], Review.prototype, "product", void 0);
 __decorate([
-    prop({ required: true, default: () => nanoid() }),
+    (0, typegoose_1.prop)({ required: true, default: () => (0, nanoid_1.nanoid)() }),
     __metadata("design:type", String)
 ], Review.prototype, "reviewId", void 0);
 __decorate([
-    prop({ required: true, min: 0.5, max: 5 }),
+    (0, typegoose_1.prop)({ required: true, min: 0.5, max: 5 }),
     __metadata("design:type", Number)
 ], Review.prototype, "rating", void 0);
 __decorate([
-    prop({ required: true }),
+    (0, typegoose_1.prop)({ required: true }),
     __metadata("design:type", String)
 ], Review.prototype, "comment", void 0);
 Review = __decorate([
-    modelOptions({
+    (0, typegoose_1.modelOptions)({
         schemaOptions: {
             timestamps: true,
             toJSON: { virtuals: true },
             toObject: { virtuals: true },
         },
         options: {
-            allowMixed: Severity.ALLOW,
+            allowMixed: typegoose_1.Severity.ALLOW,
         },
     }),
-    pre("find", function (next) {
+    (0, typegoose_1.pre)("find", function (next) {
         this.populate("user").populate("product");
         next();
     })
 ], Review);
-export { Review };
-const ReviewModel = getModelForClass(Review);
-export default ReviewModel;
+exports.Review = Review;
+const ReviewModel = (0, typegoose_1.getModelForClass)(Review);
+exports.default = ReviewModel;
 //# sourceMappingURL=review.model.js.map

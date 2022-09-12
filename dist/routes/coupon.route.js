@@ -1,13 +1,41 @@
-import express from "express";
-import * as CouponController from "../controller/coupon.controller.js";
-import auth from "../middleware/auth.middleware.js";
-import validateInput from "../middleware/validate.middleware.js";
-import * as Interface from "../schema/index.js";
-const router = express.Router();
-router.post("/coupon", auth, validateInput(Interface.CreateCouponInterface), CouponController.createCoupon);
-router.patch("/coupon", auth, validateInput(Interface.ModifyCouponInterface), CouponController.modifyCoupon);
-router.delete("/coupon", auth, validateInput(Interface.DeleteCouponInterface), CouponController.deleteCoupon);
-router.post("/coupon/redeem", auth, validateInput(Interface.RedeemCouponInterface), CouponController.redeemCoupon);
-router.post("/coupon/apply", auth, validateInput(Interface.ApplyCouponInterface), CouponController.applyCoupon);
-export default router;
+"use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = __importDefault(require("express"));
+const CouponController = __importStar(require("../controller/coupon.controller"));
+const auth_middleware_1 = __importDefault(require("../middleware/auth.middleware"));
+const validate_middleware_1 = __importDefault(require("../middleware/validate.middleware"));
+const Interface = __importStar(require("../schema/index"));
+const router = express_1.default.Router();
+router.post("/coupon", auth_middleware_1.default, (0, validate_middleware_1.default)(Interface.CreateCouponInterface), CouponController.createCoupon);
+router.patch("/coupon", auth_middleware_1.default, (0, validate_middleware_1.default)(Interface.ModifyCouponInterface), CouponController.modifyCoupon);
+router.delete("/coupon", auth_middleware_1.default, (0, validate_middleware_1.default)(Interface.DeleteCouponInterface), CouponController.deleteCoupon);
+router.post("/coupon/redeem", auth_middleware_1.default, (0, validate_middleware_1.default)(Interface.RedeemCouponInterface), CouponController.redeemCoupon);
+router.post("/coupon/apply", auth_middleware_1.default, (0, validate_middleware_1.default)(Interface.ApplyCouponInterface), CouponController.applyCoupon);
+exports.default = router;
 //# sourceMappingURL=coupon.route.js.map

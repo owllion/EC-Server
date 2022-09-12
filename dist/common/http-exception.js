@@ -1,4 +1,6 @@
-export default class HttpException extends Error {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+class HttpException extends Error {
     constructor(statusCode, message, error) {
         super();
         this.statusCode = statusCode;
@@ -6,4 +8,5 @@ export default class HttpException extends Error {
         this.error = error || null;
     }
 }
+exports.default = HttpException;
 //# sourceMappingURL=http-exception.js.map
