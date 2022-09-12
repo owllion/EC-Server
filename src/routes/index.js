@@ -1,0 +1,15 @@
+"use strict";
+exports.__esModule = true;
+var express_1 = require("express");
+var user_route_1 = require("./user.route");
+var coupon_route_1 = require("./coupon.route");
+var order_route_1 = require("./order.route");
+var product_route_1 = require("./product.route");
+var review_route_1 = require("./review.route");
+var router = express_1["default"].Router();
+router.use(product_route_1["default"]);
+router.use(user_route_1["default"]);
+router.use(coupon_route_1["default"]);
+router.use(order_route_1["default"]);
+router.use(review_route_1["default"]);
+exports["default"] = router;
