@@ -1,7 +1,7 @@
 import { RequestHandler } from "express";
-import ProductModel, { Product } from "./../model/product.model.js";
-import * as ProductServices from "../services/product.service.js";
-import * as ProductInterface from "../interface/controller/product.controller.interface.js";
+import ProductModel, { Product } from "./../model/product.model";
+import * as ProductServices from "../services/product.service";
+import * as ProductInterface from "../interface/controller/product.controller.interface";
 
 export const createProduct: RequestHandler = async (req, res) => {
   const product = new ProductModel(req.body as Product);

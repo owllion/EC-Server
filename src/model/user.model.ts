@@ -1,15 +1,24 @@
-import { Ref, ReturnModelType, DocumentType } from "@typegoose/typegoose";
-import pkg from "@typegoose/typegoose";
-const { modelOptions, getModelForClass, prop, Severity, pre, post } = pkg;
+import {
+  modelOptions,
+  getModelForClass,
+  prop,
+  Severity,
+  pre,
+  post,
+  Ref,
+  ReturnModelType,
+  DocumentType,
+} from "@typegoose/typegoose";
+
 import validator from "validator";
 import argon2 from "argon2";
 import config from "config";
 
-import OrderModel, { Order } from "../model/order.model.js";
-import ReviewModel, { Review } from "../model/review.model.js";
-import { Product } from "../model/product.model.js";
-import { Coupon } from "../model/coupon.model.js";
-import { signJwt } from "./../utils/jwt.js";
+import OrderModel, { Order } from "../model/order.model";
+import ReviewModel, { Review } from "../model/review.model";
+import { Product } from "../model/product.model";
+import { Coupon } from "../model/coupon.model";
+import { signJwt } from "./../utils/jwt";
 
 @pre<User>("save", async function (next) {
   /**
@@ -150,7 +159,6 @@ export class User {
     if (!user) {
       throw new Error("No user with that email!");
     }
-    console.log("這是pwd", password);
     const isMatch: boolean = await argon2.verify(
       user.password!,
       password.trim()

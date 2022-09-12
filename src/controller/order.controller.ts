@@ -1,7 +1,7 @@
 import { RequestHandler } from "express";
-import { IOrderItem } from "./../interface/controller/order.controller.interface.js";
-import OrderModel, { Order } from "../model/order.model.js";
-import * as OrderServices from "../services/order.service.js";
+import { IOrderItem } from "./../interface/controller/order.controller.interface";
+import OrderModel, { Order } from "../model/order.model";
+import * as OrderServices from "../services/order.service";
 
 export const createOrder: RequestHandler = async (req, res) => {
   try {

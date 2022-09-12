@@ -3,11 +3,11 @@ import morgan from "morgan";
 import cors from "cors";
 import "dotenv/config";
 import helmet from "helmet";
-import dbConnect from "./db/mongoose.js";
+import dbConnect from "./db/mongoose";
 import config from "config";
-import router from "./routes/index.js";
-import { errorHandler } from "./middleware/error.middleware.js";
-import { notFoundHandler } from "./middleware/not-found.middleware.js";
+import router from "./routes/index";
+import { errorHandler } from "./middleware/error.middleware";
+import { notFoundHandler } from "./middleware/not-found.middleware";
 
 const app = express();
 app.use(express.json());

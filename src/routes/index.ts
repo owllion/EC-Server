@@ -1,9 +1,9 @@
 import express from "express";
-import user from "./user.route.js";
-import coupon from "./coupon.route.js";
-import order from "./order.route.js";
-import product from "./product.route.js";
-import review from "./review.route.js";
+import user from "./user.route";
+import coupon from "./coupon.route";
+import order from "./order.route";
+import product from "./product.route";
+import review from "./review.route";
 
 const router = express.Router();
 

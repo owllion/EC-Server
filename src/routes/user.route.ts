@@ -1,11 +1,10 @@
-import { GoogleLoginInterface } from "./../interface/user.interface";
 import express from "express";
-import * as UserController from "../controller/user.controller.js";
-import auth from "../middleware/auth.middleware.js";
-import validateInput from "../middleware/validate.middleware.js";
-import validateParams from "../middleware/validate.params.middleware.js";
-import * as Interface from "../schema/index.js";
-import GetNormalListInterface from "../schema/@Request/GetNormalListInterface.js";
+import * as UserController from "../controller/user.controller";
+import auth from "../middleware/auth.middleware";
+import validateInput from "../middleware/validate.middleware";
+import validateParams from "../middleware/validate.params.middleware";
+import * as Interface from "../schema/index";
+import GetNormalListInterface from "../schema/@Request/GetNormalListInterface";
 
 const router = express.Router();
 

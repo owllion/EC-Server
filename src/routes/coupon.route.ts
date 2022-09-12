@@ -1,8 +1,8 @@
 import express from "express";
-import * as CouponController from "../controller/coupon.controller.js";
-import auth from "../middleware/auth.middleware.js";
-import validateInput from "../middleware/validate.middleware.js";
-import * as Interface from "../schema/index.js";
+import * as CouponController from "../controller/coupon.controller";
+import auth from "../middleware/auth.middleware";
+import validateInput from "../middleware/validate.middleware";
+import * as Interface from "../schema/index";
 
 const router = express.Router();
 

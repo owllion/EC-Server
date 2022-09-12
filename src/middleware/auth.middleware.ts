@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import config from "config";
-import UserModel from "../model/user.model.js";
-import { verifyJwt } from "../utils/jwt.js";
+import UserModel from "../model/user.model";
+import { verifyJwt } from "../utils/jwt";
 
 interface JwtPayload {
   _id: string;

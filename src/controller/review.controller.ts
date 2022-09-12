@@ -1,7 +1,7 @@
 import { RequestHandler } from "express";
-import ReviewModel from "./../model/review.model.js";
-import * as ReviewInterface from "../interface/controller/review.controller.interface.js";
-import * as ReviewServices from "../services/review.service.js";
+import ReviewModel from "./../model/review.model";
+import * as ReviewInterface from "../interface/controller/review.controller.interface";
+import * as ReviewServices from "../services/review.service";
 
 export const createReview: RequestHandler<
   {},

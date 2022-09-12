@@ -2,9 +2,9 @@ import { OAuth2Client } from "google-auth-library";
 import { DocumentType } from "@typegoose/typegoose";
 import config from "config";
 
-import { Product } from "../model/product.model.js";
-import { sendLink } from "../utils/email.js";
-import UserModel, { User } from "../model/user.model.js";
+import { Product } from "../model/product.model";
+import { sendLink } from "../utils/email";
+import UserModel, { User } from "../model/user.model";
 
 export const checkIfEmailIsRegisteredWithGoogleLogin = (
   password: string | undefined

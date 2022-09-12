@@ -1,9 +1,9 @@
 import { omit } from "ramda";
 import { DocumentType } from "@typegoose/typegoose";
-import CouponModel from "../model/coupon.model.js";
-import * as CouponInterface from "../interface/controller/coupon.controller.interface.js";
-import { User } from "../model/user.model.js";
-import { Coupon } from "../model/coupon.model.js";
+import CouponModel from "../model/coupon.model";
+import * as CouponInterface from "../interface/controller/coupon.controller.interface";
+import { User } from "../model/user.model";
+import { Coupon } from "../model/coupon.model";
 
 export const findCoupon = async ({
   field,
