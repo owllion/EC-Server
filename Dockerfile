@@ -7,8 +7,8 @@ RUN  npm ci --legacy-peer-deps --omit=dev
 
 RUN npm install pm2 -g
 
-RUN npm install tsc 
-
+RUN npm cache clean --force && npm install -g typescript
+ 
 RUN npm run build
 
 COPY ./dist ./
