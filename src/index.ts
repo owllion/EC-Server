@@ -24,8 +24,9 @@ const port = (Number(process.env.PORT) || 5000) as 5000 | number;
 app.get("/", (req, res) => {
   res.send("Hello!");
 });
-
+console.log("ffggdfg");
 app.listen(port, "0.0.0.0", () => {
   console.log(`Server is up on the ${port} `);
   dbConnect();
 });
+console.log("第二航");
