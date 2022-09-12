@@ -19,8 +19,7 @@ app.use("/api", router);
 app.use(errorHandler);
 app.use(notFoundHandler);
 const port = config.get<number>("port");
-// const port = 5000;
-//test
+
 app.get("/", (req, res) => {
   res.send("Hello!");
 });
