@@ -9,9 +9,9 @@ RUN npm install pm2 -g
 
 RUN npm cache clean --force && npm install -g typescript
  
-RUN npm run build
+COPY . .
 
-COPY ./dist ./
+RUN npm run build
 
 USER node
 
