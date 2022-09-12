@@ -19,7 +19,7 @@ app.use("/api", router);
 app.use(errorHandler);
 app.use(notFoundHandler);
 // const port = config.get<number>("port");
-const port = 5000;
+const port = (Number(process.env.PORT) || 5000) as 5000 | number;
 
 app.get("/", (req, res) => {
   res.send("Hello!");
