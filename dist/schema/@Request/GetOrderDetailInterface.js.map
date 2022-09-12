@@ -1,0 +1,1 @@
+{"version":3,"file":"GetOrderDetailInterface.js","sourceRoot":"","sources":["../../../src/schema/@Request/GetOrderDetailInterface.ts"],"names":[],"mappings":"AAAA,eAAc;IACZ,MAAM,EAAE,QAAQ;IAChB,YAAY,EAAE;QACZ,SAAS,EAAE;YACT,MAAM,EAAE,QAAQ;SACjB;KACF;IACD,UAAU,EAAE;QACV,SAAS;KACV;IACD,SAAS,EAAE,yCAAyC;CACrD,CAAA"}

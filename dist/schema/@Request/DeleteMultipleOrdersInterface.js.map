@@ -1,0 +1,1 @@
+{"version":3,"file":"DeleteMultipleOrdersInterface.js","sourceRoot":"","sources":["../../../src/schema/@Request/DeleteMultipleOrdersInterface.ts"],"names":[],"mappings":"AAAA,eAAc;IACZ,MAAM,EAAE,QAAQ;IAChB,YAAY,EAAE;QACZ,cAAc,EAAE;YACd,MAAM,EAAE,OAAO;YACf,OAAO,EAAE;gBACP,MAAM,EAAE,QAAQ;aACjB;SACF;KACF;IACD,UAAU,EAAE;QACV,cAAc;KACf;IACD,SAAS,EAAE,yCAAyC;CACrD,CAAA"}

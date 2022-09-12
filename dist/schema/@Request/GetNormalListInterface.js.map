@@ -1,0 +1,1 @@
+{"version":3,"file":"GetNormalListInterface.js","sourceRoot":"","sources":["../../../src/schema/@Request/GetNormalListInterface.ts"],"names":[],"mappings":"AAAA,eAAe;IACb,IAAI,EAAE,QAAQ;IACd,UAAU,EAAE;QACV,IAAI,EAAE;YACJ,IAAI,EAAE,CAAC,SAAS,EAAE,YAAY,EAAE,UAAU,CAAC;SAC5C;KACF;IACD,QAAQ,EAAE,CAAC,MAAM,CAAC;IAClB,OAAO,EAAE,yCAAyC;CACnD,CAAC"}
