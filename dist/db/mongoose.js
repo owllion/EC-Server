@@ -14,7 +14,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importDefault(require("mongoose"));
 const dbConnect = () => __awaiter(void 0, void 0, void 0, function* () {
-    const dbUri = process.env.DB_URI;
+    console.log("db網誌", process.env.MONGODB_URI);
+    const dbUri = process.env.MONGODB_URI;
+    console.log({ dbUri });
     if (mongoose_1.default.connection.readyState >= 1) {
         return;
     }

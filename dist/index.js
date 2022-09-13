@@ -7,6 +7,7 @@ const express_1 = __importDefault(require("express"));
 const morgan_1 = __importDefault(require("morgan"));
 const cors_1 = __importDefault(require("cors"));
 const helmet_1 = __importDefault(require("helmet"));
+require("dotenv/config");
 const mongoose_1 = __importDefault(require("./db/mongoose"));
 const index_1 = __importDefault(require("./routes/index"));
 const error_middleware_1 = require("./middleware/error.middleware");
@@ -20,7 +21,6 @@ app.use("/api", index_1.default);
 app.use(error_middleware_1.errorHandler);
 app.use(not_found_middleware_1.notFoundHandler);
 const port = (Number(process.env.PORT) || 5000);
-console.log("讀的道嗎??", process.env.DB_URI);
 app.get("/", (req, res) => {
     res.send("Hello!");
 });
