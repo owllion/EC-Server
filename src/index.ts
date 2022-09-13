@@ -17,13 +17,14 @@ app.use("/api", router);
 
 app.use(errorHandler);
 app.use(notFoundHandler);
-const port = (Number(process.env.PORT) || 5000) as 5000 | number;
 
-app.get("/", (req, res) => {
-  res.send("Hello!");
-});
+const port = (Number(process.env.PORT) || 5000) as 5000 | number;
 
 dbConnect();
 app.listen(port, "0.0.0.0", () => {
   console.log(`Server is up on the ${port} `);
+});
+
+app.get("/", function (req, res) {
+  res.send("hello world");
 });
