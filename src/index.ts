@@ -2,6 +2,7 @@ import express from "express";
 import morgan from "morgan";
 import cors from "cors";
 import helmet from "helmet";
+import "dotenv/config";
 import dbConnect from "./db/mongoose";
 import router from "./routes/index";
 import { errorHandler } from "./middleware/error.middleware";

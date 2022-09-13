@@ -20,6 +20,7 @@ app.use("/api", index_1.default);
 app.use(error_middleware_1.errorHandler);
 app.use(not_found_middleware_1.notFoundHandler);
 const port = (Number(process.env.PORT) || 5000);
+console.log("讀的道嗎??", process.env.DB_URI);
 app.get("/", (req, res) => {
     res.send("Hello!");
 });
