@@ -49,7 +49,7 @@ export const sendVerifyOrResetLink = async ({
   urlParams,
 }: ISendLink) => {
   const verifyToken = await user.generateLinkToken();
-  const link = `https://react-mern-ecommerce.vercel.app/auth/${urlParams}/${verifyToken}`;
+  const link = `https://react-ec-server.up.railway.app/auth/${urlParams}/${verifyToken}`;
   sendLink({ type: linkType, link, email });
 };
 
