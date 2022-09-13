@@ -26,7 +26,6 @@ exports.User = void 0;
 const typegoose_1 = require("@typegoose/typegoose");
 const validator_1 = __importDefault(require("validator"));
 const argon2_1 = __importDefault(require("argon2"));
-const config_1 = __importDefault(require("config"));
 const order_model_1 = __importDefault(require("../model/order.model"));
 const review_model_1 = __importDefault(require("../model/review.model"));
 const jwt_1 = require("./../utils/jwt");
@@ -47,7 +46,7 @@ let User = User_1 = class User {
     generateAuthToken() {
         var _a;
         return __awaiter(this, void 0, void 0, function* () {
-            const token = (0, jwt_1.signJwt)({ _id: this._id.toString() }, config_1.default.get("jwtSecret"), {
+            const token = (0, jwt_1.signJwt)({ _id: this._id.toString() }, process.env.JWT_SECRET, {
                 expiresIn: "1d",
             });
             this.tokens = (_a = this.tokens) === null || _a === void 0 ? void 0 : _a.concat({ token });
@@ -57,7 +56,7 @@ let User = User_1 = class User {
     }
     generateRefreshToken() {
         return __awaiter(this, void 0, void 0, function* () {
-            const refreshToken = (0, jwt_1.signJwt)({ _id: this._id.toString() }, config_1.default.get("refreshSecret"), {
+            const refreshToken = (0, jwt_1.signJwt)({ _id: this._id.toString() }, process.env.REFRESH_SECRET, {
                 expiresIn: "1y",
             });
             return refreshToken;
@@ -65,7 +64,7 @@ let User = User_1 = class User {
     }
     generateLinkToken() {
         return __awaiter(this, void 0, void 0, function* () {
-            const linkToken = (0, jwt_1.signJwt)({ _id: this._id.toString() }, config_1.default.get("linkSecret"), {
+            const linkToken = (0, jwt_1.signJwt)({ _id: this._id.toString() }, process.env.LINK_SECRET, {
                 expiresIn: "1d",
             });
             return linkToken;

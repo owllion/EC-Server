@@ -13,7 +13,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.sendLink = void 0;
-const config_1 = __importDefault(require("config"));
 const nodemailer_1 = __importDefault(require("nodemailer"));
 const getMailText_1 = require("./getMailText");
 const emailTemplate_1 = require("../data/emailTemplate");
@@ -21,17 +20,17 @@ const sendLink = ({ type, link, email, }) => __awaiter(void 0, void 0, void 0, f
     const { btnText, title, content, type: actionType, action, } = (0, getMailText_1.getMailText)(type, link);
     try {
         let transporter = nodemailer_1.default.createTransport({
-            host: config_1.default.get("host"),
-            port: config_1.default.get("mailPort"),
+            host: process.env.MAIL_HOST,
+            port: process.env.MAIL_PORT,
             secure: true,
             auth: {
-                user: config_1.default.get("mailFrom"),
-                pass: config_1.default.get("mailPwd"),
+                user: process.env.MAIL_FROM,
+                pass: process.env.MAIL_PWD,
             },
         });
         const info = yield transporter.sendMail({
             to: email,
-            from: config_1.default.get("mailFrom"),
+            from: process.env.MAIL_FROM,
             subject: title,
             html: (0, emailTemplate_1.setTemplate)({
                 btnText,

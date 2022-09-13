@@ -12,7 +12,6 @@ import {
 
 import validator from "validator";
 import argon2 from "argon2";
-import config from "config";
 
 import OrderModel, { Order } from "../model/order.model";
 import ReviewModel, { Review } from "../model/review.model";
@@ -177,7 +176,7 @@ export class User {
      */
     const token = signJwt(
       { _id: this._id.toString() },
-      config.get<string>("jwtSecret"),
+      process.env.JWT_SECRET!,
       {
         expiresIn: "1d",
       }
@@ -191,7 +190,7 @@ export class User {
   public async generateRefreshToken(this: DocumentType<User>) {
     const refreshToken = signJwt(
       { _id: this._id.toString() },
-      config.get<string>("refreshSecret"),
+      process.env.REFRESH_SECRET!,
       {
         expiresIn: "1y",
       }
@@ -205,7 +204,7 @@ export class User {
   public async generateLinkToken(this: DocumentType<User>) {
     const linkToken = signJwt(
       { _id: this._id.toString() },
-      config.get<string>("linkSecret"),
+      process.env.LINK_SECRET!,
       {
         expiresIn: "1d",
       }

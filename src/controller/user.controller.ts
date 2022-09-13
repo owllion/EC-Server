@@ -1,5 +1,4 @@
 import { RequestHandler } from "express";
-import config from "config";
 import { includes } from "ramda";
 import { DocumentType } from "@typegoose/typegoose";
 
@@ -171,7 +170,7 @@ export const checkAccount: RequestHandler<{}, {}, { email: string }> = async (
 
     if (user) {
       UserServices.checkIfEmailIsRegisteredWithGoogleLogin(user.password);
-      // UserServices.checkIfEmailIsVerified(user.verified);
+      UserServices.checkIfEmailIsVerified(user.verified);
     }
 
     res.status(200).send({
@@ -189,7 +188,7 @@ export const verifyUser: RequestHandler<{}, {}, { token: string }> = async (
   try {
     const decoded = verifyJwt<{ _id: string }>(
       req.body.token,
-      config.get<string>("linkSecret")
+      process.env.LINK_SECRET!
     );
 
     const user = await UserServices.findUser({
@@ -238,10 +237,7 @@ export const checkIfTokenIsValid: RequestHandler<
   { token: string }
 > = async (req, res) => {
   try {
-    verifyJwt<{ _id: string }>(
-      req.body.token,
-      config.get<string>("linkSecret")
-    );
+    verifyJwt<{ _id: string }>(req.body.token, process.env.LINK_SECRET!);
     res.status(200).send({ isValid: true });
   } catch (e) {
     res.status(500).send({ isValid: false });
@@ -272,7 +268,7 @@ export const getRefreshToken: RequestHandler<
 
     const decoded = verifyJwt<{ _id: string }>(
       refresh,
-      config.get<string>("refreshSecret")
+      process.env.REFRESH_SECRET!
     );
 
     const user = await UserServices.findUser({
@@ -346,10 +342,7 @@ export const resetPassword: RequestHandler<
 > = async (req, res) => {
   try {
     const { password, token } = req.body;
-    const decoded = verifyJwt<{ _id: string }>(
-      token,
-      config.get<string>("linkSecret")
-    );
+    const decoded = verifyJwt<{ _id: string }>(token, process.env.LINK_SECRET!);
 
     const user = await UserServices.findUser({
       field: "_id",

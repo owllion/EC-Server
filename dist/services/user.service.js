@@ -14,7 +14,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.checkIfProductExistsInFavList = exports.addItem = exports.verifyIdToken = exports.getGoogleAuthTokens = exports.getCartLength = exports.getTokens = exports.sendVerifyOrResetLink = exports.createUser = exports.findUser = exports.checkIfEmailIsVerified = exports.checkIfEmailIsRegisteredWithGoogleLogin = void 0;
 const google_auth_library_1 = require("google-auth-library");
-const config_1 = __importDefault(require("config"));
 const email_1 = require("../utils/email");
 const user_model_1 = __importDefault(require("../model/user.model"));
 const checkIfEmailIsRegisteredWithGoogleLogin = (password) => {
@@ -55,7 +54,7 @@ const getCartLength = (cartList) => {
     return cartList.reduce((total, cur) => total + (cur === null || cur === void 0 ? void 0 : cur.qty), 0);
 };
 exports.getCartLength = getCartLength;
-const oAuth2Client = new google_auth_library_1.OAuth2Client(config_1.default.get("clientID"), config_1.default.get("clientSecret"), "postmessage");
+const oAuth2Client = new google_auth_library_1.OAuth2Client(process.env.CLIENT_ID, process.env.CLIENT_SECRET, "postmessage");
 const getGoogleAuthTokens = (code) => __awaiter(void 0, void 0, void 0, function* () {
     const { tokens } = yield oAuth2Client.getToken(code);
     return tokens;
@@ -64,7 +63,7 @@ exports.getGoogleAuthTokens = getGoogleAuthTokens;
 const verifyIdToken = (idToken) => __awaiter(void 0, void 0, void 0, function* () {
     return yield oAuth2Client.verifyIdToken({
         idToken,
-        expectedAudience: config_1.default.get("clientID"),
+        expectedAudience: process.env.CLIENT_ID,
     });
 });
 exports.verifyIdToken = verifyIdToken;

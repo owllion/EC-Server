@@ -36,7 +36,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getNormalList = exports.getPopulatedList = exports.userInfoModify = exports.passwordModify = exports.addToFav = exports.removeFromFav = exports.addToCart = exports.updateItemQty = exports.clearCart = exports.removeCartItem = exports.resetPassword = exports.forgotPassword = exports.uploadAvatar = exports.getRefreshToken = exports.logout = exports.checkIfTokenIsValid = exports.verifyUser = exports.checkAccount = exports.sendVerifyOrResetLink = exports.googleLogin = exports.login = exports.register = void 0;
-const config_1 = __importDefault(require("config"));
 const ramda_1 = require("ramda");
 const CouponServices = __importStar(require("../services/coupon.service"));
 const user_model_1 = __importDefault(require("../model/user.model"));
@@ -177,6 +176,7 @@ const checkAccount = (req, res) => __awaiter(void 0, void 0, void 0, function* (
         });
         if (user) {
             UserServices.checkIfEmailIsRegisteredWithGoogleLogin(user.password);
+            UserServices.checkIfEmailIsVerified(user.verified);
         }
         res.status(200).send({
             hasAccount: user ? true : false,
@@ -189,7 +189,7 @@ const checkAccount = (req, res) => __awaiter(void 0, void 0, void 0, function* (
 exports.checkAccount = checkAccount;
 const verifyUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const decoded = (0, jwt_1.verifyJwt)(req.body.token, config_1.default.get("linkSecret"));
+        const decoded = (0, jwt_1.verifyJwt)(req.body.token, process.env.LINK_SECRET);
         const user = yield UserServices.findUser({
             field: "_id",
             value: decoded._id,
@@ -229,7 +229,7 @@ const verifyUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
 exports.verifyUser = verifyUser;
 const checkIfTokenIsValid = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        (0, jwt_1.verifyJwt)(req.body.token, config_1.default.get("linkSecret"));
+        (0, jwt_1.verifyJwt)(req.body.token, process.env.LINK_SECRET);
         res.status(200).send({ isValid: true });
     }
     catch (e) {
@@ -251,7 +251,7 @@ exports.logout = logout;
 const getRefreshToken = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { refresh } = req.body;
-        const decoded = (0, jwt_1.verifyJwt)(refresh, config_1.default.get("refreshSecret"));
+        const decoded = (0, jwt_1.verifyJwt)(refresh, process.env.REFRESH_SECRET);
         const user = yield UserServices.findUser({
             field: "_id",
             value: decoded._id,
@@ -310,7 +310,7 @@ exports.forgotPassword = forgotPassword;
 const resetPassword = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { password, token } = req.body;
-        const decoded = (0, jwt_1.verifyJwt)(token, config_1.default.get("linkSecret"));
+        const decoded = (0, jwt_1.verifyJwt)(token, process.env.LINK_SECRET);
         const user = yield UserServices.findUser({
             field: "_id",
             value: decoded._id,

@@ -12,7 +12,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const config_1 = __importDefault(require("config"));
 const user_model_1 = __importDefault(require("../model/user.model"));
 const jwt_1 = require("../utils/jwt");
 const auth = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
@@ -22,7 +21,7 @@ const auth = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () 
             ((_a = req.header("Authorization")) === null || _a === void 0 ? void 0 : _a.replace("Bearer ", ""));
         if (!token)
             throw new Error("No token provided!");
-        const decoded = (0, jwt_1.verifyJwt)(token, config_1.default.get("jwtSecret"));
+        const decoded = (0, jwt_1.verifyJwt)(token, process.env.JWT_SECRET);
         const user = yield user_model_1.default.findOne({
             _id: decoded._id,
             "tokens.token": token,

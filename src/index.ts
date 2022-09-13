@@ -1,10 +1,8 @@
 import express from "express";
 import morgan from "morgan";
 import cors from "cors";
-import "dotenv/config";
 import helmet from "helmet";
 import dbConnect from "./db/mongoose";
-import config from "config";
 import router from "./routes/index";
 import { errorHandler } from "./middleware/error.middleware";
 import { notFoundHandler } from "./middleware/not-found.middleware";
@@ -18,15 +16,13 @@ app.use("/api", router);
 
 app.use(errorHandler);
 app.use(notFoundHandler);
-// const port = config.get<number>("port");
-const port = (Number(process.env.PORT) || 3000) as 3000 | number;
+const port = (Number(process.env.PORT) || 5000) as 5000 | number;
 
 app.get("/", (req, res) => {
   res.send("Hello!");
 });
+
 dbConnect();
-console.log("ffggdfg");
 app.listen(port, "0.0.0.0", () => {
   console.log(`Server is up on the ${port} `);
 });
-console.log("第二航");

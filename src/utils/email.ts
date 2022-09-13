@@ -1,6 +1,4 @@
-import config from "config";
 import nodemailer from "nodemailer";
-
 import { getMailText } from "./getMailText";
 import { setTemplate } from "../data/emailTemplate";
 
@@ -23,18 +21,19 @@ export const sendLink = async ({
 
   try {
     let transporter = nodemailer.createTransport({
-      host: config.get<string>("host"),
-      port: config.get<number>("mailPort"),
+      //@ts-ignore
+      host: process.env.MAIL_HOST!,
+      port: process.env.MAIL_PORT!,
       secure: true,
       auth: {
-        user: config.get<string>("mailFrom"),
-        pass: config.get<string>("mailPwd"),
+        user: process.env.MAIL_FROM!,
+        pass: process.env.MAIL_PWD!,
       },
     });
 
     const info = await transporter.sendMail({
       to: email,
-      from: config.get<string>("mailFrom"),
+      from: process.env.MAIL_FROM!,
       subject: title,
       html: setTemplate({
         btnText,

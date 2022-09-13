@@ -1,8 +1,8 @@
 import mongoose from "mongoose";
-import config from "config";
 
 const dbConnect = async () => {
-  const dbUri = config.get<string>("dbUri");
+  const dbUri = process.env.DB_URI!;
+
   if (mongoose.connection.readyState >= 1) {
     return;
   }

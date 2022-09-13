@@ -6,7 +6,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const morgan_1 = __importDefault(require("morgan"));
 const cors_1 = __importDefault(require("cors"));
-require("dotenv/config");
 const helmet_1 = __importDefault(require("helmet"));
 const mongoose_1 = __importDefault(require("./db/mongoose"));
 const index_1 = __importDefault(require("./routes/index"));
@@ -20,14 +19,12 @@ app.use((0, morgan_1.default)("combined"));
 app.use("/api", index_1.default);
 app.use(error_middleware_1.errorHandler);
 app.use(not_found_middleware_1.notFoundHandler);
-const port = (Number(process.env.PORT) || 3000);
+const port = (Number(process.env.PORT) || 5000);
 app.get("/", (req, res) => {
     res.send("Hello!");
 });
 (0, mongoose_1.default)();
-console.log("ffggdfg");
 app.listen(port, "0.0.0.0", () => {
     console.log(`Server is up on the ${port} `);
 });
-console.log("第二航");
 //# sourceMappingURL=index.js.map

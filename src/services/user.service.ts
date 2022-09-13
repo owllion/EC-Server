@@ -1,6 +1,5 @@
 import { OAuth2Client } from "google-auth-library";
 import { DocumentType } from "@typegoose/typegoose";
-import config from "config";
 
 import { Product } from "../model/product.model";
 import { sendLink } from "../utils/email";
@@ -67,8 +66,8 @@ export const getCartLength = (cartList: DocumentType<Product>[]) => {
  * Google Login
  */
 const oAuth2Client = new OAuth2Client(
-  config.get<string>("clientID"),
-  config.get<string>("clientSecret"),
+  process.env.CLIENT_ID!,
+  process.env.CLIENT_SECRET!,
   "postmessage"
 );
 export const getGoogleAuthTokens = async (code: string) => {
@@ -78,7 +77,7 @@ export const getGoogleAuthTokens = async (code: string) => {
 export const verifyIdToken = async (idToken: string) => {
   return await oAuth2Client.verifyIdToken({
     idToken,
-    expectedAudience: config.get<string>("clientID"),
+    expectedAudience: process.env.CLIENT_ID!,
   });
 };
 
