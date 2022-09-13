@@ -24,7 +24,3 @@ dbConnect();
 app.listen(port, "0.0.0.0", () => {
   console.log(`Server is up on the ${port} `);
 });
-
-app.get("/", function (req, res) {
-  res.send("hello world");
-});
