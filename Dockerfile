@@ -4,14 +4,12 @@ WORKDIR /app
 
 COPY package*.json ./
 RUN  npm ci --legacy-peer-deps --omit=dev
-
-RUN npm install pm2 -g
  
 COPY . .
 
 USER node
 
-EXPOSE 8000
+EXPOSE 5000
 
-CMD ["npm","run","cluster"]
+CMD ["npm","start"]
 
