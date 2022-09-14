@@ -49,7 +49,7 @@ export const sendVerifyOrResetLink = async ({
   urlParams,
 }: ISendLink) => {
   const verifyToken = await user.generateLinkToken();
-  const link = `${process.env.DEPLOY_URL}/auth/${urlParams}/${verifyToken}`;
+  const link = `${process.env.FRONTEND_DEPLOY_URL}/auth/${urlParams}/${verifyToken}`;
   sendLink({ type: linkType, link, email });
 };
 
