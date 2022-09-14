@@ -78,7 +78,10 @@ export const getGoogleAuthTokens = async (code: string) => {
 export const setCredentials = async (
   tokens: Record<string, string | number>
 ) => {
+  console.log(oAuth2Client, "前面");
+
   oAuth2Client.setCredentials(tokens);
+  console.log(oAuth2Client, "後面");
 };
 
 export const verifyIdToken = async (idToken: string) => {
