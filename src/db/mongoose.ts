@@ -1,9 +1,8 @@
 import mongoose from "mongoose";
 
 const dbConnect = async () => {
-  console.log("db網誌", process.env.MONGODB_URI!);
-  const dbUri = process.env.MONGODB_URI!!;
-  console.log({ dbUri });
+  const dbUri = process.env.MONGODB_URI!;
+
   if (mongoose.connection.readyState >= 1) {
     return;
   }

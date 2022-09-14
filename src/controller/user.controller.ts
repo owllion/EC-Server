@@ -87,6 +87,10 @@ export const googleLogin: RequestHandler<{}, {}, { code: string }> = async (
 ) => {
   try {
     const tokens = await UserServices.getGoogleAuthTokens(req.body.code);
+
+    //refresh and access token need to be updated.
+    if (tokens.length > 0) UserServices.setCredentials(tokens);
+
     const ticket = await UserServices.verifyIdToken(tokens.id_token);
 
     const { name, email, picture, locale } = ticket.getPayload();

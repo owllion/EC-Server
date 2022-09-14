@@ -74,6 +74,13 @@ export const getGoogleAuthTokens = async (code: string) => {
   const { tokens } = await oAuth2Client.getToken(code);
   return tokens;
 };
+
+export const setCredentials = async (
+  tokens: Record<string, string | number>
+) => {
+  oAuth2Client.setCredentials(tokens);
+};
+
 export const verifyIdToken = async (idToken: string) => {
   return await oAuth2Client.verifyIdToken({
     idToken,
