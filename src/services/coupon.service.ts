@@ -39,7 +39,7 @@ export const getPriceAndDiscount = async (
   amount: number
 ) => {
   const finalPrice =
-    discountType === "rebate"
+    discountType === "debate"
       ? totalPrice - amount
       : Math.round(totalPrice * (amount * 0.01));
 
