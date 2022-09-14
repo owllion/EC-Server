@@ -71,8 +71,15 @@ const oAuth2Client = new OAuth2Client(
   "postmessage"
 );
 export const getGoogleAuthTokens = async (code: string) => {
-  const { tokens } = await oAuth2Client.getToken(code);
-  return tokens;
+  try {
+    console.log(code, code);
+    const { tokens } = await oAuth2Client.getToken(code);
+    console.log(tokens);
+    return tokens;
+  } catch (e) {
+    console.log(e, "這是錯誤");
+    throw new Error(e);
+  }
 };
 
 export const setCredentials = async (
