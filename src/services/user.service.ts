@@ -65,11 +65,14 @@ export const getCartLength = (cartList: DocumentType<Product>[]) => {
 /**
  * Google Login
  */
+console.log("有跑到上面");
 const oAuth2Client = new OAuth2Client(
   process.env.CLIENT_ID!,
   process.env.CLIENT_SECRET!,
   "postmessage"
 );
+console.log("有跑道下面");
+console.log({ oAuth2Client });
 export const getGoogleAuthTokens = async (code: string) => {
   try {
     console.log(code, code);
