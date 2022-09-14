@@ -22,8 +22,8 @@ export const sendLink = async ({
   try {
     let transporter = nodemailer.createTransport({
       //@ts-ignore
-      host: process.env.MAIL_HOST!,
-      port: process.env.MAIL_PORT!,
+      host: "smtp.gmail.com",
+      port: 465,
       secure: true,
       auth: {
         user: process.env.MAIL_FROM!,
