@@ -30,7 +30,7 @@ git clone https://github.com/owllion/EC-Server.git
 
 npm install
 
-npm run start
+npm run dev
 ```
 
 - docker
