@@ -1,4 +1,7 @@
 ﻿# koh - MERN Stack Shopping App Server
+ 
+[![CI](https://github.com/owllion/EC-Server/actions/workflows/node.yml/badge.svg)](https://github.com/owllion/EC-Server/actions/workflows/node.yml)
+[![CD](https://github.com/owllion/EC-Server/actions/workflows/main.yml/badge.svg)](https://github.com/owllion/EC-Server/actions/workflows/main.yml)
 
 - A shopping app created with React.js , styled-components , TypeScript , Node.js , Typegoose and MongoDB.  
 - This repository contains the back-end part.
@@ -27,7 +30,7 @@ git clone https://github.com/owllion/EC-Server.git
 
 npm install
 
-npm run start
+npm run dev
 ```
 
 - docker
