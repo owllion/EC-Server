@@ -15,7 +15,7 @@ app.use(helmet());
 app.use(morgan("combined"));
 app.use("/api", router);
 
-app.use(errorHandler);
+// app.use(errorHandler);
 app.use(notFoundHandler);
 
 const port = (Number(process.env.PORT) || 5000) as 5000 | number;

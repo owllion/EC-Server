@@ -110,7 +110,7 @@ export const getProductDetail: RequestHandler<
 
 export const getBestSellerList: RequestHandler = async (req, res) => {
   try {
-    const list = await ProductModel.find().sort({ sales: -1 }).limit(20);
+    const list = await ProductModel.find().sort({ sales: -1 }).limit(10);
 
     res.status(200).send({
       msg: "success",

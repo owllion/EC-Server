@@ -32,6 +32,9 @@ export class Product {
   imageList: string[];
 
   @prop({ required: true })
+  thumbnail: string;
+
+  @prop({ required: true })
   price: number;
 
   @prop({ default: 0 })
