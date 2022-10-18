@@ -5,7 +5,6 @@ import helmet from "helmet";
 import "dotenv/config";
 import dbConnect from "./db/mongoose";
 import router from "./routes/index";
-import { errorHandler } from "./middleware/error.middleware";
 import { notFoundHandler } from "./middleware/not-found.middleware";
 
 const app = express();
