@@ -65,14 +65,12 @@ export const getCartLength = (cartList: DocumentType<Product>[]) => {
 /**
  * Google Login
  */
-console.log("有跑到上面");
 const oAuth2Client = new OAuth2Client(
   process.env.CLIENT_ID!,
   process.env.CLIENT_SECRET!,
   "postmessage"
 );
-console.log("有跑道下面");
-console.log({ oAuth2Client });
+
 export const getGoogleAuthTokens = async (code: string) => {
   try {
     console.log(code, code);
@@ -80,7 +78,6 @@ export const getGoogleAuthTokens = async (code: string) => {
     console.log(tokens);
     return tokens;
   } catch (e) {
-    console.log(e, "這是錯誤");
     throw new Error(e);
   }
 };
@@ -88,10 +85,7 @@ export const getGoogleAuthTokens = async (code: string) => {
 export const setCredentials = async (
   tokens: Record<string, string | number>
 ) => {
-  console.log(oAuth2Client, "前面");
-
   oAuth2Client.setCredentials(tokens);
-  console.log(oAuth2Client, "後面");
 };
 
 export const verifyIdToken = async (idToken: string) => {
