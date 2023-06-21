@@ -39,10 +39,6 @@ npm run dev
 docker run -it -p 5000:5000 traversal/react-shopapp:1.0
 ```
 
-## Project Status
-
-Project is in progress , currently writing unit tests with jest
-
 ## License
 
 This project is licensed under the terms of the MIT license
