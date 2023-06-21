@@ -3,14 +3,12 @@
 [![CI](https://github.com/owllion/EC-Server/actions/workflows/node.yml/badge.svg)](https://github.com/owllion/EC-Server/actions/workflows/node.yml)
 [![CD](https://github.com/owllion/EC-Server/actions/workflows/main.yml/badge.svg)](https://github.com/owllion/EC-Server/actions/workflows/main.yml)
 
-- A shopping app created with React.js , styled-components , TypeScript , Node.js , Typegoose and MongoDB.  
-- This repository contains the back-end part.
+- A server for a shopping app powered by Node.js / Express.js and incorporates MongoDB using Typegoose for data integration and modeling. Containerized with Docker for easy deployment and scalability and deployed on Heroku
 
 ## Table of Contents
 
 - [Technologies](#technologies)
 - [Setup](#setup)
-- [Project Status](#project-status)
 - [License](#license)
 
 ## Technologies
