@@ -119,7 +119,7 @@ const getProductDetail = (req, res) => __awaiter(void 0, void 0, void 0, functio
 exports.getProductDetail = getProductDetail;
 const getBestSellerList = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const list = yield product_model_1.default.find().sort({ sales: -1 }).limit(20);
+        const list = yield product_model_1.default.find().sort({ sales: -1 }).limit(10);
         res.status(200).send({
             msg: "success",
             list,

@@ -10,6 +10,9 @@ const order_route_1 = __importDefault(require("./order.route"));
 const product_route_1 = __importDefault(require("./product.route"));
 const review_route_1 = __importDefault(require("./review.route"));
 const router = express_1.default.Router();
+router.get("/", (req, res) => {
+    res.send("Hello, World!");
+});
 router.use(product_route_1.default);
 router.use(user_route_1.default);
 router.use(coupon_route_1.default);

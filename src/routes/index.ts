@@ -6,7 +6,9 @@ import product from "./product.route";
 import review from "./review.route";
 
 const router = express.Router();
-
+router.get("/", (req, res) => {
+  res.send("Hello, World!");
+});
 router.use(product);
 router.use(user);
 router.use(coupon);

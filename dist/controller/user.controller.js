@@ -110,6 +110,8 @@ const googleLogin = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
     var _a, _b;
     try {
         const tokens = yield UserServices.getGoogleAuthTokens(req.body.code);
+        if (tokens.length > 0)
+            UserServices.setCredentials(tokens);
         const ticket = yield UserServices.verifyIdToken(tokens.id_token);
         const { name, email, picture, locale } = ticket.getPayload();
         const user = yield UserServices.findUser({ field: "email", value: email });

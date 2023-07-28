@@ -29,6 +29,14 @@ __decorate([
 ], Product.prototype, "imageList", void 0);
 __decorate([
     (0, typegoose_1.prop)({ required: true }),
+    __metadata("design:type", Array)
+], Product.prototype, "thumbnailList", void 0);
+__decorate([
+    (0, typegoose_1.prop)({ required: true }),
+    __metadata("design:type", String)
+], Product.prototype, "thumbnail", void 0);
+__decorate([
+    (0, typegoose_1.prop)({ required: true }),
     __metadata("design:type", Number)
 ], Product.prototype, "price", void 0);
 __decorate([

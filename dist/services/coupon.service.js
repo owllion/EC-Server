@@ -37,7 +37,7 @@ const isShort = (minimumAmount, totalPrice) => __awaiter(void 0, void 0, void 0,
 });
 exports.isShort = isShort;
 const getPriceAndDiscount = (discountType, totalPrice, amount) => __awaiter(void 0, void 0, void 0, function* () {
-    const finalPrice = discountType === "rebate"
+    const finalPrice = discountType === "debate"
         ? totalPrice - amount
         : Math.round(totalPrice * (amount * 0.01));
     return {

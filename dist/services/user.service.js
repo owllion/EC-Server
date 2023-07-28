@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.checkIfProductExistsInFavList = exports.addItem = exports.verifyIdToken = exports.getGoogleAuthTokens = exports.getCartLength = exports.getTokens = exports.sendVerifyOrResetLink = exports.createUser = exports.findUser = exports.checkIfEmailIsVerified = exports.checkIfEmailIsRegisteredWithGoogleLogin = void 0;
+exports.checkIfProductExistsInFavList = exports.addItem = exports.verifyIdToken = exports.setCredentials = exports.getGoogleAuthTokens = exports.getCartLength = exports.getTokens = exports.sendVerifyOrResetLink = exports.createUser = exports.findUser = exports.checkIfEmailIsVerified = exports.checkIfEmailIsRegisteredWithGoogleLogin = void 0;
 const google_auth_library_1 = require("google-auth-library");
 const email_1 = require("../utils/email");
 const user_model_1 = __importDefault(require("../model/user.model"));
@@ -39,7 +39,7 @@ const createUser = (info) => __awaiter(void 0, void 0, void 0, function* () {
 exports.createUser = createUser;
 const sendVerifyOrResetLink = ({ user, email, linkType, urlParams, }) => __awaiter(void 0, void 0, void 0, function* () {
     const verifyToken = yield user.generateLinkToken();
-    const link = `http://localhost:3000/auth/${urlParams}/${verifyToken}`;
+    const link = `${process.env.FRONTEND_DEPLOY_URL}/auth/${urlParams}/${verifyToken}`;
     (0, email_1.sendLink)({ type: linkType, link, email });
 });
 exports.sendVerifyOrResetLink = sendVerifyOrResetLink;
@@ -56,10 +56,21 @@ const getCartLength = (cartList) => {
 exports.getCartLength = getCartLength;
 const oAuth2Client = new google_auth_library_1.OAuth2Client(process.env.CLIENT_ID, process.env.CLIENT_SECRET, "postmessage");
 const getGoogleAuthTokens = (code) => __awaiter(void 0, void 0, void 0, function* () {
-    const { tokens } = yield oAuth2Client.getToken(code);
-    return tokens;
+    try {
+        console.log(code, code);
+        const { tokens } = yield oAuth2Client.getToken(code);
+        console.log(tokens);
+        return tokens;
+    }
+    catch (e) {
+        throw new Error(e);
+    }
 });
 exports.getGoogleAuthTokens = getGoogleAuthTokens;
+const setCredentials = (tokens) => __awaiter(void 0, void 0, void 0, function* () {
+    oAuth2Client.setCredentials(tokens);
+});
+exports.setCredentials = setCredentials;
 const verifyIdToken = (idToken) => __awaiter(void 0, void 0, void 0, function* () {
     return yield oAuth2Client.verifyIdToken({
         idToken,

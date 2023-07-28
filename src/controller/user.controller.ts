@@ -199,7 +199,6 @@ export const verifyUser: RequestHandler<{}, {}, { token: string }> = async (
     user.verified = true;
     await user.save();
 
-    //return necessary info for login
     const { token, refreshToken } = await UserServices.getTokens(
       user as DocumentType<User>
     );

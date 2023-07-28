@@ -10,7 +10,6 @@ const helmet_1 = __importDefault(require("helmet"));
 require("dotenv/config");
 const mongoose_1 = __importDefault(require("./db/mongoose"));
 const index_1 = __importDefault(require("./routes/index"));
-const error_middleware_1 = require("./middleware/error.middleware");
 const not_found_middleware_1 = require("./middleware/not-found.middleware");
 const app = (0, express_1.default)();
 app.use(express_1.default.json());
@@ -18,12 +17,9 @@ app.use((0, cors_1.default)());
 app.use((0, helmet_1.default)());
 app.use((0, morgan_1.default)("combined"));
 app.use("/api", index_1.default);
-app.use(error_middleware_1.errorHandler);
 app.use(not_found_middleware_1.notFoundHandler);
+console.log(process.env.PORT, "這是prot");
 const port = (Number(process.env.PORT) || 5000);
-app.get("/", (req, res) => {
-    res.send("Hello!");
-});
 (0, mongoose_1.default)();
 app.listen(port, "0.0.0.0", () => {
     console.log(`Server is up on the ${port} `);

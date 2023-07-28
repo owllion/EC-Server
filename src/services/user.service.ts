@@ -75,6 +75,7 @@ export const getGoogleAuthTokens = async (code: string) => {
   try {
     console.log(code, code);
     const { tokens } = await oAuth2Client.getToken(code);
+
     console.log(tokens);
     return tokens;
   } catch (e) {

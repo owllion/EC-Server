@@ -16,7 +16,7 @@ app.use("/api", router);
 
 // app.use(errorHandler);
 app.use(notFoundHandler);
-
+console.log(process.env.PORT, "這是prot");
 const port = (Number(process.env.PORT) || 5000) as 5000 | number;
 
 dbConnect();
