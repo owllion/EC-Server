@@ -21,7 +21,7 @@
 
 ## Features
 - <strong>Shopping Functionality</strong>: <br>Browse (by category and search), add to cart, apply coupons, leave comments, add to favorites, and complete checkout.
-- <strong>User Management</strong>: <br>Login, logout, register (email/Google/GitHub), password recovery, profile page (view and update personal information, upload profile picture, view order history, and manage coupons .etc).
+- <strong>User Management</strong>: <br>Login, logout, register (email/Google), password recovery, profile page (view and update personal information, upload profile picture, view order history, and manage coupons .etc).
 - <strong>JSON Schema Data Verification</strong>: <br>Ensure data integrity and validation using AJV and typescript-json-schema.
 - <strong>CI/CD Integration</strong>:  <br>Automate the build, packaging, and deployment processes with GitHub Actions for continuous integration and deployment.
 
