@@ -40,7 +40,9 @@ exports.createUser = createUser;
 const sendVerifyOrResetLink = ({ user, email, linkType, urlParams, }) => __awaiter(void 0, void 0, void 0, function* () {
     const verifyToken = yield user.generateLinkToken();
     const link = `${process.env.FRONTEND_DEPLOY_URL}/auth/${urlParams}/${verifyToken}`;
+    console.log("這是要寄送的link");
     yield (0, email_1.sendLink)({ type: linkType, link, email });
+    console.log("這是sendlink之後");
 });
 exports.sendVerifyOrResetLink = sendVerifyOrResetLink;
 const getTokens = (user) => __awaiter(void 0, void 0, void 0, function* () {
