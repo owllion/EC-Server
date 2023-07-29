@@ -38,6 +38,7 @@ const createUser = (info) => __awaiter(void 0, void 0, void 0, function* () {
 });
 exports.createUser = createUser;
 const sendVerifyOrResetLink = ({ user, email, linkType, urlParams, }) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log("senflink剛進入");
     const verifyToken = yield user.generateLinkToken();
     const link = `${process.env.FRONTEND_DEPLOY_URL}/auth/${urlParams}/${verifyToken}`;
     console.log("這是要寄送的link");

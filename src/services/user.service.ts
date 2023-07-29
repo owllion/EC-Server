@@ -48,6 +48,8 @@ export const sendVerifyOrResetLink = async ({
   linkType,
   urlParams,
 }: ISendLink) => {
+  console.log("senflink剛進入");
+
   const verifyToken = await user.generateLinkToken();
   const link = `${process.env.FRONTEND_DEPLOY_URL}/auth/${urlParams}/${verifyToken}`;
   console.log("這是要寄送的link");
