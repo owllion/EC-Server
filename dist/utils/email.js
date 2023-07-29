@@ -21,7 +21,7 @@ const sendLink = ({ type, link, email, }) => __awaiter(void 0, void 0, void 0, f
     try {
         let transporter = nodemailer_1.default.createTransport({
             host: "smtp.gmail.com",
-            port: 587,
+            port: 465,
             secure: false,
             auth: {
                 user: process.env.MAIL_FROM,
