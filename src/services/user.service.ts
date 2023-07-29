@@ -50,7 +50,7 @@ export const sendVerifyOrResetLink = async ({
 }: ISendLink) => {
   const verifyToken = await user.generateLinkToken();
   const link = `${process.env.FRONTEND_DEPLOY_URL}/auth/${urlParams}/${verifyToken}`;
-  sendLink({ type: linkType, link, email });
+  await sendLink({ type: linkType, link, email });
 };
 
 export const getTokens = async (user: DocumentType<User>) => ({

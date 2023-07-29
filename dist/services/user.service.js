@@ -40,7 +40,7 @@ exports.createUser = createUser;
 const sendVerifyOrResetLink = ({ user, email, linkType, urlParams, }) => __awaiter(void 0, void 0, void 0, function* () {
     const verifyToken = yield user.generateLinkToken();
     const link = `${process.env.FRONTEND_DEPLOY_URL}/auth/${urlParams}/${verifyToken}`;
-    (0, email_1.sendLink)({ type: linkType, link, email });
+    yield (0, email_1.sendLink)({ type: linkType, link, email });
 });
 exports.sendVerifyOrResetLink = sendVerifyOrResetLink;
 const getTokens = (user) => __awaiter(void 0, void 0, void 0, function* () {
