@@ -13,22 +13,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.sendLink = void 0;
-const nodemailer_1 = __importDefault(require("nodemailer"));
 const getMailText_1 = require("./getMailText");
 const emailTemplate_1 = require("../data/emailTemplate");
+const mail_1 = __importDefault(require("@sendgrid/mail"));
 const sendLink = ({ type, link, email, }) => __awaiter(void 0, void 0, void 0, function* () {
     const { btnText, title, content, type: actionType, action, } = (0, getMailText_1.getMailText)(type, link);
     try {
-        let transporter = nodemailer_1.default.createTransport({
-            host: "smtp.gmail.com",
-            port: 465,
-            secure: false,
-            auth: {
-                user: process.env.MAIL_FROM,
-                pass: process.env.MAIL_PWD,
-            },
-        });
-        const info = yield transporter.sendMail({
+        mail_1.default.setApiKey(process.env.SENDGRID_API_KEY);
+        const msg = {
             to: email,
             from: process.env.MAIL_FROM,
             subject: title,
@@ -40,7 +32,8 @@ const sendLink = ({ type, link, email, }) => __awaiter(void 0, void 0, void 0, f
                 type: actionType,
                 action,
             }),
-        });
+        };
+        const info = yield mail_1.default.send(msg);
         console.log("Email send", info);
     }
     catch (error) {

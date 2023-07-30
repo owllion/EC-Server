@@ -1,6 +1,7 @@
-import nodemailer from "nodemailer";
+// import nodemailer from "nodemailer";
 import { getMailText } from "./getMailText";
 import { setTemplate } from "../data/emailTemplate";
+import sgMail from "@sendgrid/mail";
 
 export const sendLink = async ({
   type,
@@ -20,17 +21,8 @@ export const sendLink = async ({
   } = getMailText(type, link);
 
   try {
-    let transporter = nodemailer.createTransport({
-      host: "smtp.gmail.com",
-      port: 465,
-      secure: false,
-      auth: {
-        user: process.env.MAIL_FROM!,
-        pass: process.env.MAIL_PWD!,
-      },
-    });
-
-    const info = await transporter.sendMail({
+    sgMail.setApiKey(process.env.SENDGRID_API_KEY!);
+    const msg = {
       to: email,
       from: process.env.MAIL_FROM!,
       subject: title,
@@ -42,7 +34,8 @@ export const sendLink = async ({
         type: actionType,
         action,
       }),
-    });
+    };
+    const info = await sgMail.send(msg);
 
     console.log("Email send", info);
   } catch (error) {
