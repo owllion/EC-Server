@@ -29,7 +29,14 @@ UserCoupon = __decorate([
     (0, typegoose_1.modelOptions)({
         schemaOptions: {
             timestamps: true,
-            toJSON: { virtuals: true },
+            toJSON: {
+                virtuals: true,
+                transform: function (_, ret) {
+                    delete ret.createdAt;
+                    delete ret.updatedAt;
+                    delete ret.id;
+                },
+            },
             toObject: { virtuals: true },
         },
     }),

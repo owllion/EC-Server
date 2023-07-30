@@ -17,7 +17,10 @@ export const createOrder: RequestHandler = async (req, res) => {
     req.user.cartList = [];
 
     if (order.discountCode)
-      req.user = OrderServices.markUsedCode(req.user, order.discountCode);
+      req.user = OrderServices.setCouponAsUsed(
+        req.user._id,
+        order.discountCode
+      );
 
     await req.user.save();
 

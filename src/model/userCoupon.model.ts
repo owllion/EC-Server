@@ -6,12 +6,20 @@ import {
   pre,
 } from "@typegoose/typegoose";
 import { User } from "./user.model";
-import CouponModel, { Coupon } from "./coupon.model";
+import { Coupon } from "./coupon.model";
 
 @modelOptions({
   schemaOptions: {
     timestamps: true,
-    toJSON: { virtuals: true },
+    toJSON: {
+      virtuals: true,
+      transform: function (_, ret) {
+        // ret.toObject();
+        delete ret.createdAt;
+        delete ret.updatedAt;
+        delete ret.id;
+      },
+    },
     // output virtuals，也可設定把model instnace轉成json時要去掉的欄位
     toObject: { virtuals: true },
   },

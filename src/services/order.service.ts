@@ -3,6 +3,9 @@ import * as OrderInterface from "../interface/controller/order.controller.interf
 import OrderModel from "../model/order.model";
 import { User } from "../model/user.model";
 import { Coupon } from "../model/coupon.model";
+import UserCouponModel, { UserCoupon } from "../model/userCoupon.model";
+import { ObjectId } from "mongoose";
+import { DocumentType } from "@typegoose/typegoose";
 
 export const getModifiedItem = async (orderItem: OrderInterface.IOrderItem) => {
   const updateFields: OrderInterface.IField = {};
@@ -20,12 +23,20 @@ export const getModifiedItem = async (orderItem: OrderInterface.IOrderItem) => {
   return order;
 };
 
-export const markUsedCode = (user: User, discountCode: string | undefined) => {
-  // if (discountCode) {
-  //   (user.couponList as Coupon[]) = user.couponList.map((coupon) =>
-  //     coupon.code === discountCode ? { ...coupon, isUsed: true } : coupon
-  //   );
-  //   return user;
-  // }
-  // return user;
+export const setCouponAsUsed = async (
+  userId: ObjectId,
+  discountCode: String
+) => {
+  const userCoupon: DocumentType<UserCoupon> | null =
+    await UserCouponModel.findOne({
+      user: userId,
+      coupon: discountCode,
+    });
+
+  if (userCoupon) {
+    userCoupon.isUsed = true;
+    await userCoupon.save();
+  } else {
+    throw new Error("coupon not found");
+  }
 };

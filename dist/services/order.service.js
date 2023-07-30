@@ -12,9 +12,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.markUsedCode = exports.getModifiedItem = void 0;
+exports.setCouponAsUsed = exports.getModifiedItem = void 0;
 const ramda_1 = require("ramda");
 const order_model_1 = __importDefault(require("../model/order.model"));
+const userCoupon_model_1 = __importDefault(require("../model/userCoupon.model"));
 const getModifiedItem = (orderItem) => __awaiter(void 0, void 0, void 0, function* () {
     const updateFields = {};
     Object.keys((0, ramda_1.omit)(["_id"], orderItem)).forEach((item) => {
@@ -26,7 +27,18 @@ const getModifiedItem = (orderItem) => __awaiter(void 0, void 0, void 0, functio
     return order;
 });
 exports.getModifiedItem = getModifiedItem;
-const markUsedCode = (user, discountCode) => {
-};
-exports.markUsedCode = markUsedCode;
+const setCouponAsUsed = (userId, discountCode) => __awaiter(void 0, void 0, void 0, function* () {
+    const userCoupon = yield userCoupon_model_1.default.findOne({
+        user: userId,
+        coupon: discountCode,
+    });
+    if (userCoupon) {
+        userCoupon.isUsed = true;
+        yield userCoupon.save();
+    }
+    else {
+        throw new Error("coupon not found");
+    }
+});
+exports.setCouponAsUsed = setCouponAsUsed;
 //# sourceMappingURL=order.service.js.map
