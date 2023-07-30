@@ -9,6 +9,7 @@ import {
   ReturnModelType,
   DocumentType,
 } from "@typegoose/typegoose";
+import { nanoid } from "nanoid";
 
 import validator from "validator";
 import argon2 from "argon2";
@@ -16,8 +17,8 @@ import argon2 from "argon2";
 import OrderModel, { Order } from "../model/order.model";
 import ReviewModel, { Review } from "../model/review.model";
 import { Product } from "../model/product.model";
-import { Coupon } from "../model/coupon.model";
 import { signJwt } from "./../utils/jwt";
+import { UserCoupon } from "./userCoupon.model";
 
 @pre<User>("save", async function (next) {
   /**
@@ -43,15 +44,7 @@ import { signJwt } from "./../utils/jwt";
 @modelOptions({
   schemaOptions: {
     timestamps: true,
-
     toObject: { virtuals: true },
-    // toObject: {
-    //   transform: function (_, ret) {
-
-    //     delete ret.password;
-    //     delete ret.tokens;
-    //   },
-    // },
     toJSON: {
       virtuals: true,
       transform: function (_, ret) {
@@ -82,10 +75,13 @@ export class User {
   })
   email: string;
 
-  @prop({ default: "", trim: true })
+  @prop({ required: true, default: () => nanoid() })
+  userId: string;
+
+  @prop({ required: true, trim: true })
   firstName: string;
 
-  @prop({ default: "", trim: true })
+  @prop({ required: true, trim: true })
   lastName: string;
 
   @prop({ default: "", trim: true })
@@ -126,8 +122,15 @@ export class User {
   @prop()
   favList: DocumentType<Product>[] | [];
 
-  @prop()
-  couponList: DocumentType<Coupon>[] | [];
+  // @prop()
+  // couponList: DocumentType<Coupon>[] | [];
+
+  @prop({
+    ref: "UserCoupon", //collection name
+    foreignField: "user", //該colleciton裡面要關聯的欄位
+    localField: "_id", //對方要和此collection關聯的目標欄位
+  })
+  couponList: Ref<UserCoupon>[];
 
   @prop({
     ref: "Order",

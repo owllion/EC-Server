@@ -21,11 +21,11 @@ export const getModifiedItem = async (orderItem: OrderInterface.IOrderItem) => {
 };
 
 export const markUsedCode = (user: User, discountCode: string | undefined) => {
-  if (discountCode) {
-    (user.couponList as Coupon[]) = user.couponList.map((coupon) =>
-      coupon.code === discountCode ? { ...coupon, isUsed: true } : coupon
-    );
-    return user;
-  }
-  return user;
+  // if (discountCode) {
+  //   (user.couponList as Coupon[]) = user.couponList.map((coupon) =>
+  //     coupon.code === discountCode ? { ...coupon, isUsed: true } : coupon
+  //   );
+  //   return user;
+  // }
+  // return user;
 };

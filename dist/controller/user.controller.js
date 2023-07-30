@@ -44,30 +44,21 @@ const jwt_1 = require("../utils/jwt");
 const UserServices = __importStar(require("../services/user.service"));
 const register = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const user = new user_model_1.default(req.body);
-        yield CouponServices.addCouponToUserCouponList("new123", user);
-        yield user.save();
-        yield UserServices.sendVerifyOrResetLink({
-            user,
-            email: user.email,
-            linkType: "verify",
-            urlParams: "verify-email",
+        const user = yield UserServices.findUser({
+            field: "email",
+            value: req.body.email,
         });
-        const { token, refreshToken } = yield UserServices.getTokens(user);
+        if (user)
+            throw new Error("This email has already been registered");
+        const new_user = new user_model_1.default(req.body);
+        yield CouponServices.issueCoupons(new_user._id);
+        const { token, refreshToken } = yield UserServices.getTokens(new_user);
         res.status(201).json({
             msg: "Registration success",
             result: {
                 token,
                 refreshToken,
-                user: {
-                    firstName: user.firstName,
-                    lastName: user.lastName,
-                    email: user.email,
-                    phone: user.phone,
-                    cartLength: 0,
-                    avatarDefault: user.avatarDefault,
-                    avatarUpload: user.avatarUpload,
-                },
+                user: Object.assign(Object.assign({}, new_user.toJSON()), { cartLength: 0 }),
             },
         });
     }
@@ -88,16 +79,7 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             result: {
                 token,
                 refreshToken,
-                user: {
-                    firstName: user.firstName,
-                    lastName: user.lastName,
-                    email: user.email,
-                    phone: user.phone,
-                    cartLength: UserServices.getCartLength(user.cartList),
-                    favList: user.favList,
-                    avatarDefault: user.avatarDefault,
-                    avatarUpload: user.avatarUpload,
-                },
+                user: Object.assign(Object.assign({}, user.toJSON()), { cartLength: UserServices.getCartLength(user.cartList) }),
             },
         });
     }
@@ -448,10 +430,8 @@ const userInfoModify = (req, res) => __awaiter(void 0, void 0, void 0, function*
 exports.userInfoModify = userInfoModify;
 const getPopulatedList = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { type } = req.params;
-    if (!type || !(0, ramda_1.includes)(type, ["order", "review"]))
-        return res
-            .status(400)
-            .send({ msg: "params must be either order or review" });
+    if (!type || !(0, ramda_1.includes)(type, ["order", "review", "coupon"]))
+        return res.status(400).send({ msg: "List does not exist!" });
     try {
         const user = yield user_model_1.default.findById(req.user.id).populate(`${type}List`);
         res

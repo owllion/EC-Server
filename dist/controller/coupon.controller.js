@@ -36,7 +36,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.redeemCoupon = exports.applyCoupon = exports.modifyCoupon = exports.deleteMultipleCoupons = exports.deleteCoupon = exports.createCoupon = void 0;
-const coupon_model_1 = __importDefault(require("./../model/coupon.model"));
+const coupon_model_1 = __importDefault(require("../model/coupon.model"));
 const CouponServices = __importStar(require("../services/coupon.service"));
 const createCoupon = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const coupon = new coupon_model_1.default(req.body);
@@ -85,7 +85,7 @@ exports.deleteMultipleCoupons = deleteMultipleCoupons;
 const modifyCoupon = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { couponItem } = req.body;
     try {
-        const coupon = yield CouponServices.getModifiedItem(couponItem);
+        const coupon = yield CouponServices.modifyCoupon(couponItem);
         yield coupon.save();
         res.status(200).send({ msg: "success" });
     }
@@ -119,7 +119,6 @@ const applyCoupon = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
 exports.applyCoupon = applyCoupon;
 const redeemCoupon = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        yield CouponServices.addCouponToUserCouponList(req.body.code, req.user);
         res.status(200).send({ msg: "success" });
     }
     catch (e) {

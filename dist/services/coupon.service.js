@@ -12,9 +12,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.addCouponToUserCouponList = exports.getModifiedItem = exports.getPriceAndDiscount = exports.isShort = exports.isExpired = exports.findCoupon = void 0;
+exports.issueCoupons = exports.modifyCoupon = exports.getPriceAndDiscount = exports.isShort = exports.isExpired = exports.findCoupon = void 0;
 const ramda_1 = require("ramda");
 const coupon_model_1 = __importDefault(require("../model/coupon.model"));
+const userCoupon_model_1 = __importDefault(require("../model/userCoupon.model"));
 const findCoupon = ({ field, value, }) => __awaiter(void 0, void 0, void 0, function* () {
     const coupon = yield coupon_model_1.default.findOne({ [field]: value });
     if (!coupon)
@@ -46,7 +47,7 @@ const getPriceAndDiscount = (discountType, totalPrice, amount) => __awaiter(void
     };
 });
 exports.getPriceAndDiscount = getPriceAndDiscount;
-const getModifiedItem = (couponItem) => __awaiter(void 0, void 0, void 0, function* () {
+const modifyCoupon = (couponItem) => __awaiter(void 0, void 0, void 0, function* () {
     const updateFields = {};
     Object.keys((0, ramda_1.omit)(["_id"], couponItem)).forEach((item) => {
         updateFields[item] = couponItem[item];
@@ -56,14 +57,52 @@ const getModifiedItem = (couponItem) => __awaiter(void 0, void 0, void 0, functi
         throw new Error("Coupon not found");
     return coupon;
 });
-exports.getModifiedItem = getModifiedItem;
-const addCouponToUserCouponList = (code, user) => __awaiter(void 0, void 0, void 0, function* () {
-    const coupon = yield (0, exports.findCoupon)({
-        field: "code",
-        value: code,
-    });
-    user.couponList.push(coupon);
-    yield user.save();
+exports.modifyCoupon = modifyCoupon;
+const issueCoupons = (userId) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log(userId, "這是issue的userId");
+    yield create10UserCoupons(userId);
 });
-exports.addCouponToUserCouponList = addCouponToUserCouponList;
+exports.issueCoupons = issueCoupons;
+const getRandom10CouponIds = () => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const randomCouponIds = yield coupon_model_1.default.aggregate([
+            { $sample: { size: 10 } },
+            { $project: { _id: 1 } },
+        ]);
+        console.log(randomCouponIds, "this is randomCids");
+        const couponIds = randomCouponIds.map((c) => c._id);
+        console.log(couponIds, "這些事coupond ids to string()");
+        return couponIds;
+    }
+    catch (error) {
+        console.error("Error fetching random coupon ids:", error);
+        return [];
+    }
+});
+const create10UserCoupons = (userId) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const ids = yield getRandom10CouponIds();
+        const userCoupons = [];
+        for (const couponId of ids) {
+            const coupon = yield createUserCoupon(userId, couponId);
+            userCoupons.push(coupon);
+        }
+        console.log(userCoupons, "這是userCpopons");
+        yield userCoupon_model_1.default.insertMany(userCoupons);
+    }
+    catch (error) {
+        console.error("Something wrong when creating 10 coupons:", error);
+    }
+});
+const createUserCoupon = (userId, couponId) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        return new userCoupon_model_1.default({
+            user: userId,
+            coupon: couponId,
+        });
+    }
+    catch (error) {
+        console.error("Something wrong when creating the coupon:", error);
+    }
+});
 //# sourceMappingURL=coupon.service.js.map

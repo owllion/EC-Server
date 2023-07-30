@@ -1,4 +1,4 @@
-import { Coupon } from "./../model/coupon.model";
+import { Coupon } from "../model/coupon.model";
 
 export interface createCouponInterface {
   code: string;

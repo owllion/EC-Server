@@ -24,6 +24,7 @@ var User_1;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.User = void 0;
 const typegoose_1 = require("@typegoose/typegoose");
+const nanoid_1 = require("nanoid");
 const validator_1 = __importDefault(require("validator"));
 const argon2_1 = __importDefault(require("argon2"));
 const order_model_1 = __importDefault(require("../model/order.model"));
@@ -86,11 +87,15 @@ __decorate([
     __metadata("design:type", String)
 ], User.prototype, "email", void 0);
 __decorate([
-    (0, typegoose_1.prop)({ default: "", trim: true }),
+    (0, typegoose_1.prop)({ required: true, default: () => (0, nanoid_1.nanoid)() }),
+    __metadata("design:type", String)
+], User.prototype, "userId", void 0);
+__decorate([
+    (0, typegoose_1.prop)({ required: true, trim: true }),
     __metadata("design:type", String)
 ], User.prototype, "firstName", void 0);
 __decorate([
-    (0, typegoose_1.prop)({ default: "", trim: true }),
+    (0, typegoose_1.prop)({ required: true, trim: true }),
     __metadata("design:type", String)
 ], User.prototype, "lastName", void 0);
 __decorate([
@@ -140,7 +145,11 @@ __decorate([
     __metadata("design:type", Array)
 ], User.prototype, "favList", void 0);
 __decorate([
-    (0, typegoose_1.prop)(),
+    (0, typegoose_1.prop)({
+        ref: "UserCoupon",
+        foreignField: "user",
+        localField: "_id",
+    }),
     __metadata("design:type", Array)
 ], User.prototype, "couponList", void 0);
 __decorate([

@@ -10,32 +10,32 @@ import * as UserServices from "../services/user.service";
 
 export const register: RequestHandler<{}, {}, User> = async (req, res) => {
   try {
-    const user = new UserModel(req.body);
-    await CouponServices.addCouponToUserCouponList("new123", user);
-    await user.save();
-    await UserServices.sendVerifyOrResetLink({
-      user,
-      email: user.email,
-      linkType: "verify",
-      urlParams: "verify-email",
+    const user = await UserServices.findUser({
+      field: "email",
+      value: req.body.email,
     });
 
-    const { token, refreshToken } = await UserServices.getTokens(user);
+    if (user) throw new Error("This email has already been registered");
+
+    const new_user = new UserModel(req.body);
+
+    await CouponServices.issueCoupons(new_user._id);
+
+    // await UserServices.sendVerifyOrResetLink({
+    //   user,
+    //   email: user.email,
+    //   linkType: "verify",
+    //   urlParams: "verify-email",
+    // });
+
+    const { token, refreshToken } = await UserServices.getTokens(new_user);
 
     res.status(201).json({
       msg: "Registration success",
       result: {
         token,
         refreshToken,
-        user: {
-          firstName: user.firstName,
-          lastName: user.lastName,
-          email: user.email,
-          phone: user.phone,
-          cartLength: 0,
-          avatarDefault: user.avatarDefault,
-          avatarUpload: user.avatarUpload,
-        },
+        user: { ...new_user.toJSON(), cartLength: 0 },
       },
     });
   } catch (e) {
@@ -63,16 +63,10 @@ export const login: RequestHandler<
         token,
         refreshToken,
         user: {
-          firstName: user.firstName,
-          lastName: user.lastName,
-          email: user.email,
-          phone: user.phone,
+          ...user.toJSON(),
           cartLength: UserServices.getCartLength(
             user.cartList as DocumentType<Product>[]
           ),
-          favList: user.favList,
-          avatarDefault: user.avatarDefault,
-          avatarUpload: user.avatarUpload,
         },
       },
     });
@@ -539,17 +533,14 @@ export const userInfoModify: RequestHandler<
 };
 
 export const getPopulatedList: RequestHandler<{
-  type: "order" | "review";
+  type: "order" | "review" | "coupon";
 }> = async (req, res) => {
   const { type } = req.params;
-  if (!type || !includes(type, ["order", "review"]))
-    return res
-      .status(400)
-      .send({ msg: "params must be either order or review" });
+  if (!type || !includes(type, ["order", "review", "coupon"]))
+    return res.status(400).send({ msg: "List does not exist!" });
 
   try {
     const user = await UserModel.findById(req.user.id).populate(`${type}List`);
-    //If user has not placed any order/review, list will be an empty array added in req.user's document.
 
     res
       .status(200)

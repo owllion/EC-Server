@@ -27,11 +27,6 @@ const getModifiedItem = (orderItem) => __awaiter(void 0, void 0, void 0, functio
 });
 exports.getModifiedItem = getModifiedItem;
 const markUsedCode = (user, discountCode) => {
-    if (discountCode) {
-        user.couponList = user.couponList.map((coupon) => coupon.code === discountCode ? Object.assign(Object.assign({}, coupon), { isUsed: true }) : coupon);
-        return user;
-    }
-    return user;
 };
 exports.markUsedCode = markUsedCode;
 //# sourceMappingURL=order.service.js.map

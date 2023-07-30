@@ -1,9 +1,12 @@
+import { UserCoupon } from "./../model/userCoupon.model";
 import { omit } from "ramda";
 import { DocumentType } from "@typegoose/typegoose";
 import CouponModel from "../model/coupon.model";
 import * as CouponInterface from "../interface/controller/coupon.controller.interface";
 import { User } from "../model/user.model";
 import { Coupon } from "../model/coupon.model";
+import { ObjectId } from "mongoose";
+import UserCouponModel from "../model/userCoupon.model";
 
 export const findCoupon = async ({
   field,
@@ -49,7 +52,7 @@ export const getPriceAndDiscount = async (
   };
 };
 
-export const getModifiedItem = async (couponItem: CouponInterface.ICoupon) => {
+export const modifyCoupon = async (couponItem: CouponInterface.ICoupon) => {
   const updateFields: CouponInterface.IList = {};
 
   Object.keys(omit(["_id"], couponItem)).forEach((item) => {
@@ -65,13 +68,52 @@ export const getModifiedItem = async (couponItem: CouponInterface.ICoupon) => {
   return coupon;
 };
 
-export const addCouponToUserCouponList = async (code: string, user: User) => {
-  const coupon = await findCoupon({
-    field: "code",
-    value: code,
-  });
+export const issueCoupons = async (userId: ObjectId) => {
+  console.log(userId, "這是issue的userId");
+  await create10UserCoupons(userId);
+};
 
-  (user.couponList as Coupon[]).push(coupon);
+const getRandom10CouponIds = async () => {
+  try {
+    const randomCouponIds = await CouponModel.aggregate([
+      { $sample: { size: 10 } },
+      { $project: { _id: 1 } },
+    ]);
 
-  await (user as DocumentType<User>).save();
+    console.log(randomCouponIds, "this is randomCids");
+
+    const couponIds: ObjectId[] = randomCouponIds.map((c) => c._id);
+    console.log(couponIds, "這些事coupond ids to string()");
+    return couponIds;
+  } catch (error) {
+    console.error("Error fetching random coupon ids:", error);
+    return [];
+  }
+};
+
+const create10UserCoupons = async (userId: ObjectId) => {
+  try {
+    const ids = await getRandom10CouponIds();
+    const userCoupons = [];
+
+    for (const couponId of ids) {
+      const coupon = await createUserCoupon(userId, couponId);
+      userCoupons.push(coupon);
+    }
+    console.log(userCoupons, "這是userCpopons");
+    await UserCouponModel.insertMany(userCoupons);
+  } catch (error) {
+    console.error("Something wrong when creating 10 coupons:", error);
+  }
+};
+
+const createUserCoupon = async (userId: ObjectId, couponId: ObjectId) => {
+  try {
+    return new UserCouponModel({
+      user: userId,
+      coupon: couponId,
+    });
+  } catch (error) {
+    console.error("Something wrong when creating the coupon:", error);
+  }
 };

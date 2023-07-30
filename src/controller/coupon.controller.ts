@@ -1,5 +1,5 @@
 import { RequestHandler } from "express";
-import CouponModel, { Coupon } from "./../model/coupon.model";
+import CouponModel, { Coupon } from "../model/coupon.model";
 import * as CouponServices from "../services/coupon.service";
 import * as CouponInterface from "../interface/controller/coupon.controller.interface";
 
@@ -51,7 +51,7 @@ export const modifyCoupon: RequestHandler = async (req, res) => {
   const { couponItem } = req.body as { couponItem: CouponInterface.ICoupon };
 
   try {
-    const coupon = await CouponServices.getModifiedItem(couponItem);
+    const coupon = await CouponServices.modifyCoupon(couponItem);
     await coupon!.save();
 
     res.status(200).send({ msg: "success" });
@@ -106,7 +106,7 @@ export const redeemCoupon: RequestHandler<{}, {}, { code: string }> = async (
   res
 ) => {
   try {
-    await CouponServices.addCouponToUserCouponList(req.body.code, req.user);
+    // await CouponServices.addCouponToUserCouponList(req.body.code, req.user);
 
     res.status(200).send({ msg: "success" });
   } catch (e) {
