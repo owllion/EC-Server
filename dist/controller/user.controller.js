@@ -101,24 +101,9 @@ const googleLogin = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
                 res.status(400).send(apiMsg_1.emailAlreadyRegistered);
             }
             if (UserServices.isGoogleLogin(user.email, user.password)) {
-                const { token, refreshToken } = yield UserServices.getTokens(user);
-                res.status(200).send({
-                    msg: "success",
-                    result: {
-                        token,
-                        refreshToken,
-                        user: {
-                            fullName: user.fullName || name,
-                            email: email,
-                            phone: user === null || user === void 0 ? void 0 : user.phone,
-                            avatarDefault: picture,
-                            avatarUpload: user === null || user === void 0 ? void 0 : user.avatarUpload,
-                            cartLength: UserServices.getCartLength(user.cartList),
-                            favList: user.favList,
-                            locale,
-                        },
-                    },
-                });
+                res
+                    .status(200)
+                    .send(UserServices.genUserInfoAndTokens(user, locale, name));
             }
         }
         else {
@@ -127,24 +112,9 @@ const googleLogin = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
                 email: email,
                 avatarDefault: picture,
             });
-            const { token, refreshToken } = yield UserServices.getTokens(newUser);
-            res.status(200).send({
-                msg: "success",
-                result: {
-                    token,
-                    refreshToken,
-                    user: {
-                        fullName: newUser.fullName || name,
-                        email: email,
-                        phone: newUser === null || newUser === void 0 ? void 0 : newUser.phone,
-                        avatarDefault: picture,
-                        avatarUpload: newUser === null || newUser === void 0 ? void 0 : newUser.avatarUpload,
-                        cartLength: UserServices.getCartLength(newUser.cartList),
-                        favList: newUser.favList,
-                        locale,
-                    },
-                },
-            });
+            res
+                .status(200)
+                .send(UserServices.genUserInfoAndTokens(newUser, locale, name));
         }
     }
     catch (e) {

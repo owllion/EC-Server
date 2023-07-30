@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.isGoogleLogin = exports.isEmailLogin = exports.getUserData = exports.checkIfProductExistsInFavList = exports.addItem = exports.verifyIdToken = exports.setCredentials = exports.getGoogleAuthTokens = exports.getCartLength = exports.getTokens = exports.sendVerifyOrResetLink = exports.createUser = exports.findUser = exports.checkIfEmailIsVerified = exports.checkIfEmailIsRegisteredWithGoogleLogin = void 0;
+exports.genUserInfoAndTokens = exports.isGoogleLogin = exports.isEmailLogin = exports.getUserData = exports.checkIfProductExistsInFavList = exports.addItem = exports.verifyIdToken = exports.setCredentials = exports.getGoogleAuthTokens = exports.getCartLength = exports.getTokens = exports.sendVerifyOrResetLink = exports.createUser = exports.findUser = exports.checkIfEmailIsVerified = exports.checkIfEmailIsRegisteredWithGoogleLogin = void 0;
 const google_auth_library_1 = require("google-auth-library");
 const email_1 = require("../utils/email");
 const user_model_1 = __importDefault(require("../model/user.model"));
@@ -116,4 +116,24 @@ const isEmailLogin = (email, password) => email && password ? true : false;
 exports.isEmailLogin = isEmailLogin;
 const isGoogleLogin = (email, password) => email && !password ? true : false;
 exports.isGoogleLogin = isGoogleLogin;
+const genUserInfoAndTokens = (user, locale, name) => __awaiter(void 0, void 0, void 0, function* () {
+    return {
+        msg: "success",
+        result: {
+            token: (yield (0, exports.getTokens)(user)).token,
+            refreshToken: (yield (0, exports.getTokens)(user)).refreshToken,
+            user: {
+                fullName: user.fullName || name,
+                email: user.email,
+                phone: user.phone,
+                avatarDefault: user.avatarDefault,
+                avatarUpload: user.avatarUpload,
+                cartLength: (0, exports.getCartLength)(user.cartList),
+                favList: user.favList,
+                locale,
+            },
+        },
+    };
+});
+exports.genUserInfoAndTokens = genUserInfoAndTokens;
 //# sourceMappingURL=user.service.js.map

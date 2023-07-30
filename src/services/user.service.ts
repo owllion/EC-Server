@@ -160,3 +160,27 @@ export const isEmailLogin = (email: string, password: string) =>
 
 export const isGoogleLogin = (email: string, password: string) =>
   email && !password ? true : false;
+
+export const genUserInfoAndTokens = async (
+  user: DocumentType<User>,
+  locale: string,
+  name: string
+) => {
+  return {
+    msg: "success",
+    result: {
+      token: (await getTokens(user)).token,
+      refreshToken: (await getTokens(user)).refreshToken,
+      user: {
+        fullName: user.fullName || name,
+        email: user.email,
+        phone: user.phone,
+        avatarDefault: user.avatarDefault,
+        avatarUpload: user.avatarUpload,
+        cartLength: getCartLength(user.cartList as DocumentType<Product>[]),
+        favList: user.favList,
+        locale,
+      },
+    },
+  };
+};
