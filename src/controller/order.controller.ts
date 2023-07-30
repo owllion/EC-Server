@@ -2,6 +2,7 @@ import { RequestHandler } from "express";
 import { IOrderItem } from "./../interface/controller/order.controller.interface";
 import OrderModel, { Order } from "../model/order.model";
 import * as OrderServices from "../services/order.service";
+import { orderNotFound } from "../constant/apiMsg";
 
 export const createOrder: RequestHandler = async (req, res) => {
   try {
@@ -57,7 +58,7 @@ export const getOrderDetail: RequestHandler<
   try {
     const order = await OrderModel.findOne({ orderId }).populate("owner");
 
-    if (!order) throw new Error("order not found");
+    if (!order) throw new Error(orderNotFound);
 
     res.status(200).send({
       msg: "success",

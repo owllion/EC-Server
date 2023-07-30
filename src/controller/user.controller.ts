@@ -7,6 +7,7 @@ import UserModel, { User } from "../model/user.model";
 import ProductModel, { Product } from "../model/product.model";
 import { verifyJwt } from "../utils/jwt";
 import * as UserServices from "../services/user.service";
+import { emailAlreadyRegistered } from "../constant/apiMsg";
 
 export const register: RequestHandler<{}, {}, User> = async (req, res) => {
   try {
@@ -15,7 +16,7 @@ export const register: RequestHandler<{}, {}, User> = async (req, res) => {
       value: req.body.email,
     });
 
-    if (user) throw new Error("This email has already been registered");
+    if (user) throw new Error(emailAlreadyRegistered);
 
     const new_user = new UserModel(req.body);
 
@@ -80,48 +81,76 @@ export const googleLogin: RequestHandler<{}, {}, { code: string }> = async (
   res
 ) => {
   try {
-    const tokens = await UserServices.getGoogleAuthTokens(req.body.code);
+    // const tokens = await UserServices.getGoogleAuthTokens(req.body.code);
 
-    //refresh and access token need to be updated.
-    if (tokens.length > 0) UserServices.setCredentials(tokens);
+    // //refresh and access token need to be updated.
+    // if (tokens.length > 0) UserServices.setCredentials(tokens);
 
-    const ticket = await UserServices.verifyIdToken(tokens.id_token);
+    // const ticket = await UserServices.verifyIdToken(tokens.id_token);
 
-    const { name, email, picture, locale } = ticket.getPayload();
-    const user = await UserServices.findUser({ field: "email", value: email });
+    // const { name, email, picture, locale } = ticket.getPayload();
 
-    let newUser;
-    if (!user)
-      newUser = await UserServices.createUser({
+    const { name, email, picture, locale }: UserServices.TicketPayload =
+      await UserServices.getUserData(req.body.code);
+
+    const user = await UserServices.findUser({
+      field: "email",
+      value: email,
+    });
+
+    if (user) {
+      if (UserServices.isEmailLogin(user.email, user.password)) {
+        res.status(400).send(emailAlreadyRegistered);
+      }
+      if (UserServices.isGoogleLogin(user.email, user.password)) {
+        const { token, refreshToken } = await UserServices.getTokens(user);
+        res.status(200).send({
+          msg: "success",
+          result: {
+            token,
+            refreshToken,
+            user: {
+              fullName: user.fullName || name,
+              email: email,
+              phone: user?.phone,
+              avatarDefault: picture,
+              avatarUpload: user?.avatarUpload,
+              cartLength: UserServices.getCartLength(
+                user.cartList as DocumentType<Product>[]
+              ),
+              favList: user.favList,
+              locale,
+            },
+          },
+        });
+      }
+    } else {
+      const newUser = await UserServices.createUser({
         fullName: name,
-        email,
+        email: email,
         avatarDefault: picture,
       });
-    else if (user && user.password) {
-      throw new Error("This email has already been registered");
-    }
-    const { token, refreshToken } = await UserServices.getTokens(
-      (user || newUser) as DocumentType<User>
-    );
-    res.status(200).send({
-      msg: "success",
-      result: {
-        token,
-        refreshToken,
-        user: {
-          fullName: user?.fullName || name,
-          email,
-          phone: user?.phone,
-          avatarDefault: picture,
-          avatarUpload: user?.avatarUpload,
-          cartLength: UserServices.getCartLength(
-            (user || newUser)?.cartList as DocumentType<Product>[]
-          ),
-          favList: (user || newUser)?.favList,
-          locale,
+      const { token, refreshToken } = await UserServices.getTokens(newUser);
+      res.status(200).send({
+        msg: "success",
+        result: {
+          token,
+          refreshToken,
+          user: {
+            fullName: newUser.fullName || name,
+            email: email,
+            phone: newUser?.phone,
+            avatarDefault: picture,
+            avatarUpload: newUser?.avatarUpload,
+            cartLength: UserServices.getCartLength(
+              newUser.cartList as DocumentType<Product>[]
+            ),
+            favList: newUser.favList,
+            locale,
+          },
         },
-      },
-    });
+      });
+    }
   } catch (e) {
     res.status(500).send({ msg: e.message });
   }

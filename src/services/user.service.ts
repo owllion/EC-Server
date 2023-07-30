@@ -136,3 +136,27 @@ export const checkIfProductExistsInFavList = (
   console.log(res);
   if (res) throw new Error("Product is already in the list");
 };
+
+export interface TicketPayload {
+  name: string;
+  email: string;
+  picture: string;
+  locale: string;
+}
+export const getUserData = async (code: string) => {
+  const tokens = await getGoogleAuthTokens(code);
+
+  //updates refresh and access token.
+  if (tokens.length > 0) setCredentials(tokens);
+
+  const ticket = await verifyIdToken(tokens.id_token);
+
+  const data: TicketPayload = ticket.getPayload();
+
+  return data;
+};
+export const isEmailLogin = (email: string, password: string) =>
+  email && password ? true : false;
+
+export const isGoogleLogin = (email: string, password: string) =>
+  email && !password ? true : false;

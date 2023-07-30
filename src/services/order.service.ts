@@ -6,6 +6,7 @@ import { Coupon } from "../model/coupon.model";
 import UserCouponModel, { UserCoupon } from "../model/userCoupon.model";
 import { ObjectId } from "mongoose";
 import { DocumentType } from "@typegoose/typegoose";
+import { couponNotFound, orderNotFound } from "../constant/apiMsg";
 
 export const getModifiedItem = async (orderItem: OrderInterface.IOrderItem) => {
   const updateFields: OrderInterface.IField = {};
@@ -19,7 +20,7 @@ export const getModifiedItem = async (orderItem: OrderInterface.IOrderItem) => {
     updateFields,
     { new: true }
   );
-  if (!order) throw new Error("order not found");
+  if (!order) throw new Error(orderNotFound);
   return order;
 };
 
@@ -37,6 +38,6 @@ export const setCouponAsUsed = async (
     userCoupon.isUsed = true;
     await userCoupon.save();
   } else {
-    throw new Error("coupon not found");
+    throw new Error(couponNotFound);
   }
 };

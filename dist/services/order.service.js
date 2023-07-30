@@ -16,6 +16,7 @@ exports.setCouponAsUsed = exports.getModifiedItem = void 0;
 const ramda_1 = require("ramda");
 const order_model_1 = __importDefault(require("../model/order.model"));
 const userCoupon_model_1 = __importDefault(require("../model/userCoupon.model"));
+const apiMsg_1 = require("../constant/apiMsg");
 const getModifiedItem = (orderItem) => __awaiter(void 0, void 0, void 0, function* () {
     const updateFields = {};
     Object.keys((0, ramda_1.omit)(["_id"], orderItem)).forEach((item) => {
@@ -23,7 +24,7 @@ const getModifiedItem = (orderItem) => __awaiter(void 0, void 0, void 0, functio
     });
     const order = yield order_model_1.default.findByIdAndUpdate({ _id: orderItem._id }, updateFields, { new: true });
     if (!order)
-        throw new Error("order not found");
+        throw new Error(apiMsg_1.orderNotFound);
     return order;
 });
 exports.getModifiedItem = getModifiedItem;
@@ -37,7 +38,7 @@ const setCouponAsUsed = (userId, discountCode) => __awaiter(void 0, void 0, void
         yield userCoupon.save();
     }
     else {
-        throw new Error("coupon not found");
+        throw new Error(apiMsg_1.couponNotFound);
     }
 });
 exports.setCouponAsUsed = setCouponAsUsed;

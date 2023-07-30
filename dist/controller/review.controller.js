@@ -38,6 +38,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.modifyReview = exports.deleteReview = exports.createReview = void 0;
 const review_model_1 = __importDefault(require("./../model/review.model"));
 const ReviewServices = __importStar(require("../services/review.service"));
+const apiMsg_1 = require("../constant/apiMsg");
 const createReview = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         yield ReviewServices.checkIfUserHasCommented(req.body.product, req.user.id);
@@ -58,7 +59,7 @@ const deleteReview = (req, res) => __awaiter(void 0, void 0, void 0, function* (
     try {
         const review = yield review_model_1.default.findOneAndDelete({ reviewId });
         if (!review)
-            throw new Error("Review not found");
+            throw new Error(apiMsg_1.reviewNotFound);
         res.status(200).send({ msg: "success" });
     }
     catch (e) {

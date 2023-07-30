@@ -2,6 +2,7 @@ import { RequestHandler } from "express";
 import ReviewModel from "./../model/review.model";
 import * as ReviewInterface from "../interface/controller/review.controller.interface";
 import * as ReviewServices from "../services/review.service";
+import { reviewNotFound } from "../constant/apiMsg";
 
 export const createReview: RequestHandler<
   {},
@@ -37,7 +38,7 @@ export const deleteReview: RequestHandler<
   const { reviewId } = req.body;
   try {
     const review = await ReviewModel.findOneAndDelete({ reviewId });
-    if (!review) throw new Error("Review not found");
+    if (!review) throw new Error(reviewNotFound);
 
     res.status(200).send({ msg: "success" });
   } catch (e) {

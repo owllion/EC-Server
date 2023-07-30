@@ -38,6 +38,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.getOrderDetail = exports.modifyOrder = exports.createOrder = void 0;
 const order_model_1 = __importDefault(require("../model/order.model"));
 const OrderServices = __importStar(require("../services/order.service"));
+const apiMsg_1 = require("../constant/apiMsg");
 const createOrder = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const order = new order_model_1.default(Object.assign(Object.assign({}, req.body), { owner: req.user.id, name: req.user.name, email: req.user.email }));
@@ -72,7 +73,7 @@ const getOrderDetail = (req, res) => __awaiter(void 0, void 0, void 0, function*
     try {
         const order = yield order_model_1.default.findOne({ orderId }).populate("owner");
         if (!order)
-            throw new Error("order not found");
+            throw new Error(apiMsg_1.orderNotFound);
         res.status(200).send({
             msg: "success",
             detail: order,

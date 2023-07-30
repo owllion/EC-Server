@@ -42,6 +42,7 @@ const user_model_1 = __importDefault(require("../model/user.model"));
 const product_model_1 = __importDefault(require("../model/product.model"));
 const jwt_1 = require("../utils/jwt");
 const UserServices = __importStar(require("../services/user.service"));
+const apiMsg_1 = require("../constant/apiMsg");
 const register = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const user = yield UserServices.findUser({
@@ -49,7 +50,7 @@ const register = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             value: req.body.email,
         });
         if (user)
-            throw new Error("This email has already been registered");
+            throw new Error(apiMsg_1.emailAlreadyRegistered);
         const new_user = new user_model_1.default(req.body);
         yield CouponServices.issueCoupons(new_user._id);
         const { token, refreshToken } = yield UserServices.getTokens(new_user);
@@ -89,42 +90,62 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
 });
 exports.login = login;
 const googleLogin = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a, _b;
     try {
-        const tokens = yield UserServices.getGoogleAuthTokens(req.body.code);
-        if (tokens.length > 0)
-            UserServices.setCredentials(tokens);
-        const ticket = yield UserServices.verifyIdToken(tokens.id_token);
-        const { name, email, picture, locale } = ticket.getPayload();
-        const user = yield UserServices.findUser({ field: "email", value: email });
-        let newUser;
-        if (!user)
-            newUser = yield UserServices.createUser({
+        const { name, email, picture, locale } = yield UserServices.getUserData(req.body.code);
+        const user = yield UserServices.findUser({
+            field: "email",
+            value: email,
+        });
+        if (user) {
+            if (UserServices.isEmailLogin(user.email, user.password)) {
+                res.status(400).send(apiMsg_1.emailAlreadyRegistered);
+            }
+            if (UserServices.isGoogleLogin(user.email, user.password)) {
+                const { token, refreshToken } = yield UserServices.getTokens(user);
+                res.status(200).send({
+                    msg: "success",
+                    result: {
+                        token,
+                        refreshToken,
+                        user: {
+                            fullName: user.fullName || name,
+                            email: email,
+                            phone: user === null || user === void 0 ? void 0 : user.phone,
+                            avatarDefault: picture,
+                            avatarUpload: user === null || user === void 0 ? void 0 : user.avatarUpload,
+                            cartLength: UserServices.getCartLength(user.cartList),
+                            favList: user.favList,
+                            locale,
+                        },
+                    },
+                });
+            }
+        }
+        else {
+            const newUser = yield UserServices.createUser({
                 fullName: name,
-                email,
+                email: email,
                 avatarDefault: picture,
             });
-        else if (user && user.password) {
-            throw new Error("This email has already been registered");
-        }
-        const { token, refreshToken } = yield UserServices.getTokens((user || newUser));
-        res.status(200).send({
-            msg: "success",
-            result: {
-                token,
-                refreshToken,
-                user: {
-                    fullName: (user === null || user === void 0 ? void 0 : user.fullName) || name,
-                    email,
-                    phone: user === null || user === void 0 ? void 0 : user.phone,
-                    avatarDefault: picture,
-                    avatarUpload: user === null || user === void 0 ? void 0 : user.avatarUpload,
-                    cartLength: UserServices.getCartLength((_a = (user || newUser)) === null || _a === void 0 ? void 0 : _a.cartList),
-                    favList: (_b = (user || newUser)) === null || _b === void 0 ? void 0 : _b.favList,
-                    locale,
+            const { token, refreshToken } = yield UserServices.getTokens(newUser);
+            res.status(200).send({
+                msg: "success",
+                result: {
+                    token,
+                    refreshToken,
+                    user: {
+                        fullName: newUser.fullName || name,
+                        email: email,
+                        phone: newUser === null || newUser === void 0 ? void 0 : newUser.phone,
+                        avatarDefault: picture,
+                        avatarUpload: newUser === null || newUser === void 0 ? void 0 : newUser.avatarUpload,
+                        cartLength: UserServices.getCartLength(newUser.cartList),
+                        favList: newUser.favList,
+                        locale,
+                    },
                 },
-            },
-        });
+            });
+        }
     }
     catch (e) {
         res.status(500).send({ msg: e.message });

@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.checkIfProductExistsInFavList = exports.addItem = exports.verifyIdToken = exports.setCredentials = exports.getGoogleAuthTokens = exports.getCartLength = exports.getTokens = exports.sendVerifyOrResetLink = exports.createUser = exports.findUser = exports.checkIfEmailIsVerified = exports.checkIfEmailIsRegisteredWithGoogleLogin = void 0;
+exports.isGoogleLogin = exports.isEmailLogin = exports.getUserData = exports.checkIfProductExistsInFavList = exports.addItem = exports.verifyIdToken = exports.setCredentials = exports.getGoogleAuthTokens = exports.getCartLength = exports.getTokens = exports.sendVerifyOrResetLink = exports.createUser = exports.findUser = exports.checkIfEmailIsVerified = exports.checkIfEmailIsRegisteredWithGoogleLogin = void 0;
 const google_auth_library_1 = require("google-auth-library");
 const email_1 = require("../utils/email");
 const user_model_1 = __importDefault(require("../model/user.model"));
@@ -103,4 +103,17 @@ const checkIfProductExistsInFavList = (user, productId) => {
         throw new Error("Product is already in the list");
 };
 exports.checkIfProductExistsInFavList = checkIfProductExistsInFavList;
+const getUserData = (code) => __awaiter(void 0, void 0, void 0, function* () {
+    const tokens = yield (0, exports.getGoogleAuthTokens)(code);
+    if (tokens.length > 0)
+        (0, exports.setCredentials)(tokens);
+    const ticket = yield (0, exports.verifyIdToken)(tokens.id_token);
+    const data = ticket.getPayload();
+    return data;
+});
+exports.getUserData = getUserData;
+const isEmailLogin = (email, password) => email && password ? true : false;
+exports.isEmailLogin = isEmailLogin;
+const isGoogleLogin = (email, password) => email && !password ? true : false;
+exports.isGoogleLogin = isGoogleLogin;
 //# sourceMappingURL=user.service.js.map
