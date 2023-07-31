@@ -40,7 +40,7 @@ npm run dev
 - docker
 
 ```
-docker run -it -p 5000:5000 traversal/react-shopapp:1.0
+docker run -p 5000:5000 --restart=always -d yuhsinzheng/ec-server:latest
 ```
 
 ## License
