@@ -7,6 +7,7 @@ import { User } from "../model/user.model";
 import { Coupon } from "../model/coupon.model";
 import { ObjectId } from "mongoose";
 import UserCouponModel from "../model/userCoupon.model";
+import { couponNotFound } from "../constant/apiMsg";
 
 export const findCoupon = async ({
   field,
@@ -16,7 +17,7 @@ export const findCoupon = async ({
   value: string;
 }) => {
   const coupon = await CouponModel.findOne({ [field]: value });
-  if (!coupon) throw new Error("Coupon not found!");
+  if (!coupon) throw new Error(couponNotFound);
   return coupon;
 };
 
@@ -42,13 +43,13 @@ export const getPriceAndDiscount = async (
   amount: number
 ) => {
   const finalPrice =
-    discountType === "debate"
+    discountType === "Fixed Amount"
       ? totalPrice - amount
       : Math.round(totalPrice * (amount * 0.01));
 
   return {
-    discountTotal: finalPrice,
-    discount: totalPrice - finalPrice,
+    priceAfterDiscount: finalPrice,
+    discountedAmount: totalPrice - finalPrice,
   };
 };
 

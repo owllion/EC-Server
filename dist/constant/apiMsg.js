@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.serverError = exports.apiResponses = exports.tokenExpired = exports.authenticationRequired = exports.malformedToken = exports.malformedPayload = exports.emailNotVerified = exports.emailAlreadyRegistered = exports.emailAlreadyRegisteredWithGoogle = exports.incorrectLoginInput = exports.accountAlreadyExists = exports.sizeNotFound = exports.sizeAlreadyExists = exports.productItemNotFound = exports.productItemAlreadyExists = exports.cartItemQuantityLimitsError = exports.cartItemNotFound = exports.couponAlreadyUsed = exports.couponAlreadyExists = exports.minimumThresholdNotMet = exports.couponExpired = exports.couponNotFound = exports.orderItemNotFound = exports.orderNotFound = exports.orderAlreadyExists = exports.reviewNotFound = exports.productIsNotAvailableError = exports.productAlreadyExists = exports.productNotFound = exports.userAlreadyExists = exports.userNotFound = void 0;
+exports.serverError = exports.apiResponses = exports.tokenExpired = exports.authenticationRequired = exports.malformedToken = exports.malformedPayload = exports.emailNotVerified = exports.emailAlreadyRegistered = exports.emailAlreadyRegisteredWithGoogle = exports.incorrectLoginInput = exports.accountAlreadyExists = exports.sizeNotFound = exports.sizeAlreadyExists = exports.productItemNotFound = exports.productItemAlreadyExists = exports.cartItemQuantityLimitsError = exports.cartItemNotFound = exports.doNotOwnCoupon = exports.couponAlreadyUsed = exports.couponAlreadyExists = exports.minimumThresholdNotMet = exports.couponExpired = exports.couponNotFound = exports.orderItemNotFound = exports.orderNotFound = exports.orderAlreadyExists = exports.reviewNotFound = exports.productIsNotAvailableError = exports.productAlreadyExists = exports.productNotFound = exports.userAlreadyExists = exports.userNotFound = void 0;
 exports.userNotFound = "user not found";
 exports.userAlreadyExists = "user already exists";
 exports.productNotFound = "product not found";
@@ -15,6 +15,7 @@ exports.couponExpired = "coupon expired";
 exports.minimumThresholdNotMet = "minimum threshold not met";
 exports.couponAlreadyExists = "coupon already exists";
 exports.couponAlreadyUsed = "coupon has already been used";
+exports.doNotOwnCoupon = "this is not your coupon!";
 exports.cartItemNotFound = "cart item not found";
 exports.cartItemQuantityLimitsError = "cart item quantity should be greater than 1";
 exports.productItemAlreadyExists = "product item already exists";

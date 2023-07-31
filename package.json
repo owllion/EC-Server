@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "gf": "ts-node populate.ts",
+    "populate": "ts-node populate.ts",
     "dev": "ts-node-dev --respawn --pretty --transpile-only src/index.ts",
     "start": "node dist/index.js",
     "test": "jest --coverage",

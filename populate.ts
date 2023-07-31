@@ -75,4 +75,11 @@ async function generateFakeData() {
   console.log("Fake data generated successfully.");
 }
 
-generateFakeData();
+// generateFakeData();
+
+const deleteType = async () => {
+  await CouponModel.deleteMany({
+    discountType: { $in: ["debate", "percentage", "rebate"] },
+  });
+};
+deleteType();

@@ -38,6 +38,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.redeemCoupon = exports.applyCoupon = exports.modifyCoupon = exports.deleteMultipleCoupons = exports.deleteCoupon = exports.createCoupon = void 0;
 const coupon_model_1 = __importDefault(require("../model/coupon.model"));
 const CouponServices = __importStar(require("../services/coupon.service"));
+const userCoupon_model_1 = __importDefault(require("../model/userCoupon.model"));
+const apiMsg_1 = require("../constant/apiMsg");
 const createCoupon = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const coupon = new coupon_model_1.default(req.body);
     try {
@@ -95,20 +97,29 @@ const modifyCoupon = (req, res) => __awaiter(void 0, void 0, void 0, function* (
 });
 exports.modifyCoupon = modifyCoupon;
 const applyCoupon = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { totalPrice, code } = req.body;
+    const { totalPrice, code, couponId } = req.body;
     try {
         const coupon = yield CouponServices.findCoupon({
             field: "code",
             value: code,
         });
+        console.log(coupon, "this is coupon!");
+        const userCoupon = yield userCoupon_model_1.default.findOne({
+            user: req.user._id,
+            coupon: coupon._id,
+        });
+        if (!userCoupon)
+            throw new Error(apiMsg_1.doNotOwnCoupon);
+        if (userCoupon.isUsed)
+            throw new Error(apiMsg_1.couponAlreadyUsed);
         const { expiryDate, minimumAmount, discountType, amount, } = coupon;
         yield CouponServices.isExpired(expiryDate);
         yield CouponServices.isShort(minimumAmount, totalPrice);
-        const { discountTotal, discount } = yield CouponServices.getPriceAndDiscount(discountType, totalPrice, amount);
+        const { priceAfterDiscount, discountedAmount } = yield CouponServices.getPriceAndDiscount(discountType, totalPrice, amount);
         res.send({
             msg: "success",
-            discountTotal,
-            discount,
+            priceAfterDiscount,
+            discountedAmount,
             usedCode: code,
         });
     }

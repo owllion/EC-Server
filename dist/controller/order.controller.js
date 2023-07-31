@@ -45,7 +45,7 @@ const createOrder = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
         yield order.save();
         req.user.cartList = [];
         if (order.discountCode)
-            req.user = OrderServices.setCouponAsUsed(req.user._id, order.discountCode);
+            yield OrderServices.setCouponAsUsed(req.user._id, order.discountCode);
         yield req.user.save();
         res.status(201).send({
             msg: "success",

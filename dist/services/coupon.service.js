@@ -16,10 +16,11 @@ exports.issueCoupons = exports.modifyCoupon = exports.getPriceAndDiscount = expo
 const ramda_1 = require("ramda");
 const coupon_model_1 = __importDefault(require("../model/coupon.model"));
 const userCoupon_model_1 = __importDefault(require("../model/userCoupon.model"));
+const apiMsg_1 = require("../constant/apiMsg");
 const findCoupon = ({ field, value, }) => __awaiter(void 0, void 0, void 0, function* () {
     const coupon = yield coupon_model_1.default.findOne({ [field]: value });
     if (!coupon)
-        throw new Error("Coupon not found!");
+        throw new Error(apiMsg_1.couponNotFound);
     return coupon;
 });
 exports.findCoupon = findCoupon;
@@ -38,12 +39,12 @@ const isShort = (minimumAmount, totalPrice) => __awaiter(void 0, void 0, void 0,
 });
 exports.isShort = isShort;
 const getPriceAndDiscount = (discountType, totalPrice, amount) => __awaiter(void 0, void 0, void 0, function* () {
-    const finalPrice = discountType === "debate"
+    const finalPrice = discountType === "Fixed Amount"
         ? totalPrice - amount
         : Math.round(totalPrice * (amount * 0.01));
     return {
-        discountTotal: finalPrice,
-        discount: totalPrice - finalPrice,
+        priceAfterDiscount: finalPrice,
+        discountedAmount: totalPrice - finalPrice,
     };
 });
 exports.getPriceAndDiscount = getPriceAndDiscount;

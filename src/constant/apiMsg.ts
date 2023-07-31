@@ -23,6 +23,7 @@ export const couponExpired = "coupon expired";
 export const minimumThresholdNotMet = "minimum threshold not met";
 export const couponAlreadyExists = "coupon already exists";
 export const couponAlreadyUsed = "coupon has already been used";
+export const doNotOwnCoupon = "this is not your coupon!";
 
 // cart_item
 export const cartItemNotFound = "cart item not found";

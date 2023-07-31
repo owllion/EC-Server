@@ -2,7 +2,7 @@ import { omit } from "ramda";
 import * as OrderInterface from "../interface/controller/order.controller.interface";
 import OrderModel from "../model/order.model";
 import { User } from "../model/user.model";
-import { Coupon } from "../model/coupon.model";
+import CouponModel, { Coupon } from "../model/coupon.model";
 import UserCouponModel, { UserCoupon } from "../model/userCoupon.model";
 import { ObjectId } from "mongoose";
 import { DocumentType } from "@typegoose/typegoose";
@@ -28,10 +28,12 @@ export const setCouponAsUsed = async (
   userId: ObjectId,
   discountCode: String
 ) => {
+  const coupon = await CouponModel.findOne({ code: discountCode });
+
   const userCoupon: DocumentType<UserCoupon> | null =
     await UserCouponModel.findOne({
       user: userId,
-      coupon: discountCode,
+      coupon: coupon?._id,
     });
 
   if (userCoupon) {

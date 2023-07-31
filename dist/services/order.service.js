@@ -15,6 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.setCouponAsUsed = exports.getModifiedItem = void 0;
 const ramda_1 = require("ramda");
 const order_model_1 = __importDefault(require("../model/order.model"));
+const coupon_model_1 = __importDefault(require("../model/coupon.model"));
 const userCoupon_model_1 = __importDefault(require("../model/userCoupon.model"));
 const apiMsg_1 = require("../constant/apiMsg");
 const getModifiedItem = (orderItem) => __awaiter(void 0, void 0, void 0, function* () {
@@ -29,9 +30,10 @@ const getModifiedItem = (orderItem) => __awaiter(void 0, void 0, void 0, functio
 });
 exports.getModifiedItem = getModifiedItem;
 const setCouponAsUsed = (userId, discountCode) => __awaiter(void 0, void 0, void 0, function* () {
+    const coupon = yield coupon_model_1.default.findOne({ code: discountCode });
     const userCoupon = yield userCoupon_model_1.default.findOne({
         user: userId,
-        coupon: discountCode,
+        coupon: coupon === null || coupon === void 0 ? void 0 : coupon._id,
     });
     if (userCoupon) {
         userCoupon.isUsed = true;

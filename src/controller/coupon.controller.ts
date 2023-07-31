@@ -2,6 +2,8 @@ import { RequestHandler } from "express";
 import CouponModel, { Coupon } from "../model/coupon.model";
 import * as CouponServices from "../services/coupon.service";
 import * as CouponInterface from "../interface/controller/coupon.controller.interface";
+import UserCouponModel from "../model/userCoupon.model";
+import { couponAlreadyUsed, doNotOwnCoupon } from "../constant/apiMsg";
 
 export const createCoupon: RequestHandler = async (req, res) => {
   const coupon = new CouponModel(req.body as Coupon);
@@ -63,14 +65,22 @@ export const modifyCoupon: RequestHandler = async (req, res) => {
 export const applyCoupon: RequestHandler<
   {},
   {},
-  { totalPrice: number; code: string }
+  { totalPrice: number; code: string; couponId: string }
 > = async (req, res) => {
-  const { totalPrice, code } = req.body;
+  const { totalPrice, code, couponId } = req.body;
   try {
     const coupon = await CouponServices.findCoupon({
       field: "code",
       value: code,
     });
+    console.log(coupon, "this is coupon!");
+
+    const userCoupon = await UserCouponModel.findOne({
+      user: req.user._id,
+      coupon: coupon._id,
+    });
+    if (!userCoupon) throw new Error(doNotOwnCoupon);
+    if (userCoupon.isUsed) throw new Error(couponAlreadyUsed);
 
     const {
       expiryDate,
@@ -83,7 +93,7 @@ export const applyCoupon: RequestHandler<
 
     await CouponServices.isShort(minimumAmount, totalPrice);
 
-    const { discountTotal, discount } =
+    const { priceAfterDiscount, discountedAmount } =
       await CouponServices.getPriceAndDiscount(
         discountType,
         totalPrice,
@@ -92,8 +102,8 @@ export const applyCoupon: RequestHandler<
 
     res.send({
       msg: "success",
-      discountTotal,
-      discount,
+      priceAfterDiscount,
+      discountedAmount,
       usedCode: code,
     });
   } catch (e) {
