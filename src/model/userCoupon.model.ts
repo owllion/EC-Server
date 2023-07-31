@@ -25,7 +25,7 @@ import { Coupon } from "./coupon.model";
   },
 })
 @pre<User>("find", function (next) {
-  this.populate("coupon", "code");
+  this.populate("coupon");
   next();
 })
 export class UserCoupon {

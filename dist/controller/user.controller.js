@@ -37,7 +37,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getNormalList = exports.getPopulatedList = exports.userInfoModify = exports.passwordModify = exports.addToFav = exports.removeFromFav = exports.addToCart = exports.updateItemQty = exports.clearCart = exports.removeCartItem = exports.resetPassword = exports.forgotPassword = exports.uploadAvatar = exports.getRefreshToken = exports.logout = exports.checkIfTokenIsValid = exports.verifyUser = exports.checkAccount = exports.sendVerifyOrResetLink = exports.googleLogin = exports.login = exports.register = void 0;
 const ramda_1 = require("ramda");
-const CouponServices = __importStar(require("../services/coupon.service"));
 const user_model_1 = __importDefault(require("../model/user.model"));
 const product_model_1 = __importDefault(require("../model/product.model"));
 const jwt_1 = require("../utils/jwt");
@@ -51,17 +50,7 @@ const register = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         });
         if (user)
             throw new Error(apiMsg_1.emailAlreadyRegistered);
-        const new_user = new user_model_1.default(req.body);
-        yield CouponServices.issueCoupons(new_user._id);
-        const { token, refreshToken } = yield UserServices.getTokens(new_user);
-        res.status(201).json({
-            msg: "Registration success",
-            result: {
-                token,
-                refreshToken,
-                user: Object.assign(Object.assign({}, new_user.toJSON()), { cartLength: 0 }),
-            },
-        });
+        UserServices.createEmailLoginUser(req.body);
     }
     catch (e) {
         res.status(500).send({
@@ -74,15 +63,7 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { email, password } = req.body;
     try {
         const user = yield user_model_1.default.findByCredentials(email, password);
-        const { token, refreshToken } = yield UserServices.getTokens(user);
-        res.status(200).send({
-            msg: "success",
-            result: {
-                token,
-                refreshToken,
-                user: Object.assign(Object.assign({}, user.toJSON()), { cartLength: UserServices.getCartLength(user.cartList) }),
-            },
-        });
+        res.status(200).send(UserServices.getUserInfo(user));
     }
     catch (e) {
         res.status(400).send({ msg: e.message });
@@ -103,7 +84,7 @@ const googleLogin = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
             if (UserServices.isGoogleLogin(user.email, user.password)) {
                 res
                     .status(200)
-                    .send(UserServices.genUserInfoAndTokens(user, locale, name));
+                    .send(yield UserServices.getGoogleUserInfo(user, locale, name));
             }
         }
         else {
@@ -114,7 +95,7 @@ const googleLogin = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
             });
             res
                 .status(200)
-                .send(UserServices.genUserInfoAndTokens(newUser, locale, name));
+                .send(yield UserServices.getGoogleUserInfo(newUser, locale, name));
         }
     }
     catch (e) {
@@ -170,7 +151,7 @@ const verifyUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
             value: decoded._id,
         });
         if (!user)
-            throw new Error("User not found");
+            throw new Error(apiMsg_1.userNotFound);
         user.verified = true;
         yield user.save();
         const { token, refreshToken } = yield UserServices.getTokens(user);

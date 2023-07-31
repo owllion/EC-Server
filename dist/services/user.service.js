@@ -1,4 +1,27 @@
 "use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -12,8 +35,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.genUserInfoAndTokens = exports.isGoogleLogin = exports.isEmailLogin = exports.getUserData = exports.checkIfProductExistsInFavList = exports.addItem = exports.verifyIdToken = exports.setCredentials = exports.getGoogleAuthTokens = exports.getCartLength = exports.getTokens = exports.sendVerifyOrResetLink = exports.createUser = exports.findUser = exports.checkIfEmailIsVerified = exports.checkIfEmailIsRegisteredWithGoogleLogin = void 0;
+exports.createEmailLoginUser = exports.getUserInfo = exports.getGoogleUserInfo = exports.isGoogleLogin = exports.isEmailLogin = exports.getUserData = exports.checkIfProductExistsInFavList = exports.addItem = exports.verifyIdToken = exports.setCredentials = exports.getGoogleAuthTokens = exports.getCartLength = exports.getTokens = exports.sendVerifyOrResetLink = exports.createUser = exports.findUser = exports.checkIfEmailIsVerified = exports.checkIfEmailIsRegisteredWithGoogleLogin = void 0;
 const google_auth_library_1 = require("google-auth-library");
+const CouponServices = __importStar(require("../services/coupon.service"));
 const email_1 = require("../utils/email");
 const user_model_1 = __importDefault(require("../model/user.model"));
 const checkIfEmailIsRegisteredWithGoogleLogin = (password) => {
@@ -33,7 +57,7 @@ const findUser = ({ field, value, }) => __awaiter(void 0, void 0, void 0, functi
 exports.findUser = findUser;
 const createUser = (info) => __awaiter(void 0, void 0, void 0, function* () {
     const user = new user_model_1.default(info);
-    yield user.save();
+    yield CouponServices.issueCoupons(user._id);
     return user;
 });
 exports.createUser = createUser;
@@ -116,7 +140,7 @@ const isEmailLogin = (email, password) => email && password ? true : false;
 exports.isEmailLogin = isEmailLogin;
 const isGoogleLogin = (email, password) => email && !password ? true : false;
 exports.isGoogleLogin = isGoogleLogin;
-const genUserInfoAndTokens = (user, locale, name) => __awaiter(void 0, void 0, void 0, function* () {
+const getGoogleUserInfo = (user, locale, name) => __awaiter(void 0, void 0, void 0, function* () {
     return {
         msg: "success",
         result: {
@@ -135,5 +159,27 @@ const genUserInfoAndTokens = (user, locale, name) => __awaiter(void 0, void 0, v
         },
     };
 });
-exports.genUserInfoAndTokens = genUserInfoAndTokens;
+exports.getGoogleUserInfo = getGoogleUserInfo;
+const getUserInfo = (user) => __awaiter(void 0, void 0, void 0, function* () {
+    return {
+        msg: "success",
+        result: {
+            token: (yield (0, exports.getTokens)(user)).token,
+            refreshToken: (yield (0, exports.getTokens)(user)).refreshToken,
+            user: Object.assign(Object.assign({}, user.toJSON()), { cartLength: (0, exports.getCartLength)(user.cartList) }),
+        },
+    };
+});
+exports.getUserInfo = getUserInfo;
+const createEmailLoginUser = (payload) => __awaiter(void 0, void 0, void 0, function* () {
+    const new_user = new user_model_1.default(payload);
+    yield CouponServices.issueCoupons(new_user._id);
+    yield (0, exports.sendVerifyOrResetLink)({
+        user: new_user,
+        email: new_user.email,
+        linkType: "verify",
+        urlParams: "verify-email",
+    });
+});
+exports.createEmailLoginUser = createEmailLoginUser;
 //# sourceMappingURL=user.service.js.map

@@ -1,10 +1,9 @@
 import { OAuth2Client } from "google-auth-library";
 import { DocumentType } from "@typegoose/typegoose";
-
+import * as CouponServices from "../services/coupon.service";
 import { Product } from "../model/product.model";
 import { sendLink } from "../utils/email";
 import UserModel, { User } from "../model/user.model";
-
 export const checkIfEmailIsRegisteredWithGoogleLogin = (
   password: string | undefined
 ) => {
@@ -31,7 +30,7 @@ export const findUser = async ({
 
 export const createUser = async (info: Partial<User>) => {
   const user = new UserModel(info);
-  await user.save();
+  await CouponServices.issueCoupons(user._id);
   return user;
 };
 
@@ -161,7 +160,7 @@ export const isEmailLogin = (email: string, password: string) =>
 export const isGoogleLogin = (email: string, password: string) =>
   email && !password ? true : false;
 
-export const genUserInfoAndTokens = async (
+export const getGoogleUserInfo = async (
   user: DocumentType<User>,
   locale: string,
   name: string
@@ -183,4 +182,31 @@ export const genUserInfoAndTokens = async (
       },
     },
   };
+};
+
+export const getUserInfo = async (user: DocumentType<User>) => {
+  return {
+    msg: "success",
+    result: {
+      token: (await getTokens(user)).token,
+      refreshToken: (await getTokens(user)).refreshToken,
+      user: {
+        ...user.toJSON(),
+        cartLength: getCartLength(user.cartList as DocumentType<Product>[]),
+      },
+    },
+  };
+};
+
+export const createEmailLoginUser = async (payload: User) => {
+  const new_user = new UserModel(payload);
+
+  await CouponServices.issueCoupons(new_user._id);
+
+  await sendVerifyOrResetLink({
+    user: new_user,
+    email: new_user.email,
+    linkType: "verify",
+    urlParams: "verify-email",
+  });
 };

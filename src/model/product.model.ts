@@ -4,12 +4,18 @@ import {
   prop,
   Severity,
   index,
+  pre,
   Ref,
 } from "@typegoose/typegoose";
 
 import { nanoid } from "nanoid";
-import { Review } from "./review.model";
+import ReviewModel, { Review } from "./review.model";
 
+@pre<Product>("deleteOne", async function (next) {
+  const id = this.getFilter()["_id"];
+  await ReviewModel.deleteMany({ product: id });
+  next();
+})
 @modelOptions({
   schemaOptions: {
     timestamps: true,

@@ -41,7 +41,7 @@ UserCoupon = __decorate([
         },
     }),
     (0, typegoose_1.pre)("find", function (next) {
-        this.populate("coupon", "code");
+        this.populate("coupon");
         next();
     })
 ], UserCoupon);

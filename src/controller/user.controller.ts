@@ -7,7 +7,7 @@ import UserModel, { User } from "../model/user.model";
 import ProductModel, { Product } from "../model/product.model";
 import { verifyJwt } from "../utils/jwt";
 import * as UserServices from "../services/user.service";
-import { emailAlreadyRegistered } from "../constant/apiMsg";
+import { emailAlreadyRegistered, userNotFound } from "../constant/apiMsg";
 
 export const register: RequestHandler<{}, {}, User> = async (req, res) => {
   try {
@@ -18,27 +18,7 @@ export const register: RequestHandler<{}, {}, User> = async (req, res) => {
 
     if (user) throw new Error(emailAlreadyRegistered);
 
-    const new_user = new UserModel(req.body);
-
-    await CouponServices.issueCoupons(new_user._id);
-
-    // await UserServices.sendVerifyOrResetLink({
-    //   user,
-    //   email: user.email,
-    //   linkType: "verify",
-    //   urlParams: "verify-email",
-    // });
-
-    const { token, refreshToken } = await UserServices.getTokens(new_user);
-
-    res.status(201).json({
-      msg: "Registration success",
-      result: {
-        token,
-        refreshToken,
-        user: { ...new_user.toJSON(), cartLength: 0 },
-      },
-    });
+    UserServices.createEmailLoginUser(req.body);
   } catch (e) {
     res.status(500).send({
       msg: e.message,
@@ -54,23 +34,8 @@ export const login: RequestHandler<
   const { email, password } = req.body;
   try {
     const user = await UserModel.findByCredentials(email, password);
-    const { token, refreshToken } = await UserServices.getTokens(
-      user as DocumentType<User>
-    );
 
-    res.status(200).send({
-      msg: "success",
-      result: {
-        token,
-        refreshToken,
-        user: {
-          ...user.toJSON(),
-          cartLength: UserServices.getCartLength(
-            user.cartList as DocumentType<Product>[]
-          ),
-        },
-      },
-    });
+    res.status(200).send(UserServices.getUserInfo(user));
   } catch (e) {
     res.status(400).send({ msg: e.message });
   }
@@ -96,7 +61,7 @@ export const googleLogin: RequestHandler<{}, {}, { code: string }> = async (
       if (UserServices.isGoogleLogin(user.email, user.password)) {
         res
           .status(200)
-          .send(UserServices.genUserInfoAndTokens(user, locale, name));
+          .send(await UserServices.getGoogleUserInfo(user, locale, name));
       }
     } else {
       const newUser = await UserServices.createUser({
@@ -107,7 +72,7 @@ export const googleLogin: RequestHandler<{}, {}, { code: string }> = async (
 
       res
         .status(200)
-        .send(UserServices.genUserInfoAndTokens(newUser, locale, name));
+        .send(await UserServices.getGoogleUserInfo(newUser, locale, name));
     }
   } catch (e) {
     res.status(500).send({ msg: e.message });
@@ -176,7 +141,7 @@ export const verifyUser: RequestHandler<{}, {}, { token: string }> = async (
       field: "_id",
       value: decoded._id,
     });
-    if (!user) throw new Error("User not found");
+    if (!user) throw new Error(userNotFound);
     user.verified = true;
     await user.save();
 

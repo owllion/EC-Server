@@ -18,7 +18,7 @@ import OrderModel, { Order } from "../model/order.model";
 import ReviewModel, { Review } from "../model/review.model";
 import { Product } from "../model/product.model";
 import { signJwt } from "./../utils/jwt";
-import { UserCoupon } from "./userCoupon.model";
+import UserCouponModel, { UserCoupon } from "./userCoupon.model";
 
 @pre<User>("save", async function (next) {
   /**
@@ -35,7 +35,8 @@ import { UserCoupon } from "./userCoupon.model";
 @pre<User>("deleteOne", async function (next) {
   const id = this.getFilter()["_id"];
   await OrderModel.deleteMany({ owner: id });
-  await ReviewModel.deleteMany({ owner: id });
+  await ReviewModel.deleteMany({ user: id });
+  await UserCouponModel.deleteMany({ user: id });
   next();
 })
 @post<User>("save", function () {
@@ -78,10 +79,10 @@ export class User {
   @prop({ required: true, default: () => nanoid() })
   userId: string;
 
-  @prop({ required: true, trim: true })
+  @prop({ trim: true })
   firstName: string;
 
-  @prop({ required: true, trim: true })
+  @prop({ trim: true })
   lastName: string;
 
   @prop({ default: "", trim: true })

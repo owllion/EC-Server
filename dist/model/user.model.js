@@ -30,6 +30,7 @@ const argon2_1 = __importDefault(require("argon2"));
 const order_model_1 = __importDefault(require("../model/order.model"));
 const review_model_1 = __importDefault(require("../model/review.model"));
 const jwt_1 = require("./../utils/jwt");
+const userCoupon_model_1 = __importDefault(require("./userCoupon.model"));
 let User = User_1 = class User {
     static findByCredentials(email, password) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -91,11 +92,11 @@ __decorate([
     __metadata("design:type", String)
 ], User.prototype, "userId", void 0);
 __decorate([
-    (0, typegoose_1.prop)({ required: true, trim: true }),
+    (0, typegoose_1.prop)({ trim: true }),
     __metadata("design:type", String)
 ], User.prototype, "firstName", void 0);
 __decorate([
-    (0, typegoose_1.prop)({ required: true, trim: true }),
+    (0, typegoose_1.prop)({ trim: true }),
     __metadata("design:type", String)
 ], User.prototype, "lastName", void 0);
 __decorate([
@@ -182,7 +183,8 @@ User = User_1 = __decorate([
         return __awaiter(this, void 0, void 0, function* () {
             const id = this.getFilter()["_id"];
             yield order_model_1.default.deleteMany({ owner: id });
-            yield review_model_1.default.deleteMany({ owner: id });
+            yield review_model_1.default.deleteMany({ user: id });
+            yield userCoupon_model_1.default.deleteMany({ user: id });
             next();
         });
     }),
